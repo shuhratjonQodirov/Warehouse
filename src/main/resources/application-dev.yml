@@ -2,9 +2,13 @@ spring:
   application:
     name: Warehouse
   datasource:
-    username: postgres
-    url: jdbc:postgresql://localhost:5432/warehouse
-    password: 1234
+#    username: postgres
+#    url: jdbc:postgresql://localhost:5432/warehouse
+#    password: 1234
+    username: transport_menegment_user
+    password: oP3ulOMLOS2S2vFI74m6lNCjFB6NXQO7
+    url: jdbc:postgresql://dpg-d5r2pj9r0fns73dt1r2g-a.oregon-postgres.render.com:5432/transport_menegment
+    driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
