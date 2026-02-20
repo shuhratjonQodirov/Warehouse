@@ -1,0 +1,3644 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ombor Boshqaruv Tizimi</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap');
+        /* Overlay */
+        #kgOverlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(3px);
+            z-index: 1050;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            animation: kgFadeIn .2s ease;
+        }
+        #kgOverlay.active { display: flex; }
+
+        @keyframes kgFadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes kgSlideUp {
+            from { opacity: 0; transform: translateY(28px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Modal box */
+        #kgModal {
+            background: #fff;
+            border-radius: 18px;
+            width: 100%;
+            max-width: 560px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 24px 80px rgba(0,0,0,.22);
+            animation: kgSlideUp .25s ease;
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e1 transparent;
+        }
+        #kgModal::-webkit-scrollbar { width: 5px; }
+        #kgModal::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+        /* Header */
+        .kg-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px 16px;
+            border-bottom: 1px solid #f1f5f9;
+            position: sticky;
+            top: 0;
+            background: #fff;
+            z-index: 5;
+            border-radius: 18px 18px 0 0;
+        }
+        .kg-header h2 { font-size: 17px; font-weight: 700; color: #1e293b; }
+        .kg-header p  { font-size: 12px; color: #94a3b8; margin-top: 2px; }
+        .kg-close {
+            width: 32px; height: 32px;
+            border: none; background: #f1f5f9;
+            border-radius: 8px; cursor: pointer;
+            font-size: 15px; color: #64748b;
+            display: flex; align-items: center; justify-content: center;
+            transition: background .15s;
+        }
+        .kg-close:hover { background: #e2e8f0; color: #1e293b; }
+
+        /* Body */
+        .kg-body { padding: 20px 24px 24px; }
+
+        /* Field */
+        .kg-field { margin-bottom: 16px; }
+        .kg-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+        .kg-label span { font-weight: 400; color: #94a3b8; margin-left: 4px; }
+        .kg-input, .kg-select {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 9px;
+            font-size: 14px;
+            color: #1e293b;
+            outline: none;
+            background: #fff;
+            transition: border-color .2s, box-shadow .2s;
+            font-family: inherit;
+        }
+        .kg-input:focus, .kg-select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59,130,246,.12);
+        }
+        .kg-input::placeholder { color: #cbd5e1; }
+        .kg-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+        /* Divider */
+        .kg-divider {
+            border: none;
+            border-top: 1.5px dashed #e2e8f0;
+            margin: 8px 0 18px;
+            position: relative;
+        }
+        #pnOverlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(3px);
+            z-index: 1050;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        #pnOverlay.active { display: flex; }
+
+        @keyframes pnSlideUp {
+            from { opacity: 0; transform: translateY(28px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        #pnModal {
+            background: #fff;
+            border-radius: 18px;
+            width: 100%;
+            max-width: 560px;
+            max-height: 92vh;
+            overflow-y: auto;
+            box-shadow: 0 24px 80px rgba(0,0,0,.22);
+            animation: pnSlideUp .25s ease;
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e1 transparent;
+        }
+        #pnModal::-webkit-scrollbar { width: 5px; }
+        #pnModal::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+        .pn-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px 16px;
+            border-bottom: 1px solid #f1f5f9;
+            position: sticky;
+            top: 0;
+            background: #fff;
+            z-index: 5;
+            border-radius: 18px 18px 0 0;
+        }
+        .pn-header h2 { font-size: 17px; font-weight: 700; color: #1e293b; }
+        .pn-header p  { font-size: 12px; color: #94a3b8; margin-top: 2px; }
+        .pn-close {
+            width: 32px; height: 32px;
+            border: none; background: #f1f5f9;
+            border-radius: 8px; cursor: pointer;
+            font-size: 15px; color: #64748b;
+            display: flex; align-items: center; justify-content: center;
+            transition: background .15s;
+        }
+        .pn-close:hover { background: #e2e8f0; color: #1e293b; }
+
+        .pn-body { padding: 20px 24px 24px; }
+
+        .pn-field { margin-bottom: 16px; }
+        .pn-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+        .pn-label span { font-weight: 400; color: #94a3b8; margin-left: 4px; }
+
+        .pn-input, .pn-select {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 9px;
+            font-size: 14px;
+            color: #1e293b;
+            outline: none;
+            background: #fff;
+            transition: border-color .2s, box-shadow .2s;
+            font-family: inherit;
+        }
+        .pn-input:focus, .pn-select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59,130,246,.12);
+        }
+        .pn-input::placeholder { color: #cbd5e1; }
+
+        .pn-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .pn-grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+        /* Section divider */
+        .pn-section {
+            font-size: 11px;
+            font-weight: 700;
+            color: #94a3b8;
+            letter-spacing: .06em;
+            text-align: center;
+            margin: 4px 0 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .pn-section::before, .pn-section::after {
+            content: '';
+            flex: 1;
+            border-top: 1.5px dashed #e2e8f0;
+        }
+
+        /* Enum pills */
+        .pn-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .pn-pill input[type="radio"] { display: none; }
+        .pn-pill label {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 13px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #64748b;
+            cursor: pointer;
+            transition: all .15s;
+            user-select: none;
+        }
+        .pn-pill input[type="radio"]:checked + label {
+            border-color: #3b82f6;
+            background: #eff6ff;
+            color: #2563eb;
+            font-weight: 600;
+        }
+        .pn-pill label:hover { border-color: #93c5fd; color: #3b82f6; }
+
+        /* Repeat days (conditional) */
+        #pnRepeatBlock {
+            display: none;
+            margin-top: 12px;
+            padding: 12px 14px;
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            border-radius: 9px;
+        }
+
+        /* Info card */
+        .pn-info {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 9px;
+            padding: 10px 13px;
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 6px;
+        }
+        .pn-info strong { color: #1e293b; }
+
+        /* Footer */
+        .pn-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        .pn-btn {
+            padding: 10px 22px;
+            border-radius: 9px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .15s;
+            font-family: inherit;
+        }
+        .pn-btn-cancel {
+            border: 1.5px solid #e2e8f0;
+            background: #fff;
+            color: #64748b;
+        }
+        .pn-btn-cancel:hover { background: #f8fafc; }
+        .pn-btn-save {
+            border: none;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(59,130,246,.35);
+        }
+        .pn-btn-save:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(59,130,246,.45); }
+        .pn-btn-save:disabled { opacity: .6; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        .pn-spinner {
+            display: inline-block;
+            width: 13px; height: 13px;
+            border: 2px solid rgba(255,255,255,.4);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: pnSpin .7s linear infinite;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+        @keyframes pnSpin { to { transform: rotate(360deg); } }
+        .kg-divider-label {
+            text-align: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: #94a3b8;
+            letter-spacing: .06em;
+            margin-bottom: 16px;
+            margin-top: -6px;
+        }
+
+        /* Sub card */
+        .kg-subcard {
+            border-radius: 10px;
+            padding: 14px;
+            margin-top: 8px;
+            border: 1px solid #dbeafe;
+            background: #eff6ff;
+        }
+        .kg-subcard.green {
+            border-color: #bbf7d0;
+            background: #f0fdf4;
+        }
+        .kg-subcard-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #1d4ed8;
+            margin-bottom: 10px;
+        }
+        .kg-subcard.green .kg-subcard-title { color: #15803d; }
+
+        /* Summary line */
+        .kg-summary-line {
+            margin-top: 10px;
+            padding: 8px 10px;
+            background: rgba(255,255,255,.7);
+            border-radius: 7px;
+            font-size: 12px;
+            color: #475569;
+            display: none;
+        }
+        .kg-summary-line strong { color: #1e293b; }
+        .kg-summary-line em { color: #94a3b8; font-style: normal; }
+
+        /* Total summary */
+        .kg-total-summary {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 20px;
+            display: none;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .kg-total-summary.visible { display: flex; align-items: center; }
+        .kg-total-summary-title { font-size: 13px; font-weight: 700; color: #1e293b; width: 100%; margin-bottom: 4px; }
+        .kg-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 6px;
+            padding: 3px 9px;
+            font-size: 12px;
+            color: #0369a1;
+        }
+
+        /* Hidden */
+        .kg-hidden { display: none; }
+
+        /* Footer */
+        .kg-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 4px;
+        }
+        .kg-btn {
+            padding: 10px 22px;
+            border-radius: 9px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .15s;
+            font-family: inherit;
+        }
+        .kg-btn-cancel {
+            border: 1.5px solid #e2e8f0;
+            background: #fff;
+            color: #64748b;
+        }
+        .kg-btn-cancel:hover { background: #f8fafc; }
+        .kg-btn-save {
+            border: none;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(59,130,246,.35);
+        }
+        .kg-btn-save:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(59,130,246,.45); }
+        .kg-btn-save:disabled {
+            opacity: .6; cursor: not-allowed; transform: none;
+            box-shadow: none;
+        }
+
+        /* Loading spinner */
+        .kg-spinner {
+            display: inline-block;
+            width: 14px; height: 14px;
+            border: 2px solid rgba(255,255,255,.4);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: kgSpin .7s linear infinite;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+        @keyframes kgSpin { to { transform: rotate(360deg); } }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --bg-tertiary: #3a3a3a;
+            --text-primary: #f5f5f5;
+            --text-secondary: #b0b0b0;
+            --accent-primary: #ff6b35;
+            --accent-secondary: #ffa500;
+            --sidebar-width: 280px;
+            --sidebar-collapsed: 60px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Landing Page */
+        .landing-page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            background: radial-gradient(circle at 20% 30%, rgba(255, 107, 53, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 70%, rgba(255, 165, 0, 0.1) 0%, transparent 50%),
+            linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .landing-page::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(255, 107, 53, 0.03) 2px, rgba(255, 107, 53, 0.03) 4px);
+            pointer-events: none;
+        }
+
+        .landing-content {
+            max-width: 800px;
+            z-index: 1;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .landing-page h1 {
+            font-family: 'Space Mono', monospace;
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -2px;
+            animation: fadeInUp 1s ease-out 0.2s backwards;
+        }
+
+        .td-index {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .index-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background: rgba(255, 107, 53, 0.1);
+            border: 1px solid rgba(255, 107, 53, 0.2);
+            border-radius: 6px;
+            font-size: 0.78rem;
+        }
+
+        .region-name {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .region-icon {
+            width: 34px;
+            height: 34px;
+            background: rgba(255, 107, 53, 0.1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .region-label {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .region-id {
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .td-actions {
+            text-align: center;
+        }
+
+        .action-group {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-edit {
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            border: 1px solid rgba(255, 107, 53, 0.3);
+            background: rgba(255, 107, 53, 0.1);
+            color: var(--accent-primary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-edit:hover {
+            background: var(--accent-primary);
+            color: #fff;
+        }
+
+        .btn-delete {
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            background: rgba(220, 38, 38, 0.1);
+            color: #ef4444;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        #supplierList tr {
+            height: 60px; /* satr balandligini oshirish */
+        }
+
+        #supplierList td {
+            padding: 0.75rem 1rem; /* ustunlar ichidagi padding */
+        }
+
+        #supplierList tr:not(:last-child) {
+            border-bottom: 1px solid rgba(255,107,53,0.2); /* satrlar orasiga chiziq */
+        }
+
+
+        .btn-delete:hover {
+            background: #ef4444;
+            color: #fff;
+        }
+
+        #regionList tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: background 0.15s;
+        }
+
+        #regionList tr:hover {
+            background: rgba(255, 107, 53, 0.05);
+        }
+
+        #regionList td {
+            padding: 0.9rem 1rem;
+            vertical-align: middle;
+        }
+
+        .landing-page .subtitle {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            font-weight: 300;
+            animation: fadeInUp 1s ease-out 0.4s backwards;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+            animation: fadeInUp 1s ease-out 0.6s backwards;
+        }
+
+        .feature-card {
+            padding: 1.5rem;
+            background: rgba(45, 45, 45, 0.5);
+            border: 1px solid rgba(255, 107, 53, 0.2);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            transition: var(--transition);
+        }
+
+        .feature-card:hover {
+            background: rgba(45, 45, 45, 0.8);
+            border-color: var(--accent-primary);
+            transform: translateY(-5px);
+        }
+        .modal {
+            display: none; /* boshlanishda yashirilgan */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* fon qorayishi */
+            display: flex; /* modalni markazga olib keladi */
+            justify-content: center;
+            align-items: center;
+            z-index: 9999; /* boshqa elementlardan ustun */
+        }
+
+        .modal-content {
+            background: #222; /* oyna rangi */
+            padding: 1.5rem;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 100%;
+            color: var(--text-primary);
+            position: relative;
+        }
+
+        .feature-card h3 {
+            color: var(--accent-primary);
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1.2rem 3rem;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);
+            animation: fadeInUp 1s ease-out 0.8s backwards;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255, 107, 53, 0.5);
+        }
+
+        /* Login Page */
+        .login-page {
+            display: none;
+            min-height: 100vh;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            background: radial-gradient(circle at 20% 30%, rgba(255, 107, 53, 0.08) 0%, transparent 50%),
+            radial-gradient(circle at 80% 70%, rgba(255, 165, 0, 0.08) 0%, transparent 50%),
+            linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+        }
+
+        .login-box {
+            background: rgba(45, 45, 45, 0.7);
+            backdrop-filter: blur(20px);
+            padding: 3rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 107, 53, 0.2);
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .login-box h2 {
+            font-family: 'Space Mono', monospace;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .login-box p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(58, 58, 58, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            background: rgba(58, 58, 58, 0.8);
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 1rem;
+        }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 107, 53, 0.4);
+        }
+
+        /* Dashboard Layout */
+        .dashboard {
+            display: none;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: var(--sidebar-width);
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 107, 53, 0.1);
+            padding: 1.5rem 0;
+            transition: var(--transition);
+            z-index: 1000;
+            overflow-y: auto;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed);
+        }
+
+        .sidebar-header {
+            padding: 0 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .sidebar.collapsed .sidebar-header {
+            padding: 0;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .sidebar.collapsed .logo {
+            display: none;
+        }
+
+        .logo {
+            font-family: 'Space Mono', monospace;
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            white-space: nowrap;
+            transition: var(--transition);
+        }
+
+        .toggle-btn {
+            background: var(--bg-tertiary);
+            border: 2px solid var(--accent-primary);
+            color: var(--accent-primary);
+            font-size: 1.4rem;
+            cursor: pointer;
+            padding: 0.6rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            border-radius: 10px;
+            width: 40px;
+            height: 40px;
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+        }
+
+        .toggle-btn:hover {
+            background: var(--accent-primary);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.5);
+        }
+
+        .sidebar.collapsed .toggle-btn {
+            font-size: 1.6rem;
+        }
+
+        .user-info {
+            margin-top: auto;
+            position: relative;
+        }
+
+        .user-info-trigger {
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .user-info-trigger:hover {
+            background: rgba(255, 107, 53, 0.1);
+        }
+
+        .sidebar.collapsed .user-info-trigger {
+            justify-content: center;
+            padding: 1rem 0;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .user-details {
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .sidebar.collapsed .user-details {
+            opacity: 0;
+            visibility: hidden;
+            width: 0;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .user-plan {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .nav-section {
+            margin-bottom: 1.5rem;
+            flex: 1;
+        }
+
+        .nav-item {
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar.collapsed .nav-item {
+            justify-content: center;
+            padding: 0.8rem 0;
+        }
+
+        .nav-item:hover {
+            color: var(--text-primary);
+            background: rgba(255, 107, 53, 0.1);
+            border-left-color: var(--accent-primary);
+        }
+
+        .nav-item.active {
+            color: var(--accent-primary);
+            background: rgba(255, 107, 53, 0.15);
+            border-left-color: var(--accent-primary);
+        }
+
+        .nav-icon {
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        .nav-text {
+            font-size: 0.95rem;
+            white-space: nowrap;
+            transition: var(--transition);
+        }
+
+        .sidebar.collapsed .nav-text {
+            opacity: 0;
+            visibility: hidden;
+            width: 0;
+        }
+
+        .nav-arrow {
+            margin-left: auto;
+            font-size: 1rem;
+            transition: transform 0.3s;
+        }
+
+        .sidebar.collapsed .nav-arrow {
+            display: none;
+        }
+
+        .nav-item.expanded .nav-arrow {
+            transform: rotate(90deg);
+        }
+
+        .submenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .submenu.open {
+            max-height: 500px;
+        }
+
+        .submenu-item {
+            padding: 0.7rem 1.5rem 0.7rem 4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: var(--transition);
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .sidebar.collapsed .submenu {
+            display: none;
+        }
+
+        .submenu-item:hover {
+            color: var(--text-primary);
+            background: rgba(255, 107, 53, 0.05);
+        }
+
+        .user-submenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, opacity 0.3s ease-out;
+            background: rgba(30, 30, 30, 0.98);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            position: absolute;
+            bottom: calc(100%);
+            left: 0;
+            right: 0;
+            opacity: 0;
+            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
+            border-radius: 12px 12px 0 0;
+        }
+
+        .user-submenu.open {
+            max-height: 450px;
+            opacity: 1;
+        }
+
+        .sidebar.collapsed .user-submenu {
+            display: none;
+        }
+
+        .user-submenu-item {
+            padding: 0.85rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: var(--transition);
+            cursor: pointer;
+            font-size: 0.95rem;
+            border-left: 3px solid transparent;
+            position: relative;
+        }
+
+        .user-submenu-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .user-submenu-item .item-icon {
+            font-size: 1.1rem;
+            width: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-submenu-item .item-arrow {
+            margin-left: auto;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .user-submenu-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 0.5rem 0;
+        }
+
+        .user-arrow {
+            margin-left: auto;
+            font-size: 1.1rem;
+            transition: transform 0.3s ease;
+            color: var(--accent-primary);
+        }
+
+        .user-info.expanded .user-arrow {
+            transform: rotate(180deg);
+        }
+
+        .sidebar.collapsed .user-arrow {
+            display: none;
+        }
+
+        .user-info.expanded .user-info-trigger {
+            background: rgba(255, 107, 53, 0.15);
+            border-top-color: var(--accent-primary);
+        }
+
+        /* Settings Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 107, 53, 0.2);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-header h2 {
+            font-size: 1.5rem;
+            color: var(--accent-primary);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .close-modal:hover {
+            color: var(--text-primary);
+        }
+
+        .setting-group {
+            margin-bottom: 2rem;
+        }
+
+        .setting-group h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .setting-item {
+            padding: 1rem;
+            background: rgba(58, 58, 58, 0.3);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .setting-item:hover {
+            background: rgba(58, 58, 58, 0.5);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+            transition: var(--transition);
+            min-height: 100vh;
+        }
+
+        .sidebar.collapsed ~ .main-content {
+            margin-left: var(--sidebar-collapsed);
+        }
+
+        .content-header {
+            margin-bottom: 2rem;
+        }
+
+        .content-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .content-header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(45, 45, 45, 0.5);
+            border: 1px solid rgba(255, 107, 53, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            background: rgba(45, 45, 45, 0.8);
+            border-color: var(--accent-primary);
+            transform: translateY(-3px);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(26, 26, 26, 0.5);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 107, 53, 0.5);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .landing-page h1 {
+                font-size: 2.5rem;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Landing Page -->
+<div class="landing-page" id="landingPage">
+    <div class="landing-content">
+        <h1>Ombor Boshqaruv</h1>
+        <p class="subtitle">Zamonaviy ombor tizimini boshqaring</p>
+
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h3>📊 Dashboard</h3>
+                <p>Real-time statistika va hisobotlar</p>
+            </div>
+            <div class="feature-card">
+                <h3>📦 Mahsulotlar</h3>
+                <p>Mahsulotlarni taqsimlash va qabul qilish</p>
+            </div>
+            <div class="feature-card">
+                <h3>🏭 Omborlar</h3>
+                <p>Ko'p omborlarni boshqarish</p>
+            </div>
+            <div class="feature-card">
+                <h3>📈 Hisobotlar</h3>
+                <p>Batafsil tahlil va hisobotlar</p>
+            </div>
+        </div>
+
+        <button class="cta-button" onclick="showLogin()">Tizimga Kirish</button>
+    </div>
+</div>
+
+<!-- Login Page -->
+<div class="login-page" id="loginPage">
+    <div class="login-box">
+        <h2>Tizimga Kirish</h2>
+        <p>Ombor boshqaruv tizimiga xush kelibsiz</p>
+
+        <form onsubmit="login(event)">
+            <div class="form-group">
+                <label for="username">Foydalanuvchi nomi</label>
+                <input type="text" id="username" placeholder="username@example.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Parol</label>
+                <input type="password" id="password" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" class="login-button">Kirish</button>
+        </form>
+    </div>
+</div>
+
+<!-- Dashboard -->
+<div class="dashboard" id="dashboard">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">Ombor</div>
+            <button class="toggle-btn" onclick="toggleSidebar()">
+                <span id="toggleIcon">◀</span>
+            </button>
+        </div>
+
+        <nav class="nav-section">
+            <a class="nav-item active" onclick="loadPage('dashboard')">
+                <span class="nav-icon">📊</span>
+                <span class="nav-text">Dashboard</span>
+            </a>
+
+            <a class="nav-item" onclick="loadPage('distribute')">
+                <span class="nav-icon">🚚</span>
+                <span class="nav-text">Mahsulotlarni taqsimlash</span>
+            </a>
+
+            <a class="nav-item" onclick="loadPage('receive')">
+                <span class="nav-icon">📥</span>
+                <span class="nav-text">Mahsulot qabul qilish</span>
+            </a>
+
+            <a class="nav-item" onclick="loadPage('warehouse')">
+                <span class="nav-icon">🏭</span>
+                <span class="nav-text">Ombordagi Mahsulotlar</span>
+            </a>
+
+            <a class="nav-item" onclick="loadPage('reports')">
+                <span class="nav-icon">📈</span>
+                <span class="nav-text">Hisobotlar</span>
+            </a>
+        </nav>
+
+        <div class="user-info">
+            <div class="user-info-trigger" onclick="toggleUserSubmenu()">
+                <div class="user-avatar">S</div>
+                <div class="user-details">
+                    <div class="user-name">Sozlamalar</div>
+                </div>
+                <span class="user-arrow">▼</span>
+            </div>
+
+            <div class="user-submenu" id="userSubmenu">
+                <a class="user-submenu-item" onclick="loadSettingsPage('profile')">
+                    <span class="item-icon">👤</span>
+                    <span>Profil</span>
+                </a>
+                <a class="user-submenu-item" onclick="loadSettingsPage('warehouses')">
+                    <span class="item-icon">🏢</span>
+                    <span>Omborlar</span>
+                </a>
+                <a class="user-submenu-item" onclick="loadSettingsPage('products')">
+                    <span class="item-icon">📦</span>
+                    <span>Mahsulotlar</span>
+                </a>
+                <a class="user-submenu-item" onclick="loadSettingsPage('category')">
+                    <span class="item-icon">🏷️</span>
+                    <span>Kategoriyalar</span>
+                </a>
+                <a class="user-submenu-item" onclick="loadSettingsPage('regions')">
+                    <span class="item-icon">🗺️</span>
+                    <span>Rayonlar</span>
+                </a>
+                <a class="user-submenu-item" onclick="loadSettingsPage('telegram')">
+                    <span class="item-icon">📱</span>
+                    <span>Telegram va Foydalanuvchilar</span>
+                </a>
+                <a class="user-submenu-item" onclick="loadSettingsPage('suppliers')">
+                    <span class="item-icon">🤝</span>
+                    <span>Yetkazib beruvchilar</span>
+                </a>
+                <a class="user-submenu-item" onclick="loadSettingsPage('packages')">
+                    <span class="item-icon">📦</span>
+                    <span>Bog'chalar</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="content-header">
+            <h1>Dashboard</h1>
+            <p>Tizimingizning umumiy ko'rinishi</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">1,234</div>
+                <div class="stat-label">Jami Mahsulotlar</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">456</div>
+                <div class="stat-label">Bugungi Taqsimotlar</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">89</div>
+                <div class="stat-label">Aktiv Buyurtmalar</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">12</div>
+                <div class="stat-value">Omborlar</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Settings Modal -->
+<div class="modal" id="settingsModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modalTitle">Sozlamalar</h2>
+            <button class="close-modal" onclick="closeSettingsModal()">×</button>
+        </div>
+
+        <div id="modalBody">
+            <!-- Modal content will be dynamically loaded here -->
+        </div>
+    </div>
+</div>
+<!-- Supplier Modal -->
+<div class="modal" id="supplierModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="supplierModalTitle">Yangi Yetkazib Beruvchi</h2>
+            <button class="close-modal" onclick="closeSupplierModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <form id="supplierForm" onsubmit="saveSupplierForm(event)">
+                <div class="form-group">
+                    <label for="supplierName">Kompaniya nomi</label>
+                    <input type="text" id="supplierName" required>
+                </div>
+                <div class="form-group">
+                    <label for="supplierContactPerson">Mas'ul shaxs</label>
+                    <input type="text" id="supplierContactPerson" required>
+                </div>
+                <div class="form-group">
+                    <label for="supplierPhone">Telefon raqami</label>
+                    <input type="tel" id="supplierPhone" placeholder="+998 XX XXX XX XX" required>
+                </div>
+                <div class="form-group">
+                    <label for="supplierTin">INN (STIR)</label>
+                    <input type="text" id="supplierTin" required>
+                </div>
+                <div class="form-group">
+                    <label for="supplierAddress">Manzil</label>
+                    <textarea id="supplierAddress" rows="3" style="width: 100%; padding: 1rem; background: rgba(58, 58, 58, 0.5); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; color: var(--text-primary); font-family: 'Outfit', sans-serif; font-size: 1rem; resize: vertical;" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                        <input type="checkbox" id="supplierActive" style="width: 20px; height: 20px; cursor: pointer; accent-color: var(--accent-primary);">
+                        <span>Aktiv</span>
+                    </label>
+                </div>
+                <input type="hidden" id="supplierId">
+                <button type="submit" class="login-button">Saqlash</button>
+            </form>
+        </div>
+    </div>
+</div>
+<div id="kgOverlay">
+    <div id="kgModal" role="dialog" aria-modal="true" aria-labelledby="kgTitle">
+
+        <!-- Header -->
+        <div class="kg-header">
+            <div>
+                <h2 id="kgTitle">🏫 Yangi bog'cha qo'shish</h2>
+                <p>Barcha majburiy maydonlarni to'ldiring</p>
+            </div>
+            <button class="kg-close" onclick="closeKindergartenModal()" title="Yopish">✕</button>
+        </div>
+
+        <!-- Body -->
+        <div class="kg-body">
+
+            <!-- Region -->
+            <div class="kg-field">
+                <label class="kg-label" for="kgRegion">Viloyat / Tuman <span>*</span></label>
+                <select id="kgRegion" class="kg-select" required>
+                    <option value="">— Yuklanmoqda... —</option>
+                </select>
+            </div>
+
+            <!-- Mudir -->
+            <div class="kg-field">
+                <label class="kg-label" for="kgMudir">Mudir <span>*</span></label>
+                <select id="kgMudir" class="kg-select" required>
+                    <option value="">— Yuklanmoqda... —</option>
+                </select>
+            </div>
+
+            <!-- Name -->
+            <div class="kg-field">
+                <label class="kg-label" for="kgName">Bog'cha nomi <span>*</span></label>
+                <input id="kgName" class="kg-input" type="text" placeholder="Masalan: «Nilufar» bog'chasi" required>
+            </div>
+
+            <!-- Lat / Lon -->
+            <div class="kg-field kg-grid2">
+                <div>
+                    <label class="kg-label" for="kgLat">Kenglik (Latitude)</label>
+                    <input id="kgLat" class="kg-input" type="number" step="any" placeholder="41.2995">
+                </div>
+                <div>
+                    <label class="kg-label" for="kgLon">Uzunlik (Longitude)</label>
+                    <input id="kgLon" class="kg-input" type="number" step="any" placeholder="69.2401">
+                </div>
+            </div>
+
+            <!-- Divider -->
+            <hr class="kg-divider">
+            <div class="kg-divider-label">BOLALAR SONI</div>
+
+            <!-- Total -->
+            <div class="kg-field">
+                <label class="kg-label" for="kgTotal">Jami bolalar soni <span>*</span></label>
+                <input id="kgTotal" class="kg-input" type="number" min="0" placeholder="Masalan: 170"
+                       oninput="kgOnTotalChange()" required>
+            </div>
+
+            <!-- 1–3 yosh blok -->
+            <div id="kgBlock13" class="kg-field kg-hidden">
+                <label class="kg-label" for="kg13">1–3 yoshli bolalar soni</label>
+                <input id="kg13" class="kg-input" type="number" min="0" placeholder="0"
+                       oninput="kgOn13Change()">
+
+                <!-- 1–3 sub inputs -->
+                <div id="kgSub13" class="kg-subcard kg-hidden">
+                    <div class="kg-subcard-title">📋 1–3 yosh guruh taqsimoti</div>
+                    <div class="kg-grid2">
+                        <div class="kg-field">
+                            <label class="kg-label" for="kg13_3h">3–4 soat</label>
+                            <input id="kg13_3h" class="kg-input" type="number" min="0" placeholder="0"
+                                   oninput="kgUpdateSummary13(); kgCheckShow37()">
+                        </div>
+                        <div class="kg-field">
+                            <label class="kg-label" for="kg13_9h">9 soat</label>
+                            <input id="kg13_9h" class="kg-input" type="number" min="0" placeholder="0"
+                                   oninput="kgUpdateSummary13(); kgCheckShow37()">
+                        </div>
+                        <div class="kg-field" style="margin-bottom:0">
+                            <label class="kg-label" for="kg13_12h">12 soat</label>
+                            <input id="kg13_12h" class="kg-input" type="number" min="0" placeholder="0"
+                                   oninput="kgUpdateSummary13(); kgCheckShow37()">
+                        </div>
+                        <div class="kg-field" style="margin-bottom:0">
+                            <label class="kg-label" for="kg13_24h">24 soat</label>
+                            <input id="kg13_24h" class="kg-input" type="number" min="0" placeholder="0"
+                                   oninput="kgUpdateSummary13(); kgCheckShow37()">
+                        </div>
+                    </div>
+                    <!-- Summary -->
+                    <div id="kgSum13" class="kg-summary-line"></div>
+                </div>
+            </div>
+
+            <!-- 3–7 yosh blok -->
+            <div id="kgBlock37" class="kg-field kg-hidden">
+                <label class="kg-label" for="kg37">3–7 yoshli bolalar soni</label>
+                <input id="kg37" class="kg-input" type="number" min="0" placeholder="0"
+                       oninput="kgOn37Change()">
+
+                <!-- 3–7 sub inputs -->
+                <div id="kgSub37" class="kg-subcard green kg-hidden">
+                    <div class="kg-subcard-title">📋 3–7 yosh guruh taqsimoti</div>
+                    <div class="kg-grid2">
+                        <div class="kg-field">
+                            <label class="kg-label" for="kg37_3h">3–4 soat</label>
+                            <input id="kg37_3h" class="kg-input" type="number" min="0" placeholder="0"
+                                   oninput="kgUpdateSummary37(); kgUpdateTotalSummary()">
+                        </div>
+                        <div class="kg-field">
+                            <label class="kg-label" for="kg37_9h">9 soat</label>
+                            <input id="kg37_9h" class="kg-input" type="number" min="0" placeholder="0"
+                                   oninput="kgUpdateSummary37(); kgUpdateTotalSummary()">
+                        </div>
+                        <div class="kg-field" style="margin-bottom:0">
+                            <label class="kg-label" for="kg37_12h">12 soat</label>
+                            <input id="kg37_12h" class="kg-input" type="number" min="0" placeholder="0"
+                                   oninput="kgUpdateSummary37(); kgUpdateTotalSummary()">
+                        </div>
+                        <div class="kg-field" style="margin-bottom:0">
+                            <label class="kg-label" for="kg37_24h">24 soat</label>
+                            <input id="kg37_24h" class="kg-input" type="number" min="0" placeholder="0"
+                                   oninput="kgUpdateSummary37(); kgUpdateTotalSummary()">
+                        </div>
+                    </div>
+                    <div id="kgSum37" class="kg-summary-line"></div>
+                </div>
+            </div>
+
+            <!-- Total summary badges -->
+            <div id="kgTotalSummary" class="kg-total-summary">
+                <div class="kg-total-summary-title">📊 Umumiy ko'rinish</div>
+            </div>
+
+            <!-- Footer -->
+            <div class="kg-footer">
+                <button class="kg-btn kg-btn-cancel" onclick="closeKindergartenModal()">Bekor qilish</button>
+                <button id="kgSaveBtn" class="kg-btn kg-btn-save" onclick="kgSave()">✓ Saqlash</button>
+            </div>
+
+        </div><!-- /kg-body -->
+    </div><!-- /kgModal -->
+</div><!-- /kgOverlay -->
+
+<div id="pnOverlay">
+    <div id="pnModal" role="dialog" aria-modal="true" aria-labelledby="pnTitle">
+
+        <!-- Header -->
+        <div class="pn-header">
+            <div>
+                <h2 id="pnTitle">📦 Yangi mahsulot norma</h2>
+                <p>Mahsulot iste'mol normativini belgilang</p>
+            </div>
+            <button class="pn-close" onclick="closeProductNormModal()" title="Yopish">✕</button>
+        </div>
+
+        <!-- Body -->
+        <div class="pn-body">
+
+            <!-- Mahsulot -->
+            <div class="pn-field">
+                <label class="pn-label" for="pnProduct">Mahsulot <span>*</span></label>
+                <select id="pnProduct" class="pn-select" required>
+                    <option value="">— Yuklanmoqda... —</option>
+                </select>
+            </div>
+
+            <div class="pn-section">YOSH GURUHI VA QOLISH MUDDATI</div>
+
+            <!-- AgeGroup -->
+            <div class="pn-field">
+                <label class="pn-label">Yosh guruhi <span>*</span></label>
+                <div class="pn-pills">
+                    <div class="pn-pill">
+                        <input type="radio" name="pnAgeGroup" id="pnAge1" value="AGE_1_TO_3">
+                        <label for="pnAge1">👶 1–3 yosh</label>
+                    </div>
+                    <div class="pn-pill">
+                        <input type="radio" name="pnAgeGroup" id="pnAge2" value="AGE_3_TO_7">
+                        <label for="pnAge2">🧒 3–7 yosh</label>
+                    </div>
+                    <div class="pn-pill">
+                        <input type="radio" name="pnAgeGroup" id="pnAgeAll" value="ALL">
+                        <label for="pnAgeAll">👥 Barcha</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- StayDuration -->
+            <div class="pn-field">
+                <label class="pn-label">Qolish muddati <span>*</span></label>
+                <div class="pn-pills">
+                    <div class="pn-pill">
+                        <input type="radio" name="pnStayDuration" id="pnStay3" value="HOURS_3">
+                        <label for="pnStay3">⏱ 3 soat</label>
+                    </div>
+                    <div class="pn-pill">
+                        <input type="radio" name="pnStayDuration" id="pnStay9" value="HOURS_9">
+                        <label for="pnStay9">⏱ 9 soat</label>
+                    </div>
+                    <div class="pn-pill">
+                        <input type="radio" name="pnStayDuration" id="pnStay12" value="HOURS_12">
+                        <label for="pnStay12">⏱ 12 soat</label>
+                    </div>
+                    <div class="pn-pill">
+                        <input type="radio" name="pnStayDuration" id="pnStay24" value="HOURS_24">
+                        <label for="pnStay24">🌙 24 soat</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pn-section">NORMA MA'LUMOTLARI</div>
+
+            <!-- dailyPerChild + unit -->
+            <div class="pn-field pn-grid2">
+                <div>
+                    <label class="pn-label" for="pnDailyPerChild">1 bolaga kunlik norma <span>*</span></label>
+                    <input id="pnDailyPerChild" class="pn-input" type="number" min="0" step="0.001"
+                           placeholder="Masalan: 150.000" required>
+                </div>
+                <div>
+                    <label class="pn-label" for="pnUnit">O'lchov birligi <span>*</span></label>
+                    <select id="pnUnit" class="pn-select" required>
+                        <option value="">— Tanlang —</option>
+                        <option value="g">g (gramm)</option>
+                        <option value="kg">kg (kilogramm)</option>
+                        <option value="ml">ml (millilitr)</option>
+                        <option value="litr">litr</option>
+                        <option value="dona">dona</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- ConsumptionType -->
+            <div class="pn-field">
+                <label class="pn-label">Iste'mol turi <span>*</span></label>
+                <div class="pn-pills">
+                    <div class="pn-pill">
+                        <input type="radio" name="pnConsumptionType" id="pnCDaily" value="DAILY" checked
+                               onchange="pnOnConsumptionChange()">
+                        <label for="pnCDaily">📅 Kunlik</label>
+                    </div>
+                    <div class="pn-pill">
+                        <input type="radio" name="pnConsumptionType" id="pnCDecade" value="DECADE"
+                               onchange="pnOnConsumptionChange()">
+                        <label for="pnCDecade">📆 Dekadali</label>
+                    </div>
+                    <div class="pn-pill">
+                        <input type="radio" name="pnConsumptionType" id="pnCWeekly" value="WEEKLY"
+                               onchange="pnOnConsumptionChange()">
+                        <label for="pnCWeekly">🗓 Haftalik</label>
+                    </div>
+                    <div class="pn-pill">
+                        <input type="radio" name="pnConsumptionType" id="pnCMonthly" value="MONTHLY"
+                               onchange="pnOnConsumptionChange()">
+                        <label for="pnCMonthly">🗓 Oylik</label>
+                    </div>
+                </div>
+
+                <!-- Repeat days — faqat DECADE yoki WEEKLY tanlananda chiqadi -->
+                <div id="pnRepeatBlock">
+                    <label class="pn-label" for="pnRepeatDays">Takrorlanish kuni <span>*</span></label>
+                    <input id="pnRepeatDays" class="pn-input" type="number" min="1" max="31"
+                           placeholder="Masalan: 10 (dekada uchun)">
+                    <div class="pn-info" style="margin-top:8px">
+                        <strong>Eslatma:</strong> Dekada uchun odatda <strong>10</strong>, haftalik uchun <strong>7</strong> kiritiladi.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Manba hujjat -->
+            <div class="pn-field">
+                <label class="pn-label" for="pnSourceDoc">Manba hujjat</label>
+                <input id="pnSourceDoc" class="pn-input" type="text"
+                       placeholder="Masalan: SanQvaN 0016-21 1-ilova">
+            </div>
+
+            <!-- Active -->
+            <div class="pn-field" style="display:flex; align-items:center; gap:10px; margin-bottom:20px">
+                <input id="pnActive" type="checkbox" checked
+                       style="width:17px;height:17px;accent-color:#3b82f6;cursor:pointer">
+                <label for="pnActive" class="pn-label" style="margin:0;cursor:pointer;font-weight:500">
+                    Norma faol holda saqlansin
+                </label>
+            </div>
+
+            <!-- Footer -->
+            <div class="pn-footer">
+                <button class="pn-btn pn-btn-cancel" onclick="closeProductNormModal()">Bekor qilish</button>
+                <button id="pnSaveBtn" class="pn-btn pn-btn-save" onclick="pnSave()">✓ Saqlash</button>
+            </div>
+
+        </div><!-- /pn-body -->
+    </div><!-- /pnModal -->
+</div><!-- /pnOverlay -->
+
+
+<script>
+    // API Base URL
+    const BASE_API = 'http://localhost:8083/api/v1';
+
+    // Check if user is authenticated
+    function isAuthenticated() {
+        const token = localStorage.getItem('authToken');
+        return token !== null && token !== '';
+    }
+
+    function requireAuth() {
+        if (!isAuthenticated()) {
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('loginPage').style.display = 'flex';
+            return false;
+        }
+        return true;
+    }
+
+    // Navigation Functions
+    function getAuthHeaders() {
+        const token = localStorage.getItem('authToken');
+        const tokenType = localStorage.getItem('tokenType') || 'Bearer';
+
+        if (!token) {
+            console.error('Token topilmadi');
+            return {
+                'Content-Type': 'application/json'
+            };
+        }
+
+        return {
+            'Content-Type': 'application/json',
+            'Authorization': `${tokenType} ${token}`
+        };
+    }
+
+    function showLogin() {
+        document.getElementById('landingPage').style.display = 'none';
+        document.getElementById('loginPage').style.display = 'flex';
+    }
+
+    function login(event) {
+        event.preventDefault();
+
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        // API ga so'rov yuborish
+        fetch(`${BASE_API}/auth/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: username,
+                password: password
+            })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Login xato');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Tokenni saqlash
+                localStorage.setItem('authToken', data.token);
+                localStorage.setItem('tokenType', data.type);
+
+                // Dashboardga o'tish
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+            })
+            .catch(error => {
+                alert('Login yoki parol xato. Iltimos qaytadan urinib ko\'ring.');
+                console.error('Login error');
+            });
+    }
+
+    function logout() {
+        // Tokenni o'chirish
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('tokenType');
+
+        document.getElementById('dashboard').style.display = 'none';
+        document.getElementById('landingPage').style.display = 'flex';
+    }
+
+    // Sidebar Functions
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const icon = document.getElementById('toggleIcon');
+        const userSubmenu = document.getElementById('userSubmenu');
+        const userInfo = document.querySelector('.user-info');
+
+        sidebar.classList.toggle('collapsed');
+        icon.textContent = sidebar.classList.contains('collapsed') ? '▶' : '◀';
+
+        // Sidebar yopilganda user submenu ham yopilsin
+        if (sidebar.classList.contains('collapsed')) {
+            userSubmenu.classList.remove('open');
+            userInfo.classList.remove('expanded');
+        }
+    }
+
+    function loadSettingsPage(page) {
+        // Close user submenu
+        const userInfo = document.querySelector('.user-info');
+        const userSubmenu = document.getElementById('userSubmenu');
+        userInfo.classList.remove('expanded');
+        userSubmenu.classList.remove('open');
+
+        // Remove active class from all sidebar nav items
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.classList.remove('active');
+        });
+
+        // Update content based on page
+        const contentHeader = document.querySelector('.content-header h1');
+        const contentDesc = document.querySelector('.content-header p');
+        const mainContent = document.querySelector('.main-content');
+
+        const pages = {
+            'profile': {
+                title: 'Profil Sozlamalari',
+                desc: 'Shaxsiy ma\'lumotlaringizni boshqaring',
+                content: `
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <h3 style="color: var(--accent-primary); margin-bottom: 1rem;">👤 Profil Ma'lumotlari</h3>
+                                <p style="margin-bottom: 0.5rem;"><strong>Ism:</strong> Zuhra</p>
+                                <p style="margin-bottom: 0.5rem;"><strong>Email:</strong> zuhramamirjonova@gmail.com</p>
+                                <p style="margin-bottom: 0.5rem;"><strong>Telefon:</strong> +998 90 123 45 67</p>
+                                <p><strong>Rol:</strong> Administrator</p>
+                            </div>
+                            <div class="stat-card">
+                                <h3 style="color: var(--accent-primary); margin-bottom: 1rem;">🔐 Xavfsizlik</h3>
+                                <p style="margin-bottom: 1rem;">Parol va xavfsizlik sozlamalari</p>
+                                <button class="cta-button" style="padding: 0.6rem 1.5rem; font-size: 0.85rem;">Parolni O'zgartirish</button>
+                            </div>
+                        </div>
+                    `
+            },
+            'warehouses': {
+                title: 'Omborlar',
+                desc: 'Omborlarni boshqarish va sozlash',
+                content: `
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <h3 style="color: var(--accent-primary);">🏢 Ombor #1</h3>
+                                <p><strong>Manzil:</strong> Toshkent, Chilonzor</p>
+                                <p><strong>Sig'im:</strong> 5000 m²</p>
+                                <div class="stat-value" style="font-size: 1.5rem; margin-top: 0.5rem;">85%</div>
+                                <p style="font-size: 0.85rem;">To'ldirilgan</p>
+                            </div>
+                            <div class="stat-card">
+                                <h3 style="color: var(--accent-primary);">🏢 Ombor #2</h3>
+                                <p><strong>Manzil:</strong> Samarqand</p>
+                                <p><strong>Sig'im:</strong> 3000 m²</p>
+                                <div class="stat-value" style="font-size: 1.5rem; margin-top: 0.5rem;">62%</div>
+                                <p style="font-size: 0.85rem;">To'ldirilgan</p>
+                            </div>
+                            <div class="stat-card">
+                                <h3 style="color: var(--accent-primary);">🏢 Ombor #3</h3>
+                                <p><strong>Manzil:</strong> Buxoro</p>
+                                <p><strong>Sig'im:</strong> 2500 m²</p>
+                                <div class="stat-value" style="font-size: 1.5rem; margin-top: 0.5rem;">45%</div>
+                                <p style="font-size: 0.85rem;">To'ldirilgan</p>
+                            </div>
+                        </div>
+                        <button class="cta-button" style="padding: 0.8rem 2rem; font-size: 0.9rem; margin-top: 1.5rem;">+ Yangi Ombor Qo'shish</button>
+                    `
+            },
+            'products': {
+                title: 'Mahsulotlar',
+                desc: 'Mahsulotlarni boshqarish va sozlash',
+                content: `
+                        <button class="cta-button" style="padding: 0.8rem 2rem; font-size: 0.9rem; margin-top: 1.5rem;">+ Yangi Mahsulot Qo'shish</button>
+<button class="cta-button" style="padding: 0.8rem 2rem; font-size: 0.9rem; margin-top: 1.5rem;" onclick="openProductNormModal()">Maxsulotga norma qo'shsih</button>
+                    `
+            },
+            'category': {
+                title: 'Kategoriyalar',
+                desc: 'Mahsulot kategoriyalarini boshqaring',
+                content: `
+                        <div id="categoryContent">
+                            <div style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+                                <button onclick="showAddCategoryModal()" class="cta-button" style="padding: 0.8rem 2rem; font-size: 0.9rem;">+ Yangi Kategoriya</button>
+                            </div>
+                            <div id="categoryList" class="stats-grid">
+                                <div style="text-align: center; padding: 2rem;">
+                                    <p style="color: var(--text-secondary);">Yuklanmoqda...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Add/Edit Category Modal -->
+                        <div id="categoryModal" class="modal">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h2 id="categoryModalTitle">Yangi Kategoriya</h2>
+                                    <button class="close-modal" onclick="closeCategoryModal()">×</button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="categoryForm" onsubmit="saveCategoryForm(event)">
+                                        <div class="form-group">
+                                            <label for="categoryName">Kategoriya nomi</label>
+                                            <input type="text" id="categoryName" required>
+                                        </div>
+                                        <input type="hidden" id="categoryId">
+                                        <button type="submit" class="cta-button" style="padding: 0.8rem 2rem; font-size: 0.9rem; width: 100%; margin-top: 1rem;">Saqlash</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    `
+            },
+            'regions': {
+                title: 'Rayonlar',
+                desc: 'Yetkazish rayonlarini boshqaring',
+                content: `
+                        <div id="regionContent">
+                            <div style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+                                <button onclick="showAddRegionModal()" class="cta-button" style="padding: 0.8rem 2rem; font-size: 0.9rem;">+ Yangi Rayon</button>
+                            </div>
+                            <table style="width:100%; border-collapse:collapse;">
+                         <thead>
+                            <tr style="border-bottom: 1px solid rgba(255,107,53,0.2);">
+                              <th style="padding:0.75rem 1rem; text-align:left; color:var(--text-secondary); font-size:0.8rem; width:50px;">T/R</th>
+                                <th style="padding:0.75rem 1rem; text-align:left; color:var(--text-secondary); font-size:0.8rem;">Tuman nomi</th>
+                                 <th style="padding:0.75rem 1rem; text-align:center; color:var(--text-secondary); font-size:0.8rem; width:160px;">Amallar</th>
+                                     </tr>
+                              </thead>
+                          <tbody id="regionList"></tbody>
+                        </table>
+                        </div>
+                        <!-- Add/Edit Region Modal -->
+                        <div id="regionModal" class="modal">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h2 id="regionModalTitle">Yangi Rayon</h2>
+                                    <button class="close-modal" onclick="closeRegionModal()">×</button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="regionForm" onsubmit="saveRegionForm(event)">
+                                        <div class="form-group">
+                                            <label for="regionName">Rayon nomi</label>
+                                            <input type="text" id="regionName" required>
+                                        </div>
+                                        <input type="hidden" id="regionId">
+                                        <button type="submit" class="cta-button" style="padding: 0.8rem 2rem; font-size: 0.9rem; width: 100%; margin-top: 1rem;">Saqlash</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    `
+            },
+            'telegram': {
+                title: 'Telegram va Foydalanuvchilar',
+                desc: 'Telegram bot va foydalanuvchilarni boshqaring',
+                content: `
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <h3 style="color: var(--accent-primary);">📱 Telegram Bot</h3>
+                                <p style="margin-bottom: 1rem;"><strong>Status:</strong> <span style="color: #4ade80;">Aktiv</span></p>
+                                <p style="margin-bottom: 0.5rem;"><strong>Bot username:</strong> @warehousebot</p>
+                                <p><strong>Obunachi:</strong> 1,245</p>
+                                <button class="cta-button" style="padding: 0.6rem 1.5rem; font-size: 0.85rem; margin-top: 1rem;">Sozlamalar</button>
+                            </div>
+                            <div class="stat-card">
+                                <h3 style="color: var(--accent-primary);">👥 Foydalanuvchilar</h3>
+                                <div class="stat-value" style="font-size: 1.8rem;">45</div>
+                                <p style="margin-bottom: 1rem;">Aktiv foydalanuvchilar</p>
+                                <button class="cta-button" style="padding: 0.6rem 1.5rem; font-size: 0.85rem;">+ Yangi Foydalanuvchi</button>
+                            </div>
+                            <div class="stat-card">
+                                <h3 style="color: var(--accent-primary);">🔔 Bildirishnomalar</h3>
+                                <p style="margin-bottom: 0.5rem;">✅ Yangi buyurtmalar</p>
+                                <p style="margin-bottom: 0.5rem;">✅ Mahsulot tugashi</p>
+                                <p style="margin-bottom: 0.5rem;">✅ Yetkazildi</p>
+                                <p>✅ Tizim yangiliklari</p>
+                            </div>
+                        </div>
+                    `
+            },
+            'suppliers': {
+                title: 'Yetkazib beruvchilar',
+                desc: 'Yetkazib beruvchilarni boshqaring',
+                content: `
+        <div id="supplierContent">
+            <div style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+                <button onclick="showAddSupplierModal()" class="cta-button" style="padding: 0.8rem 2rem; font-size: 0.9rem;">+ Yangi Yetkazib Beruvchi</button>
+            </div>
+            <div style="background: rgba(45, 45, 45, 0.5); border: 1px solid rgba(255, 107, 53, 0.2); border-radius: 12px; overflow: hidden;">
+                <table style="width:100%; border-collapse:collapse;">
+                    <thead>
+                        <tr style="background: rgba(58, 58, 58, 0.3); border-bottom: 1px solid rgba(255,107,53,0.2);">
+                            <th style="padding:0.75rem 1rem; text-align:left; color:var(--text-secondary); font-size:0.8rem; width:50px;">#</th>
+                            <th style="padding:0.75rem 1rem; text-align:left; color:var(--text-secondary); font-size:0.8rem;">Nomi</th>
+                            <th style="padding:0.75rem 1rem; text-align:left; color:var(--text-secondary); font-size:0.8rem;">Mas'ul shaxs</th>
+                            <th style="padding:0.75rem 1rem; text-align:left; color:var(--text-secondary); font-size:0.8rem;">Telefon</th>
+                            <th style="padding:0.75rem 1rem; text-align:left; color:var(--text-secondary); font-size:0.8rem;">INN</th>
+                            <th style="padding:0.75rem 1rem; text-align:center; color:var(--text-secondary); font-size:0.8rem;">Holat</th>
+                            <th style="padding:0.75rem 1rem; text-align:center; color:var(--text-secondary); font-size:0.8rem; width:180px;">Amallar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="supplierList"></tbody>
+                </table>
+                <div id="supplierPagination"></div>
+            </div>
+        </div>
+
+        <!-- Supplier Modal -->
+        <div id="supplierModal" class="modal">
+            <!-- ... modal content ... -->
+        </div>
+    `
+            },
+            'packages': {
+                title: 'Bog\'chalar',
+                desc: 'Mahsulot bog\'chalarini boshqaring',
+                content: `
+
+                       <button class="cta-button" style="padding: 0.8rem 2rem; font-size: 0.9rem; margin-top: 1.5rem;" onclick="openKindergartenModal()">+ Yangi Bog'cha Turi</button>
+                    `
+            }
+        };
+
+        if (pages[page]) {
+            contentHeader.textContent = pages[page].title;
+            contentDesc.textContent = pages[page].desc;
+
+            // Find content area after header and remove everything, then add new content
+            const contentArea = mainContent.querySelector('.content-header').nextElementSibling;
+            if (contentArea) {
+                // Remove all siblings after content-header
+                let sibling = mainContent.querySelector('.content-header').nextElementSibling;
+                while (sibling) {
+                    let next = sibling.nextElementSibling;
+                    sibling.remove();
+                    sibling = next;
+                }
+            }
+
+            // Add new content
+            mainContent.insertAdjacentHTML('beforeend', pages[page].content);
+
+            if (page === 'category') {
+                console.log('Settings Category loaded → loadCategories()');
+                setTimeout(loadCategories, 0);
+            }
+            if (page === 'suppliers') {
+                console.log('Settings Suppliers loaded → loadSuppliers()');
+                setTimeout(loadSuppliers, 0);
+            }
+            if (page === 'regions') {
+                console.log('Settings Regions loaded → loadRegions()');
+                setTimeout(loadRegions, 0);
+            }
+        }
+    }
+
+
+    function toggleUserSubmenu() {
+        const sidebar = document.getElementById('sidebar');
+        const userInfo = document.querySelector('.user-info');
+        const userSubmenu = document.getElementById('userSubmenu');
+
+        // Sidebar collapsed bo'lsa, avval sidebarni ochish kerak
+        if (sidebar.classList.contains('collapsed')) {
+            toggleSidebar();
+            // Kichik kechikishdan keyin submenu ochiladi
+            setTimeout(() => {
+                userInfo.classList.add('expanded');
+                userSubmenu.classList.add('open');
+            }, 300);
+            return;
+        }
+
+        // Sidebar ochiq bo'lsa oddiy toggle
+        userInfo.classList.toggle('expanded');
+        userSubmenu.classList.toggle('open');
+    }
+
+    // Prevent closing when clicking on submenu items
+    document.addEventListener('DOMContentLoaded', function () {
+        const userSubmenu = document.getElementById('userSubmenu');
+        if (userSubmenu) {
+            userSubmenu.addEventListener('click', function (e) {
+                // Close submenu when any item is clicked
+                if (e.target.closest('.user-submenu-item')) {
+                    const userInfo = document.querySelector('.user-info');
+                    userInfo.classList.remove('expanded');
+                    userSubmenu.classList.remove('open');
+                }
+            });
+        }
+    });
+
+    function loadPage(page) {
+        // Remove active class from all nav items
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.classList.remove('active');
+        });
+
+        // Add active class to clicked item
+        event.target.closest('.nav-item').classList.add('active');
+
+        // Update content based on page
+        const contentHeader = document.querySelector('.content-header h1');
+        const contentDesc = document.querySelector('.content-header p');
+        const mainContent = document.querySelector('.main-content');
+
+        const pages = {
+            'dashboard': {
+                title: 'Dashboard',
+                desc: 'Tizimingizning umumiy ko\'rinishi',
+                content: `
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-value">1,234</div>
+                                <div class="stat-label">Jami Mahsulotlar</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">456</div>
+                                <div class="stat-label">Bugungi Taqsimotlar</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">89</div>
+                                <div class="stat-label">Aktiv Buyurtmalar</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">12</div>
+                                <div class="stat-label">Omborlar</div>
+                            </div>
+                        </div>
+
+                        <!-- Debug buttons -->
+                        <div style="margin-top: 2rem; padding: 1rem; background: rgba(255, 107, 53, 0.1); border-radius: 8px;">
+                            <h3 style="color: var(--accent-primary); margin-bottom: 1rem;">🔧 Debug Tools</h3>
+                            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                                <button onclick="checkToken()" class="cta-button" style="padding: 0.6rem 1rem; font-size: 0.85rem;">Token Tekshirish</button>
+                                <button onclick="testCategoryAPI()" class="cta-button" style="padding: 0.6rem 1rem; font-size: 0.85rem;">Category API Test</button>
+                                <button onclick="testRegionAPI()" class="cta-button" style="padding: 0.6rem 1rem; font-size: 0.85rem;">Region API Test</button>
+                            </div>
+                        </div>
+                    `
+            },
+            'distribute': {
+                title: 'Mahsulotlarni taqsimlash',
+                desc: 'Mahsulotlarni omborlarga taqsimlang',
+                content: `
+                        <div class="stat-card" style="max-width: 800px; padding: 3rem; text-align: center;">
+                            <div style="font-size: 4rem; margin-bottom: 1rem;">🚚</div>
+                            <h2 style="color: var(--accent-primary); margin-bottom: 1rem; font-size: 1.5rem;">Mahsulotlarni Taqsimlash</h2>
+                            <p style="color: var(--text-secondary); margin-bottom: 2rem;">Bu bo'lim hozirda ishlab chiqish jarayonida</p>
+                            <div style="padding: 1.5rem; background: rgba(255, 107, 53, 0.1); border-radius: 8px; border-left: 4px solid var(--accent-primary);">
+                                <p style="color: var(--text-primary);"><strong>Tez orada:</strong></p>
+                                <p style="color: var(--text-secondary); margin-top: 0.5rem;">
+                                    • Mahsulotlarni tanlash<br>
+                                    • Ombor va rayon tanlash<br>
+                                    • Miqdor belgilash<br>
+                                    • Taqsimlashni tasdiqlash
+                                </p>
+                            </div>
+                        </div>
+                    `
+            },
+            'receive': {
+                title: 'Mahsulot qabul qilish',
+                desc: 'Yangi mahsulotlarni qabul qiling',
+                content: `
+                        <div class="stat-card" style="max-width: 800px; padding: 3rem; text-align: center;">
+                            <div style="font-size: 4rem; margin-bottom: 1rem;">📥</div>
+                            <h2 style="color: var(--accent-primary); margin-bottom: 1rem; font-size: 1.5rem;">Mahsulot Qabul Qilish</h2>
+                            <p style="color: var(--text-secondary); margin-bottom: 2rem;">Bu bo'lim hozirda ishlab chiqish jarayonida</p>
+                            <div style="padding: 1.5rem; background: rgba(255, 107, 53, 0.1); border-radius: 8px; border-left: 4px solid var(--accent-primary);">
+                                <p style="color: var(--text-primary);"><strong>Tez orada:</strong></p>
+                                <p style="color: var(--text-secondary); margin-top: 0.5rem;">
+                                    • Yetkazib beruvchini tanlash<br>
+                                    • Mahsulotlarni skanerlash<br>
+                                    • Sifat nazorati<br>
+                                    • Omborga joylashtirish
+                                </p>
+                            </div>
+                        </div>
+                    `
+            },
+            'warehouse': {
+                title: 'Ombordagi Mahsulotlar',
+                desc: 'Barcha mahsulotlar ro\'yxati',
+                content: `
+                        <div class="stat-card" style="max-width: 800px; padding: 3rem; text-align: center;">
+                            <div style="font-size: 4rem; margin-bottom: 1rem;">🏭</div>
+                            <h2 style="color: var(--accent-primary); margin-bottom: 1rem; font-size: 1.5rem;">Ombordagi Mahsulotlar</h2>
+                            <p style="color: var(--text-secondary); margin-bottom: 2rem;">Bu bo'lim hozirda ishlab chiqish jarayonida</p>
+                            <div style="padding: 1.5rem; background: rgba(255, 107, 53, 0.1); border-radius: 8px; border-left: 4px solid var(--accent-primary);">
+                                <p style="color: var(--text-primary);"><strong>Tez orada:</strong></p>
+                                <p style="color: var(--text-secondary); margin-top: 0.5rem;">
+                                    • Mahsulotlarni qidirish va filtrlash<br>
+                                    • Har bir mahsulotning batafsil ma'lumoti<br>
+                                    • Inventarizatsiya<br>
+                                    • Export va hisobotlar
+                                </p>
+                            </div>
+                        </div>
+                    `
+            },
+            'reports': {
+                title: 'Hisobotlar',
+                desc: 'Batafsil tahlil va statistika',
+                content: `
+                        <div class="stat-card" style="max-width: 800px; padding: 3rem; text-align: center;">
+                            <div style="font-size: 4rem; margin-bottom: 1rem;">📈</div>
+                            <h2 style="color: var(--accent-primary); margin-bottom: 1rem; font-size: 1.5rem;">Hisobotlar va Tahlil</h2>
+                            <p style="color: var(--text-secondary); margin-bottom: 2rem;">Bu bo'lim hozirda ishlab chiqish jarayonida</p>
+                            <div style="padding: 1.5rem; background: rgba(255, 107, 53, 0.1); border-radius: 8px; border-left: 4px solid var(--accent-primary);">
+                                <p style="color: var(--text-primary);"><strong>Tez orada:</strong></p>
+                                <p style="color: var(--text-secondary); margin-top: 0.5rem;">
+                                    • Kunlik, haftalik, oylik hisobotlar<br>
+                                    • Mahsulot aylanmasi tahlili<br>
+                                    • Moliyaviy hisobotlar<br>
+                                    • PDF va Excel eksport
+                                </p>
+                            </div>
+                        </div>
+                    `
+            }
+        };
+
+        if (pages[page]) {
+            contentHeader.textContent = pages[page].title;
+            contentDesc.textContent = pages[page].desc;
+
+            // Remove all content after header and add new content
+            let sibling = mainContent.querySelector('.content-header').nextElementSibling;
+            while (sibling) {
+                let next = sibling.nextElementSibling;
+                sibling.remove();
+                sibling = next;
+            }
+
+            mainContent.insertAdjacentHTML('beforeend', pages[page].content);
+
+            // Load data after content is inserted
+            if (page === 'category') {
+                console.log('Category page loaded, calling loadCategories...');
+                setTimeout(() => {
+                    console.log('Timeout executed, calling loadCategories now');
+                    loadCategories();
+                }, 500);
+            } else if (page === 'regions') {
+                console.log('Region page loaded, calling loadRegions...');
+                setTimeout(() => {
+                    console.log('Timeout executed, calling loadRegions now');
+                    loadRegions();
+                }, 500);
+            }
+        }
+    }
+    //supplier boyicah funksiyalar
+    let currentSupplierPage = 0;
+    const supplierPageSize = 5;
+
+    async function loadSuppliers(page = 0) {
+        if (!requireAuth()) return;
+
+        const supplierList = document.getElementById('supplierList');
+        const paginationContainer = document.getElementById('supplierPagination');
+
+        if (!supplierList) {
+            console.error('supplierList element topilmadi');
+            return;
+        }
+
+        supplierList.innerHTML = `
+        <tr>
+            <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                Yuklanmoqda...
+            </td>
+        </tr>
+    `;
+
+        try {
+            const response = await fetch(`${BASE_API}/supplier/get-all?page=${page}&size=${supplierPageSize}`, {
+                method: 'GET',
+                headers: getAuthHeaders()
+            });
+
+
+            if (!response.ok) {
+                throw new Error('Ma\'lumot yuklanmadi');
+            }
+
+            const result = await response.json();
+            const suppliers = result.data || [];
+            const meta = result.meta;
+
+            currentSupplierPage = page;
+
+            if (suppliers.length === 0) {
+                supplierList.innerHTML = `
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                        Hozircha yetkazib beruvchilar yo'q
+                    </td>
+                </tr>
+            `;
+                return;
+            }
+
+            supplierList.innerHTML = suppliers.map((supplier, index) => `
+            <tr style="height: 60px; border-bottom: 1px solid rgba(255,107,53,0.2);">
+                <td class="td-index">
+                    <span class="index-badge">${(page * supplierPageSize) + index + 1}</span>
+                </td>
+                <td>
+                    <div style="display:flex; align-items:center; gap:0.75rem;">
+                        <div style="width:34px; height:34px; background:rgba(255,107,53,0.1); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1rem;">🤝</div>
+                        <div>
+                            <div style="font-weight:600; color:var(--text-primary);">${supplier.name}</div>
+                            <div style="font-size:0.72rem; color:var(--text-secondary); margin-top:2px;">ID: ${supplier.id}</div>
+                        </div>
+                    </div>
+                </td>
+                <td  style="color:var(--text-primary);">${supplier.contactPerson}</td>
+                <td style="color:var(--text-secondary); font-size:0.85rem;">${supplier.phoneNumber}</td>
+                <td style="color:var(--text-secondary); font-size:0.85rem;">${supplier.tin}</td>
+                <td style="text-align:center;">
+                    <span style="padding:0.3rem 0.75rem; border-radius:100px; font-size:0.75rem; font-weight:600; background:${supplier.active ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.12)'}; color:${supplier.active ? '#10b981' : '#ef4444'}; border:1px solid ${supplier.active ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)'};">
+                        ${supplier.active ? '✓ Aktiv' : '✗ Nofaol'}
+                    </span>
+                </td>
+                <td class="td-actions">
+                    <div class="action-group">
+                        <button onclick="editSupplier(${supplier.id})" class="btn-edit">✏️ Tahrir</button>
+                        <button onclick="deleteSupplier(${supplier.id})" class="btn-delete">🗑️ O'chir</button>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+
+            // Render pagination
+            renderSupplierPagination(meta);
+
+        } catch (error) {
+            console.error('Yetkazib beruvchilarni yuklashda xatolik:', error);
+            supplierList.innerHTML = `
+            <tr>
+                <td colspan="7" style="text-align: center; padding: 2rem; color: #dc2626;">
+                    Xatolik: ${error.message}
+                </td>
+            </tr>
+        `;
+        }
+    }
+
+    function renderSupplierPagination(meta) {
+        const paginationContainer = document.getElementById('supplierPagination');
+        if (!paginationContainer || !meta) return;
+
+        const currentPage = meta.currentPage ?? 0;
+        const totalPages = meta.totalPages ?? 1;
+        const totalElements = meta.totalElements ?? 0;
+
+        // Har doim pagination box yaratamiz
+        let paginationHTML = `
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 1rem; background: rgba(45, 45, 45, 0.5); border-top: 1px solid rgba(255, 107, 53, 0.2); border-radius: 0 0 12px 12px;">
+            <div style="color: var(--text-secondary); font-size: 0.85rem;">
+                Jami: <strong style="color: var(--accent-primary);">${totalElements}</strong> ta yetkazib beruvchi
+            </div>
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+    `;
+
+        // Previous button
+        paginationHTML += `
+        <button onclick="loadSuppliers(${currentPage - 1})"
+                ${currentPage === 0 ? 'disabled' : ''}
+                style="padding: 0.5rem 0.75rem; background: rgba(58, 58, 58, 0.5); border: 1px solid rgba(255, 107, 53, 0.2); border-radius: 6px; color: var(--text-primary); cursor: ${currentPage === 0 ? 'not-allowed' : 'pointer'}; opacity: ${currentPage === 0 ? '0.5' : '1'}; transition: all 0.2s;">
+            ◀
+        </button>
+    `;
+
+        // Page numbers
+        const maxVisiblePages = 5;
+        let startPage = Math.max(0, currentPage - Math.floor(maxVisiblePages / 2));
+        let endPage = Math.min(totalPages - 1, startPage + maxVisiblePages - 1);
+
+        if (endPage - startPage < maxVisiblePages - 1) {
+            startPage = Math.max(0, endPage - maxVisiblePages + 1);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            paginationHTML += `
+            <button onclick="loadSuppliers(${i})"
+                    style="padding: 0.5rem 0.75rem; background: ${i === currentPage ? 'var(--accent-primary)' : 'rgba(58, 58, 58, 0.5)'}; border: 1px solid ${i === currentPage ? 'var(--accent-primary)' : 'rgba(255, 107, 53, 0.2)'}; border-radius: 6px; color: ${i === currentPage ? '#000' : 'var(--text-primary)'}; font-weight: ${i === currentPage ? '700' : '400'}; cursor: pointer; transition: all 0.2s;">
+                ${i + 1}
+            </button>
+        `;
+        }
+
+        // Next button
+        paginationHTML += `
+        <button onclick="loadSuppliers(${currentPage + 1})"
+                ${currentPage === totalPages - 1 ? 'disabled' : ''}
+                style="padding: 0.5rem 0.75rem; background: rgba(58, 58, 58, 0.5); border: 1px solid rgba(255, 107, 53, 0.2); border-radius: 6px; color: var(--text-primary); cursor: ${currentPage === totalPages - 1 ? 'not-allowed' : 'pointer'}; opacity: ${currentPage === totalPages - 1 ? '0.5' : '1'}; transition: all 0.2s;">
+            ▶
+        </button>
+    `;
+
+        paginationHTML += `</div></div>`;
+
+        paginationContainer.innerHTML = paginationHTML;
+    }
+
+    async function saveSupplierForm(event) {
+        event.preventDefault();
+
+        const id = document.getElementById('supplierId').value;
+        const supplierData = {
+            name: document.getElementById('supplierName').value,
+            contactPerson: document.getElementById('supplierContactPerson').value,
+            phoneNumber: document.getElementById('supplierPhone').value,
+            tin: document.getElementById('supplierTin').value,
+            address: document.getElementById('supplierAddress').value,
+            active: document.getElementById('supplierActive').checked
+        };
+
+        try {
+            const url = id ? `${BASE_API}/supplier/update/${id}` : `${BASE_API}/supplier/create`;
+            const method = id ? 'PUT' : 'POST';
+
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    ...getAuthHeaders(),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(supplierData)
+            });
+
+            if (!response.ok) throw new Error('So‘rovda xatolik yuz berdi!');
+
+            // Modalni yopish va supplierlar ro'yxatini yangilash
+            closeSupplierModal();
+            await loadSuppliers(currentPage); // Siz allaqachon ishlatayotgan GET so'rov funktsiyasi
+            alert(id ? 'Supplier yangilandi' : 'Yangi supplier yaratildi');
+        } catch (err) {
+            console.error(err);
+            alert('Xatolik yuz berdi: ' + err.message);
+        }
+    }
+
+    function showAddSupplierModal(supplier = null) {
+        const modal = document.getElementById('supplierModal');
+        const title = document.getElementById('supplierModalTitle');
+        const form = document.getElementById('supplierForm');
+
+        // Agar supplier berilgan bo'lsa → tahrirlash, aks holda yangi
+        if (supplier) {
+            title.textContent = 'Yetkazib Beruvchi Tahrirlash';
+            document.getElementById('supplierName').value = supplier.name;
+            document.getElementById('supplierContactPerson').value = supplier.contactPerson;
+            document.getElementById('supplierPhone').value = supplier.phoneNumber;
+            document.getElementById('supplierTin').value = supplier.tin;
+            document.getElementById('supplierAddress').value = supplier.address;
+            document.getElementById('supplierActive').checked = supplier.active;
+            document.getElementById('supplierId').value = supplier.id;
+        } else {
+            title.textContent = 'Yangi Yetkazib Beruvchi';
+            form.reset();
+            document.getElementById('supplierId').value = '';
+        }
+
+        modal.style.display = 'flex';
+    }
+
+    // Modalni yopish
+    function closeSupplierModal() {
+        const form = document.getElementById('supplierForm');
+        form.reset(); // barcha inputlarni tozalaydi
+        document.getElementById('supplierModal').style.display = 'none';
+    }
+
+    // Settings Modal Functions
+    function openSettingsModal(type) {
+        const modal = document.getElementById('settingsModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+
+        const settings = {
+            'profile': {
+                title: 'Profil Sozlamalari',
+                content: `
+                        <div class="setting-group">
+                            <h3>Shaxsiy Ma'lumotlar</h3>
+                            <div class="setting-item">
+                                <p><strong>Ism:</strong> Zuhra</p>
+                            </div>
+                            <div class="setting-item">
+                                <p><strong>Email:</strong> zuhramamirjonova@gmail.com</p>
+                            </div>
+                        </div>
+                    `
+            },
+            'warehouses': {
+                title: 'Omborlar',
+                content: `
+                        <div class="setting-group">
+                            <h3>Omborlar Ro'yxati</h3>
+                            <div class="setting-item">
+                                <p>Ombor 1 - Toshkent</p>
+                            </div>
+                            <div class="setting-item">
+                                <p>Ombor 2 - Samarqand</p>
+                            </div>
+                        </div>
+                    `
+            },
+            'products': {
+                title: 'Mahsulotlar Sozlamalari',
+                content: `
+                        <div class="setting-group">
+                            <h3>Mahsulot Turlari</h3>
+                            <div class="setting-item">
+                                <p>Mahsulot turlarini boshqaring</p>
+                            </div>
+                        </div>
+                    `
+            },
+            'category': {
+                title: 'Kategoriyalar',
+                content: `
+                        <div class="setting-group">
+                            <h3>Mahsulot Kategoriyalari</h3>
+                            <div class="setting-item">
+                                <p>Elektronika</p>
+                            </div>
+                            <div class="setting-item">
+                                <p>Oziq-ovqat</p>
+                            </div>
+                            <div class="setting-item">
+                                <p>Kiyim</p>
+                            </div>
+                        </div>
+                    `
+            },
+            'regions': {
+                title: 'Rayonlar',
+                content: `
+                        <div class="setting-group">
+                            <h3>Yetkazish Rayonlari</h3>
+                            <div class="setting-item">
+                                <p>Toshkent shahri</p>
+                            </div>
+                            <div class="setting-item">
+                                <p>Toshkent viloyati</p>
+                            </div>
+                        </div>
+                    `
+            },
+            'telegram': {
+                title: 'Telegram va Foydalanuvchilar',
+                content: `
+                        <div class="setting-group">
+                            <h3>Telegram Integratsiya</h3>
+                            <div class="setting-item">
+                                <p>Telegram bot sozlamalari</p>
+                            </div>
+                            <h3>Foydalanuvchilar</h3>
+                            <div class="setting-item">
+                                <p>Foydalanuvchilarni boshqaring</p>
+                            </div>
+                        </div>
+                    `
+            },
+            'suppliers': {
+                title: 'Yetkazib beruvchilar',
+                content: `
+                        <div class="setting-group">
+                            <h3>Yetkazib Beruvchilar Ro'yxati</h3>
+                            <div class="setting-item">
+                                <p>ABC Company</p>
+                            </div>
+                            <div class="setting-item">
+                                <p>XYZ Suppliers</p>
+                            </div>
+                        </div>
+                    `
+            },
+            'packages': {
+                title: 'Bog\'chalar',
+                content: `
+                        <div class="setting-group">
+                            <h3>Bog\'cha Turlari</h3>
+                            <div class="setting-item">
+                                <p>Kichik bog'cha</p>
+                            </div>
+                            <div class="setting-item">
+                                <p>O'rta bog'cha</p>
+                            </div>
+                            <div class="setting-item">
+                                <p>Katta bog'cha</p>
+                            </div>
+                        </div>
+                    `
+            }
+        };
+
+        if (settings[type]) {
+            modalTitle.textContent = settings[type].title;
+            modalBody.innerHTML = settings[type].content;
+            modal.classList.add('show');
+        }
+    }
+
+    function closeSettingsModal() {
+        document.getElementById('settingsModal').classList.remove('show');
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('settingsModal').addEventListener('click', function (e) {
+        if (e.target === this) {
+            closeSettingsModal();
+        }
+    });
+
+
+    async function loadCategories() {
+        // Check if authenticated
+        if (!requireAuth()) {
+            return;
+        }
+
+        const categoryList = document.getElementById('categoryList');
+
+        if (!categoryList) {
+            console.error('categoryList element topilmadi');
+            return;
+        }
+
+        // Show loading state
+        categoryList.innerHTML = `
+                <div style="text-align: center; padding: 2rem; grid-column: 1/-1;">
+                    <p style="color: var(--text-secondary);">Yuklanmoqda...</p>
+                </div>
+            `;
+
+        try {
+            const response = await fetch(`${BASE_API}/category/getAll`, {
+                method: 'GET',
+                headers: getAuthHeaders()
+            });
+
+            // Handle 401 - Unauthorized
+            if (response.status === 401) {
+                alert('Sessiya muddati tugadi. Iltimos qaytadan kiring.');
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('tokenType');
+                document.getElementById('dashboard').style.display = 'none';
+                document.getElementById('loginPage').style.display = 'flex';
+                return;
+            }
+
+            if (!response.ok) {
+                throw new Error('Ma\'lumot yuklanmadi');
+            }
+
+            const result = await response.json();
+
+            // API javobida data field ichida ma'lumot bor
+            const categories = result.data || [];
+
+            if (categories.length === 0) {
+                categoryList.innerHTML = `
+                        <div style="text-align: center; padding: 2rem; grid-column: 1/-1;">
+                            <p style="color: var(--text-secondary);">Hozircha kategoriyalar yo'q</p>
+                        </div>
+                    `;
+                return;
+            }
+
+            categoryList.innerHTML = categories.map(cat => `
+                    <div class="stat-card">
+                        <h3 style="color: var(--accent-primary);">🏷️ ${cat.name}</h3>
+                        <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                            <button onclick="editCategory(${cat.id})" class="cta-button" style="padding: 0.5rem 1rem; font-size: 0.85rem; flex: 1;">✏️ Tahrirlash</button>
+                            <button onclick="deleteCategory(${cat.id})" class="cta-button" style="padding: 0.5rem 1rem; font-size: 0.85rem; background: #dc2626; flex: 1;">🗑️ O'chirish</button>
+                        </div>
+                    </div>
+                `).join('');
+        } catch (error) {
+            console.error('Kategoriyalarni yuklashda xatolik');
+            categoryList.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; grid-column: 1/-1;">
+                        <p style="color: #dc2626;">Xatolik: ${error.message}</p>
+                    </div>
+                `;
+        }
+    }
+
+    function showAddCategoryModal() {
+        document.getElementById('categoryModalTitle').textContent = 'Yangi Kategoriya';
+        document.getElementById('categoryForm').reset();
+        document.getElementById('categoryId').value = '';
+        document.getElementById('categoryModal').classList.add('show');
+    }
+
+    async function editCategory(id) {
+        try {
+            const response = await fetch(`${BASE_API}/category/${id}`, {
+                method: 'GET',
+                headers: getAuthHeaders()
+            });
+
+            if (!response.ok) throw new Error('Ma\'lumot yuklanmadi');
+
+            const result = await response.json();
+
+            // API javobida data field ichida ma'lumot bor
+            const category = result.data;
+
+            document.getElementById('categoryModalTitle').textContent = 'Kategoriyani Tahrirlash';
+            document.getElementById('categoryName').value = category.name;
+            document.getElementById('categoryId').value = category.id;
+            document.getElementById('categoryModal').classList.add('show');
+        } catch (error) {
+            console.error('Kategoriyani yuklashda xatolik');
+            alert('Xatolik yuz berdi');
+        }
+    }
+
+    async function saveCategoryForm(event) {
+        event.preventDefault();
+
+        const id = document.getElementById('categoryId').value;
+        const name = document.getElementById('categoryName').value;
+
+        const url = id
+            ? `${BASE_API}/category/${id}`
+            : `${BASE_API}/category`;
+
+        const method = id ? 'PUT' : 'POST';
+
+        try {
+            const response = await fetch(url, {
+                method: method,
+                headers: getAuthHeaders(),
+                body: JSON.stringify({name: name})
+            });
+
+            if (!response.ok) {
+                throw new Error('Saqlashda xatolik');
+            }
+
+            const result = await response.json();
+
+            // Check if save was successful
+            if (result.success) {
+                closeCategoryModal();
+
+                // Wait a bit then reload
+                setTimeout(() => {
+                    loadCategories();
+                }, 300);
+            } else {
+                throw new Error(result.message || 'Saqlashda xatolik');
+            }
+
+        } catch (error) {
+            console.error('Saqlashda xatolik');
+            alert('Saqlashda xatolik yuz berdi');
+        }
+    }
+
+    async function deleteCategory(id) {
+        if (!confirm('Rostdan ham o\'chirmoqchimisiz?')) return;
+
+        try {
+            const response = await fetch(`${BASE_API}/category/${id}`, {
+                method: 'DELETE',
+                headers: getAuthHeaders()
+            });
+
+            if (!response.ok) throw new Error('O\'chirishda xatolik');
+
+            loadCategories();
+        } catch (error) {
+            console.error('Error deleting category:', error);
+            alert('O\'chirishda xatolik yuz berdi');
+        }
+    }
+
+    function closeCategoryModal() {
+        document.getElementById('categoryModal').classList.remove('show');
+    }
+
+    // ==================== REGION CRUD ====================
+
+    async function loadRegions() {
+        if (!requireAuth()) return;
+
+        const regionList = document.getElementById('regionList');
+
+        if (!regionList) {
+            console.error('regionList element topilmadi');
+            return;
+        }
+
+        regionList.innerHTML = `
+        <tr>
+            <td colspan="3" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                Yuklanmoqda...
+            </td>
+        </tr>
+    `;
+
+        try {
+            const response = await fetch(`${BASE_API}/region/all`, {
+                method: 'GET',
+                headers: getAuthHeaders()
+            });
+
+            if (response.status === 401) {
+                alert('Sessiya muddati tugadi. Iltimos qaytadan kiring.');
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('tokenType');
+                document.getElementById('dashboard').style.display = 'none';
+                document.getElementById('loginPage').style.display = 'flex';
+                return;
+            }
+
+            if (!response.ok) {
+                throw new Error('Ma\'lumot yuklanmadi');
+            }
+
+            const result = await response.json();
+            const regions = result.data || [];
+
+            if (regions.length === 0) {
+                regionList.innerHTML = `
+                <tr>
+                    <td colspan="3" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                        Hozircha rayonlar yo'q
+                    </td>
+                </tr>
+            `;
+                return;
+            }
+
+            regionList.innerHTML = regions.map((region, index) => `
+            <tr>
+                <td class="td-index">
+                    <span class="index-badge">${index + 1}</span>
+                </td>
+                <td>
+                    <div class="region-name">
+                        <div class="region-icon">🗺️</div>
+                        <div>
+                            <div class="region-label">${region.name}</div>
+                            <div class="region-id">ID: ${region.id}</div>
+                        </div>
+                    </div>
+                </td>
+                <td class="td-actions">
+                    <div class="action-group">
+                        <button onclick="editRegion(${region.id})" class="btn-edit">✏️ Tahrir</button>
+                        <button onclick="deleteRegion(${region.id})" class="btn-delete">🗑️ O'chir</button>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+
+        } catch (error) {
+            console.error('Rayonlarni yuklashda xatolik:', error);
+            regionList.innerHTML = `
+            <tr>
+                <td colspan="3" style="text-align: center; padding: 2rem; color: #dc2626;">
+                    Xatolik: ${error.message}
+                </td>
+            </tr>
+        `;
+        }
+    }
+
+    function showAddRegionModal() {
+        document.getElementById('regionModalTitle').textContent = 'Yangi Rayon';
+        document.getElementById('regionForm').reset();
+        document.getElementById('regionId').value = '';
+        document.getElementById('regionModal').classList.add('show');
+    }
+
+    async function editRegion(id) {
+        try {
+            const response = await fetch(`${BASE_API}/region/${id}`, {
+                method: 'GET',
+                headers: getAuthHeaders()
+            });
+
+            if (!response.ok) throw new Error('Ma\'lumot yuklanmadi');
+
+            const result = await response.json();
+            console.log('Edit region result:', result);
+
+            // API javobida data field ichida ma'lumot bor
+            const region = result.data;
+
+            document.getElementById('regionModalTitle').textContent = 'Rayonni Tahrirlash';
+            document.getElementById('regionName').value = region.name;
+            document.getElementById('regionId').value = region.id;
+            document.getElementById('regionModal').classList.add('show');
+        } catch (error) {
+            console.error('Error loading region:', error);
+            alert('Xatolik yuz berdi');
+        }
+    }
+
+    async function saveRegionForm(event) {
+        event.preventDefault();
+
+        const id = document.getElementById('regionId').value;
+        const name = document.getElementById('regionName').value;
+
+        const url = id
+            ? `${BASE_API}/region/${id}`
+            : `${BASE_API}/region`;
+
+        const method = id ? 'PUT' : 'POST';
+
+        console.log('Saving region:', {id, name, url, method});
+
+        try {
+            const response = await fetch(url, {
+                method: method,
+                headers: getAuthHeaders(),
+                body: JSON.stringify({name: name})
+            });
+
+            console.log('Save response status:', response.status);
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('Save error:', errorText);
+                throw new Error('Saqlashda xatolik');
+            }
+
+            const result = await response.json();
+            console.log('Save result:', result);
+
+            // Check if save was successful
+            if (result.success) {
+                closeRegionModal();
+
+                // Wait a bit then reload
+                setTimeout(() => {
+                    loadRegions();
+                }, 300);
+            } else {
+                throw new Error(result.message || 'Saqlashda xatolik');
+            }
+
+        } catch (error) {
+            console.error('Error saving region:', error);
+            alert('Saqlashda xatolik yuz berdi: ' + error.message);
+        }
+    }
+
+    async function deleteRegion(id) {
+        if (!confirm('Rostdan ham o\'chirmoqchimisiz?')) return;
+
+        try {
+            const response = await fetch(`${BASE_API}/region/${id}`, {
+                method: 'DELETE',
+                headers: getAuthHeaders()
+            });
+
+            if (!response.ok) throw new Error('O\'chirishda xatolik');
+
+            loadRegions();
+        } catch (error) {
+            console.error('Error deleting region:', error);
+            alert('O\'chirishda xatolik yuz berdi');
+        }
+    }
+
+    function closeRegionModal() {
+        document.getElementById('regionModal').classList.remove('show');
+    }
+
+    // ==================== DEBUG FUNCTIONS ====================
+
+    function checkToken() {
+        console.log('=== TOKEN CHECK ===');
+        const token = localStorage.getItem('authToken');
+        const tokenType = localStorage.getItem('tokenType');
+
+        console.log('Token exists:', !!token);
+        console.log('Token type:', tokenType);
+        console.log('Token preview:', token ? token.substring(0, 50) + '...' : 'NO TOKEN');
+        console.log('Full token:', token);
+
+        if (token) {
+            alert('Token mavjud!\n\nType: ' + tokenType + '\n\nToken: ' + token.substring(0, 50) + '...\n\nConsole da to\'liq token ko\'ring.');
+        } else {
+            alert('Token topilmadi! Iltimos qaytadan login qiling.');
+        }
+    }
+
+    async function testCategoryAPI() {
+        console.log('=== TESTING CATEGORY API ===');
+
+        try {
+            const headers = getAuthHeaders();
+            console.log('Headers:', headers);
+
+            const response = await fetch(`${BASE_API}/category/getAll`, {
+                method: 'GET',
+                headers: headers
+            });
+
+            console.log('Response status:', response.status);
+            console.log('Response ok:', response.ok);
+
+            const result = await response.json();
+            console.log('Response data:', result);
+
+            if (result.success && result.data) {
+                alert('✅ API ishlayapti!\n\n' + result.data.length + ' ta kategoriya topildi.\n\nConsole da batafsil ma\'lumot ko\'ring.');
+            } else {
+                alert('⚠️ API javob berdi lekin ma\'lumot noto\'g\'ri.\n\nConsole da tekshiring.');
+            }
+        } catch (error) {
+            console.error('Test error:', error);
+            alert('❌ Xatolik: ' + error.message);
+        }
+    }
+
+    async function testRegionAPI() {
+        console.log('=== TESTING REGION API ===');
+
+        try {
+            const headers = getAuthHeaders();
+            console.log('Headers:', headers);
+
+            const response = await fetch(`${BASE_API}/region/getAll`, {
+                method: 'GET',
+                headers: headers
+            });
+
+            console.log('Response status:', response.status);
+            console.log('Response ok:', response.ok);
+
+            const result = await response.json();
+            console.log('Response data:', result);
+
+            if (result.success && result.data) {
+                alert('✅ API ishlayapti!\n\n' + result.data.length + ' ta rayon topildi.\n\nConsole da batafsil ma\'lumot ko\'ring.');
+            } else {
+                alert('⚠️ API javob berdi lekin ma\'lumot noto\'g\'ri.\n\nConsole da tekshiring.');
+            }
+        } catch (error) {
+            console.error('Test error:', error);
+            alert('❌ Xatolik: ' + error.message);
+        }
+    }
+    function kgV(id) { return document.getElementById(id); }
+    function kgVal(id) { return (kgV(id).value || '').trim(); }
+    function kgNum(id) { return parseInt(kgV(id).value) || 0; }
+    function kgShow(id) { kgV(id).classList.remove('kg-hidden'); }
+    function kgHide(id) { kgV(id).classList.add('kg-hidden'); }
+
+    // ─── Modal ochish ─────────────────────────────────────────
+    function openKindergartenModal() {
+        kgV('kgOverlay').classList.add('active');
+        document.body.style.overflow = 'hidden';
+        kgLoadRegions();
+        kgLoadMudirs();
+    }
+
+    // ─── Modal yopish ─────────────────────────────────────────
+    function closeKindergartenModal() {
+        kgV('kgOverlay').classList.remove('active');
+        document.body.style.overflow = '';
+        kgResetForm();
+    }
+
+    // Overlay tashqarisiga bosilganda yopilsin
+    kgV('kgOverlay').addEventListener('click', function(e) {
+        if (e.target === this) closeKindergartenModal();
+    });
+
+    // ESC tugmasi
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && kgV('kgOverlay').classList.contains('active')) {
+            closeKindergartenModal();
+        }
+    });
+
+    // ─── Regionlarni yuklash ──────────────────────────────────
+    async function kgLoadRegions() {
+        const sel = kgV('kgRegion');
+        sel.innerHTML = '<option value="">— Yuklanmoqda... —</option>';
+        try {
+            const response = await fetch(`${BASE_API}/region/all`, {
+                method: 'GET',
+                headers: getAuthHeaders()
+            });
+            if (!response.ok) throw new Error('Server xatosi: ' + response.status);
+            const result = await response.json();
+
+            sel.innerHTML = '<option value="">— Tanlang —</option>';
+            if (result.success && Array.isArray(result.data)) {
+                result.data.forEach(region => {
+                    const opt = document.createElement('option');
+                    opt.value = region.id;
+                    opt.textContent = region.name;
+                    sel.appendChild(opt);
+                });
+            }
+        } catch (err) {
+            console.error('Regionlarni yuklashda xato:', err);
+            sel.innerHTML = '<option value="">— Yuklashda xato —</option>';
+        }
+    }
+
+    // ─── Mudirlarni yuklash ───────────────────────────────────
+    async function kgLoadMudirs() {
+        const sel = kgV('kgMudir');
+        sel.innerHTML = '<option value="">— Yuklanmoqda... —</option>';
+        try {
+            const response = await fetch(`${BASE_API}/user/get-all-mudir`, {
+                method: 'GET',
+                headers: getAuthHeaders()
+            });
+            if (!response.ok) throw new Error('Server xatosi: ' + response.status);
+            const result = await response.json();
+
+            sel.innerHTML = '<option value="">— Tanlang —</option>';
+            if (result.success && Array.isArray(result.data)) {
+                result.data.forEach(mudir => {
+                    const opt = document.createElement('option');
+                    opt.value = mudir.id;
+                    opt.textContent = mudir.name;
+                    sel.appendChild(opt);
+                });
+            }
+        } catch (err) {
+            console.error('Mudirlarni yuklashda xato:', err);
+            sel.innerHTML = '<option value="">— Yuklashda xato —</option>';
+        }
+    }
+
+    // ─── Jami soni o'zgarganda ────────────────────────────────
+    function kgOnTotalChange() {
+        const total = kgNum('kgTotal');
+        if (total > 0) {
+            kgShow('kgBlock13');
+            kgV('kg13').max = total;
+        } else {
+            kgHide('kgBlock13');
+            kgHide('kgBlock37');
+            kgHide('kgSub13');
+            kgHide('kgSub37');
+            kgHide('kgTotalSummary');
+        }
+        // Reset pastki qiymatlar
+        ['kg13','kg13_3h','kg13_9h','kg13_12h','kg13_24h','kg37','kg37_3h','kg37_9h','kg37_12h','kg37_24h'].forEach(id => {
+            kgV(id).value = '';
+        });
+        kgHide('kgSub13'); kgHide('kgBlock37'); kgHide('kgSub37');
+        kgHide('kgTotalSummary');
+        kgV('kgSum13').style.display = 'none';
+        kgV('kgSum37').style.display = 'none';
+    }
+
+    // ─── 1–3 yosh soni o'zgarganda ───────────────────────────
+    function kgOn13Change() {
+        const v = kgNum('kg13');
+        if (v > 0) {
+            kgShow('kgSub13');
+        } else {
+            kgHide('kgSub13');
+            kgHide('kgBlock37');
+        }
+        ['kg13_3h','kg13_9h','kg13_12h','kg13_24h'].forEach(id => kgV(id).value = '');
+        kgV('kgSum13').style.display = 'none';
+        kgHide('kgBlock37');
+        kgHide('kgSub37');
+        kgHide('kgTotalSummary');
+    }
+
+    // ─── 1–3 summary yangilash ────────────────────────────────
+    function kgUpdateSummary13() {
+        const total = kgNum('kg13');
+        const h3  = kgNum('kg13_3h');
+        const h9  = kgNum('kg13_9h');
+        const h12 = kgNum('kg13_12h');
+        const h24 = kgNum('kg13_24h');
+        const el = kgV('kgSum13');
+        el.style.display = 'block';
+        el.innerHTML = `
+      <strong>1–3 yosh guruh:</strong> <strong style="color:#3b82f6">${total}</strong> ta
+      <em>(3-4 soat: ${h3} ta, 9 soat: ${h9} ta, 12 soat: ${h12} ta, 24 soat: ${h24} ta)</em>
+    `;
+    }
+
+    // ─── 3–7 blokini ko'rsatish tekshiruvi ───────────────────
+    function kgCheckShow37() {
+        const filled = ['kg13_3h','kg13_9h','kg13_12h','kg13_24h'].every(id => kgV(id).value !== '');
+        if (filled && kgNum('kg13') > 0) {
+            kgShow('kgBlock37');
+            kgV('kg37').max = kgNum('kgTotal');
+        } else {
+            kgHide('kgBlock37');
+            kgHide('kgSub37');
+            kgHide('kgTotalSummary');
+        }
+        kgUpdateTotalSummary();
+    }
+
+    // ─── 3–7 yosh soni o'zgarganda ───────────────────────────
+    function kgOn37Change() {
+        const v = kgNum('kg37');
+        if (v > 0) {
+            kgShow('kgSub37');
+        } else {
+            kgHide('kgSub37');
+            kgHide('kgTotalSummary');
+        }
+        ['kg37_3h','kg37_9h','kg37_12h','kg37_24h'].forEach(id => kgV(id).value = '');
+        kgV('kgSum37').style.display = 'none';
+        kgHide('kgTotalSummary');
+    }
+
+    // ─── 3–7 summary yangilash ────────────────────────────────
+    function kgUpdateSummary37() {
+        const total = kgNum('kg37');
+        const h3  = kgNum('kg37_3h');
+        const h9  = kgNum('kg37_9h');
+        const h12 = kgNum('kg37_12h');
+        const h24 = kgNum('kg37_24h');
+        const el = kgV('kgSum37');
+        el.style.display = 'block';
+        el.innerHTML = `
+      <strong>3–7 yosh guruh:</strong> <strong style="color:#16a34a">${total}</strong> ta
+      <em>(3-4 soat: ${h3} ta, 9 soat: ${h9} ta, 12 soat: ${h12} ta, 24 soat: ${h24} ta)</em>
+    `;
+    }
+
+    // ─── Umumiy summary ───────────────────────────────────────
+    function kgUpdateTotalSummary() {
+        const wrap = kgV('kgTotalSummary');
+        const has13 = kgNum('kg13') > 0;
+        const has37 = kgNum('kg37') > 0;
+        if (!has13 && !has37) { wrap.classList.remove('visible'); return; }
+
+        wrap.classList.add('visible');
+        wrap.innerHTML = `<div class="kg-total-summary-title">📊 Umumiy ko'rinish</div>`;
+        const add = (lbl, val) => {
+            const b = document.createElement('span');
+            b.className = 'kg-badge';
+            b.innerHTML = `${lbl}: <strong>${val}</strong> ta`;
+            wrap.appendChild(b);
+        };
+        add('Jami', kgNum('kgTotal'));
+        if (has13) add('1–3 yosh', kgNum('kg13'));
+        if (has37) add('3–7 yosh', kgNum('kg37'));
+    }
+
+    // ─── Saqlash ──────────────────────────────────────────────
+    async function kgSave() {
+        // Validatsiya
+        if (!kgVal('kgRegion')) { alert('Iltimos, viloyat/tumanni tanlang!'); return; }
+        if (!kgVal('kgMudir'))  { alert('Iltimos, mudirni tanlang!'); return; }
+        if (!kgVal('kgName'))   { alert('Iltimos, bog\'cha nomini kiriting!'); return; }
+        if (!kgNum('kgTotal'))  { alert('Iltimos, jami bolalar sonini kiriting!'); return; }
+
+        const payload = {
+            name:               kgVal('kgName'),
+            regionId:           parseInt(kgVal('kgRegion')),
+            mudirId:            parseInt(kgVal('kgMudir')),
+            totalChildren:      kgNum('kgTotal'),
+            latitude:           kgVal('kgLat')  ? parseFloat(kgVal('kgLat'))  : null,
+            longitude:          kgVal('kgLon')  ? parseFloat(kgVal('kgLon'))  : null,
+            children1to3_3h:    kgNum('kg13_3h'),
+            children1to3_9h:    kgNum('kg13_9h'),
+            children1to3_12h:   kgNum('kg13_12h'),
+            children1to3_24h:   kgNum('kg13_24h'),
+            children3to7_3h:    kgNum('kg37_3h'),
+            children3to7_9h:    kgNum('kg37_9h'),
+            children3to7_12h:   kgNum('kg37_12h'),
+            children3to7_24h:   kgNum('kg37_24h'),
+        };
+
+        const btn = kgV('kgSaveBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="kg-spinner"></span> Saqlanmoqda...';
+
+        try {
+            const response = await fetch(`${BASE_API}/kindergarten/create`, {
+                method: 'POST',
+                headers: {
+                    ...getAuthHeaders(),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                closeKindergartenModal();
+                // Sahifani yangilash yoki jadval reload — o'zingizning funksiyangizni chaqiring:
+                // loadKindergartens();
+                alert("✅ Bog'cha muvaffaqiyatli qo'shildi!");
+            } else {
+                alert('❌ Xato: ' + (result.message || 'Noma\'lum xato'));
+            }
+        } catch (err) {
+            console.error('Saqlashda xato:', err);
+            alert('❌ Server bilan bog\'lanishda xato yuz berdi!');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '✓ Saqlash';
+        }
+    }
+
+    // ─── Formni tozalash ──────────────────────────────────────
+    function kgResetForm() {
+        ['kgRegion','kgMudir','kgName','kgLat','kgLon','kgTotal',
+            'kg13','kg13_3h','kg13_9h','kg13_12h','kg13_24h',
+            'kg37','kg37_3h','kg37_9h','kg37_12h','kg37_24h'
+        ].forEach(id => kgV(id).value = '');
+
+        ['kgBlock13','kgSub13','kgBlock37','kgSub37','kgTotalSummary'].forEach(kgHide);
+        kgV('kgTotalSummary').classList.remove('visible');
+        kgV('kgSum13').style.display = 'none';
+        kgV('kgSum37').style.display = 'none';
+        kgV('kgSaveBtn').disabled = false;
+        kgV('kgSaveBtn').innerHTML = '✓ Saqlash';
+    }
+    ///pn
+    function pnV(id)    { return document.getElementById(id); }
+    function pnVal(id)  { return (pnV(id).value || '').trim(); }
+    function pnNum(id)  { return parseFloat(pnV(id).value) || 0; }
+    function pnRadio(name) {
+        const el = document.querySelector(`input[name="${name}"]:checked`);
+        return el ? el.value : '';
+    }
+
+    // ─── Modal ochish ─────────────────────────────────────────
+    function openProductNormModal() {
+        pnV('pnOverlay').classList.add('active');
+        document.body.style.overflow = 'hidden';
+        pnLoadProducts();
+    }
+
+    // ─── Modal yopish ─────────────────────────────────────────
+    function closeProductNormModal() {
+        pnV('pnOverlay').classList.remove('active');
+        document.body.style.overflow = '';
+        pnResetForm();
+    }
+
+    pnV('pnOverlay').addEventListener('click', function(e) {
+        if (e.target === this) closeProductNormModal();
+    });
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && pnV('pnOverlay').classList.contains('active')) {
+            closeProductNormModal();
+        }
+    });
+
+    // ─── Mahsulotlarni yuklash ────────────────────────────────
+    async function pnLoadProducts() {
+        const sel = pnV('pnProduct');
+        sel.innerHTML = '<option value="">— Yuklanmoqda... —</option>';
+        try {
+            const response = await fetch(`${BASE_API}/product/get-all`, {
+                method: 'GET',
+                headers: getAuthHeaders()
+            });
+            if (!response.ok) throw new Error('Server xatosi: ' + response.status);
+            const result = await response.json();
+
+            sel.innerHTML = '<option value="">— Tanlang —</option>';
+            if (result.success && Array.isArray(result.data)) {
+                result.data.forEach(product => {
+                    const opt = document.createElement('option');
+                    opt.value = product.id;
+                    opt.textContent = product.name;
+                    sel.appendChild(opt);
+                });
+            }
+        } catch (err) {
+            console.error('Mahsulotlarni yuklashda xato:', err);
+            sel.innerHTML = '<option value="">— Yuklashda xato —</option>';
+        }
+    }
+
+    // ─── ConsumptionType o'zgarganda ─────────────────────────
+    function pnOnConsumptionChange() {
+        const val = pnRadio('pnConsumptionType');
+        const block = pnV('pnRepeatBlock');
+        const repeatInput = pnV('pnRepeatDays');
+
+        if (val === 'DECADE' || val === 'WEEKLY') {
+            block.style.display = 'block';
+            // default qiymat
+            if (!repeatInput.value) {
+                repeatInput.value = val === 'DECADE' ? 10 : 7;
+            }
+        } else {
+            block.style.display = 'none';
+            repeatInput.value = '';
+        }
+    }
+
+    // ─── Saqlash ──────────────────────────────────────────────
+    async function pnSave() {
+        // Validatsiya
+        if (!pnVal('pnProduct'))       { alert('Iltimos, mahsulotni tanlang!'); return; }
+        if (!pnRadio('pnAgeGroup'))    { alert('Iltimos, yosh guruhini tanlang!'); return; }
+        if (!pnRadio('pnStayDuration')){ alert('Iltimos, qolish muddatini tanlang!'); return; }
+        if (!pnNum('pnDailyPerChild')) { alert('Iltimos, kunlik norma miqdorini kiriting!'); return; }
+        if (!pnVal('pnUnit'))          { alert('Iltimos, o\'lchov birligini tanlang!'); return; }
+        if (!pnRadio('pnConsumptionType')) { alert('Iltimos, iste\'mol turini tanlang!'); return; }
+
+        const consumptionType = pnRadio('pnConsumptionType');
+        const repeatDays = (consumptionType === 'DECADE' || consumptionType === 'WEEKLY')
+            ? parseInt(pnV('pnRepeatDays').value) || null
+            : null;
+
+        const payload = {
+            productId:       parseInt(pnVal('pnProduct')),
+            ageGroup:        pnRadio('pnAgeGroup'),
+            stayDuration:    pnRadio('pnStayDuration'),
+            dailyPerChild:   pnNum('pnDailyPerChild'),
+            unit:            pnVal('pnUnit'),
+            consumptionType: consumptionType,
+            repeatDays:      repeatDays,
+            sourceDocument:  pnVal('pnSourceDoc') || null,
+            active:          pnV('pnActive').checked
+        };
+
+        const btn = pnV('pnSaveBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="pn-spinner"></span> Saqlanmoqda...';
+
+        try {
+            const response = await fetch(`${BASE_API}/product-norm/create`, {
+                method: 'POST',
+                headers: {
+                    ...getAuthHeaders(),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                closeProductNormModal();
+                // loadProductNorms(); // o'zingizning reload funksiyangizni chaqiring
+                alert('✅ Mahsulot norma muvaffaqiyatli qo\'shildi!');
+            } else {
+                alert('❌ Xato: ' + (result.message || 'Noma\'lum xato'));
+            }
+        } catch (err) {
+            console.error('Saqlashda xato:', err);
+            alert('❌ Server bilan bog\'lanishda xato yuz berdi!');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '✓ Saqlash';
+        }
+    }
+
+    // ─── Formni tozalash ──────────────────────────────────────
+    function pnResetForm() {
+        pnV('pnProduct').value      = '';
+        pnV('pnDailyPerChild').value = '';
+        pnV('pnUnit').value         = '';
+        pnV('pnSourceDoc').value    = '';
+        pnV('pnRepeatDays').value   = '';
+        pnV('pnRepeatBlock').style.display = 'none';
+        pnV('pnActive').checked     = true;
+
+        document.querySelectorAll('input[name="pnAgeGroup"]').forEach(r => r.checked = false);
+        document.querySelectorAll('input[name="pnStayDuration"]').forEach(r => r.checked = false);
+        document.querySelectorAll('input[name="pnConsumptionType"]').forEach(r => r.checked = false);
+        pnV('pnCDaily').checked = true; // default: Kunlik
+
+        pnV('pnSaveBtn').disabled = false;
+        pnV('pnSaveBtn').innerHTML = '✓ Saqlash';
+    }
+</script>
+</body>
+</html>
