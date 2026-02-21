@@ -66,11 +66,17 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     @Override
     public ApiResponse<?> update(WarehouseReqDto dto, Long id) {
-        return null;
+        Warehouse warehouse = warehouseRepository.findByIdAndDeletedFalse(id).orElseThrow(() -> new ByIdException("Warehouse not found"));
+        mapper.updateWarehouse(warehouse, dto);
+        warehouseRepository.save(warehouse);
+        return new ApiResponse<>("warehouse updated", true);
     }
 
     @Override
     public ApiResponse<?> delete(Long id) {
-        return null;
+        Warehouse warehouse = warehouseRepository.findByIdAndDeletedFalse(id).orElseThrow(() -> new ByIdException("Warehouse not found"));
+        warehouse.setDeleted(true);
+        warehouseRepository.save(warehouse);
+        return new ApiResponse<>("Warehouse successfully deleted", true);
     }
 }

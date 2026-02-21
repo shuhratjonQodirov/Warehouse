@@ -27,4 +27,12 @@ public class WarehouseMapper {
                 .longitude(h.getLongitude())
                 .build();
     }
+
+    public void updateWarehouse(Warehouse warehouse, WarehouseReqDto dto) {
+        warehouse.setName(dto.getName());
+        warehouse.setAddress(dto.getAddress());
+        warehouse.setDescription(dto.getDescription());
+        warehouse.setLongitude(dto.getLongitude());
+        warehouse.setLatitude(dto.getLatitude());
+    }
 }

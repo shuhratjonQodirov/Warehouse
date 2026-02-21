@@ -106,6 +106,7 @@ public class SupplierServiceImpl implements SupplierService {
     public ApiResponse<?> deleteSupplierById(Long id) {
         Supplier supplier = supplierRepository.findByIdAndDeletedFalse(id).orElseThrow(() -> new ByIdException("Supplier not found"));
         supplier.setDeleted(true);
+        supplierRepository.save(supplier);
         return new ApiResponse<>("Supplier deleted successfully", true);
     }
 }
