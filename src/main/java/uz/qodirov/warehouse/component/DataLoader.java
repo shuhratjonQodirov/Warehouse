@@ -35,8 +35,6 @@ public class DataLoader implements CommandLineRunner {
                     .brithDate(LocalDate.of(2000, 2, 10))
                     .role(RoleName.ADMIN)
                     .build();
-
-
             userRepository.save(user);
         }
     }
