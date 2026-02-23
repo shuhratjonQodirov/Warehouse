@@ -2236,7 +2236,7 @@
 <script>
     // ===== CONFIG =====
     // const BASE_API = 'http://localhost:8085/api/v1';
-    const BASE_API = 'https://warehouse-64o8.onrender.com/api/v1';
+    const BASE_API = 'https://omborxona-kx4v.onrender.com/api/v1';
 
     // ===== TOAST =====
     function showToast(msg, type = 'success') {
@@ -2295,14 +2295,10 @@
             if (!response.ok) throw new Error('Login xato');
             const data = await response.json();
 
-            // Token saqlash — API javobiga qarab moslang
-            const token = data.token || data.accessToken || data.access_token || data.data?.token;
-            const type = data.type || data.tokenType || 'Bearer';
+            if (!data.token) throw new Error('Token topilmadi');
 
-            if (!token) throw new Error('Token topilmadi');
-
-            localStorage.setItem('authToken', token);
-            localStorage.setItem('tokenType', type);
+            localStorage.setItem('authToken', data.token);
+            localStorage.setItem('tokenType', data.type || 'Bearer');
 
             document.getElementById('loginPage').style.display = 'none';
             document.getElementById('dashboard').style.display = 'block';
@@ -2314,6 +2310,7 @@
             btn.disabled = false;
         }
     }
+
 
     function logout() {
         localStorage.removeItem('authToken');
@@ -3904,6 +3901,13 @@
             statusEl.textContent = '';
             hintEl.textContent = value.length > 0 ? `${6 - value.length} ta belgi yana kerak` : '';
             hintEl.style.color = 'var(--text-secondary)';
+            return;
+        }
+        // ✅ TOKEN YO'Q BO'LSA SO'ROV YUBORMA
+        if (!localStorage.getItem('authToken')) {
+            statusEl.textContent = '';
+            hintEl.textContent = '';
+            validEl.value = 'true';
             return;
         }
 
