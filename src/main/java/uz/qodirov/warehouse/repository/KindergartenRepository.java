@@ -9,7 +9,9 @@ import org.springframework.stereotype.Repository;
 import uz.qodirov.warehouse.dto.res.KindergartenListDto;
 import uz.qodirov.warehouse.dto.res.KindergartenResDto;
 import uz.qodirov.warehouse.model.Kindergarten;
+import uz.qodirov.warehouse.model.User;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -22,4 +24,8 @@ public interface KindergartenRepository extends JpaRepository<Kindergarten, Long
 
     @Query(nativeQuery = true, value = "SELECT k.id, k.name, r.name, u.full_name, k.latitude, k.longitude, k.total_children FROM kindergarten k INNER JOIN region r ON r.id = k.region_id LEFT JOIN users u ON u.id = k.mudir_id where r.id=:regionId;")
     Page<KindergartenListDto> findAllListByRegionId(Pageable pageable, @Param("regionId") Long regionId);
+
+    List<Kindergarten> findAllByMudir(User mudir);
+
+    Optional<Kindergarten> findByMudir(User mudir);
 }

@@ -2,7 +2,6 @@ package uz.qodirov.warehouse.service;
 
 import jakarta.validation.Valid;
 import uz.qodirov.warehouse.dto.req.UserReqDto;
-import uz.qodirov.warehouse.dto.res.UserResDto;
 import uz.qodirov.warehouse.utils.ApiResponse;
 
 public interface UserService {
@@ -11,4 +10,10 @@ public interface UserService {
     ApiResponse<?> checkUsername(String username);
 
     ApiResponse<?> create(@Valid UserReqDto dto);
+
+    ApiResponse<?> update(Long id, @Valid UserReqDto dto);
+
+    ApiResponse<?> getById(Long id);
+
+    ApiResponse<?> delete(Long id);
 }

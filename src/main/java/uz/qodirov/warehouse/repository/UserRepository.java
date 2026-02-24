@@ -21,4 +21,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Page<User> findAllByRoleNotAndDeletedFalse(RoleName roleName, Pageable pageable);
 
     boolean existsByUsernameIgnoreCase(String username);
+
+    boolean existsByEmailIgnoreCase(String username);
+
 }

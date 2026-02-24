@@ -37,6 +37,8 @@ public class KindergartenServiceImpl implements KindergartenService {
         Region region = regionRepository.findByIdAndDeletedFalse(dto.getRegionId()).orElseThrow(() -> new ByIdException("Region not found"));
         Kindergarten kindergarten = mapper.toEntity(user, region, dto);
         kindergartenRepository.save(kindergarten);
+
+
         return new ApiResponse<>("New Kindergarten saved", true);
     }
 
@@ -79,5 +81,13 @@ public class KindergartenServiceImpl implements KindergartenService {
 
 
         return null;
+    }
+
+    @Override
+    public ApiResponse<?> getKgByUserId(Long userId) {
+        User user = userRepository.findByIdAndDeletedFalse(userId).orElseThrow(() -> new ByIdException("User not found"));
+        Kindergarten kg = kindergartenRepository.findByMudir(user).orElseThrow(() -> new ByIdException("Kindergarten not found"));
+        KindergartenResDto dto = mapper.toDto(kg);
+        return new ApiResponse<>("Kg by user id", true, dto);
     }
 }

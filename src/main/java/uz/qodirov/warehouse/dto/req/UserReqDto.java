@@ -33,7 +33,5 @@ public class UserReqDto {
     @NotBlank(message = "role cannot be empty")
     private String role;
 
-    @Size(min = 6, message = "password must be at least 6 characters")
-    @NotBlank(message = "password cannot be empty")
     private String password;
 }

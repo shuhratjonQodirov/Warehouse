@@ -74,7 +74,7 @@ public class RegionServiceImpl implements RegionService {
     private String validName(String name) {
         String s = name
                 .trim()
-                .replaceAll("[^A-Za-z'‘’ʻ]", "");
+                .replaceAll("[^A-Za-z'‘’ʻ ]", "");
         return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
     }
 }

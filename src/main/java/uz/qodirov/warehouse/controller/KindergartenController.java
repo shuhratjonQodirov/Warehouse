@@ -48,4 +48,11 @@ public class KindergartenController {
         ApiResponse<?> response = kindergartenService.delete(kindergartenId);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/{userId}")
+    public HttpEntity<?> getKGByUserId(@PathVariable Long userId) {
+        ApiResponse<?> response = kindergartenService.getKgByUserId(userId);
+        return ResponseEntity.ok(response);
+    }
+
 }

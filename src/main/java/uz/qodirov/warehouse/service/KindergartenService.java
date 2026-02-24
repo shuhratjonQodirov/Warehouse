@@ -15,4 +15,5 @@ public interface KindergartenService {
 
     ApiResponse<?> delete(Long kindergartenId);
 
+    ApiResponse<?> getKgByUserId(Long userId);
 }

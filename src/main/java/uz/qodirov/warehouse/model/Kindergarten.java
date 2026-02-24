@@ -22,7 +22,7 @@ public class Kindergarten extends AbsEntity {
     @Column(length = 100)
     private String name;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mudir_id")
     private User mudir;
 
@@ -81,8 +81,6 @@ public class Kindergarten extends AbsEntity {
             this.totalChildren = this.totalChildren1to3 + this.totalChildren3to7;
         }
     }
-
-
 
 
 }

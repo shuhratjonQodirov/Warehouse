@@ -4027,219 +4027,267 @@
         }
     }
 
+    let userCurrentPage = 0;
+    const USER_PAGE_SIZE = 10;
+    let userActiveTab = 'DRIVER';
+    let userSearchQuery = '';
+    let userSearchTimer = null;
+
+    const ROLE_CONFIG = {
+        MANAGER:     { label: 'Manager',   color: '#818cf8', bg: 'rgba(99,102,241,.12)',  icon: 'M', filter: 'manager'     },
+        WAREHOUSEMAN:{ label: 'Omborchi',  color: '#34d399', bg: 'rgba(52,211,153,.12)',  icon: 'O', filter: 'warehouseman' },
+        DRIVER:      { label: 'Haydovchi', color: '#fbbf24', bg: 'rgba(251,191,36,.12)',  icon: 'H', filter: 'driver'       },
+        MUDIRA:      { label: 'Mudira',    color: '#f472b6', bg: 'rgba(244,114,182,.12)', icon: 'Mu', filter: 'mudira'      },
+    };
+
+    // ─── Asosiy HTML ──────────────────────────────────────
     function telegramPageHTML() {
         return `
+    <style>
+        .utab { padding:.55rem 1.2rem; border-radius:8px; border:1.5px solid rgba(255,255,255,.12); background:rgba(58,58,58,.4); color:var(--text-secondary); font-family:inherit; font-size:.88rem; font-weight:600; cursor:pointer; transition:all .2s; }
+        .utab:hover { background:rgba(255,107,53,.12); color:var(--accent-primary); border-color:rgba(255,107,53,.3); }
+        .utab-on { background:rgba(255,107,53,.18) !important; color:var(--accent-primary) !important; border-color:var(--accent-primary) !important; }
+        .uinfo-card { background:rgba(58,58,58,.3); border:1px solid rgba(255,255,255,.07); border-radius:10px; padding:.75rem; }
+        .uinfo-label { font-size:.72rem; color:var(--text-secondary); margin-bottom:.25rem; }
+        .uinfo-value { font-size:.88rem; font-weight:600; color:var(--text-primary); word-break:break-all; }
+    </style>
+
+    <!-- LIST VIEW -->
+    <div id="userListView">
         <div style="margin-bottom:1.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem">
-            <button onclick="openUserModal()" class="cta-button" style="padding:.8rem 2rem;font-size:.9rem">
-                + Yangi Foydalanuvchi
-            </button>
-            <input id="userSearch" type="text" placeholder="🔍 Ism yoki username..."
-                oninput="searchUsers(this.value)"
+            <button onclick="openUserModal()" class="cta-button" style="padding:.8rem 2rem;font-size:.9rem">+ Yangi Foydalanuvchi</button>
+            <input id="userSearch" type="text" placeholder="Qidirish..." oninput="searchUsers(this.value)"
                 style="padding:.7rem 1rem;background:rgba(58,58,58,.5);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:var(--text-primary);font-family:inherit;font-size:.9rem;outline:none;min-width:240px">
+        </div>
+
+        <div style="display:flex;gap:.5rem;margin-bottom:1.25rem;flex-wrap:wrap">
+            <button onclick="switchUserTab('DRIVER')"  id="tab-DRIVER"  class="utab utab-on">Haydovchilar</button>
+            <button onclick="switchUserTab('MANAGER')" id="tab-MANAGER" class="utab">Managerlar</button>
+            <button onclick="switchUserTab('MUDIRA')"  id="tab-MUDIRA"  class="utab">Mudiralar</button>
         </div>
 
         <div style="background:rgba(45,45,45,.5);border:1px solid rgba(255,107,53,.2);border-radius:12px;overflow:hidden">
             <table style="width:100%;border-collapse:collapse">
                 <thead>
                     <tr style="background:rgba(58,58,58,.3);border-bottom:1px solid rgba(255,107,53,.2)">
-                        <th style="padding:.75rem 1rem;text-align:left;color:var(--text-secondary);font-size:.78rem;text-transform:uppercase;width:50px">#</th>
+                        <th style="padding:.75rem 1rem;color:var(--text-secondary);font-size:.78rem;text-transform:uppercase;width:50px">#</th>
                         <th style="padding:.75rem 1rem;text-align:left;color:var(--text-secondary);font-size:.78rem;text-transform:uppercase">Foydalanuvchi</th>
                         <th style="padding:.75rem 1rem;text-align:left;color:var(--text-secondary);font-size:.78rem;text-transform:uppercase">Username</th>
-                        <th style="padding:.75rem 1rem;text-align:left;color:var(--text-secondary);font-size:.78rem;text-transform:uppercase">Rol</th>
                         <th style="padding:.75rem 1rem;text-align:left;color:var(--text-secondary);font-size:.78rem;text-transform:uppercase">Telefon</th>
                         <th style="padding:.75rem 1rem;text-align:center;color:var(--text-secondary);font-size:.78rem;text-transform:uppercase">Telegram</th>
                         <th style="padding:.75rem 1rem;text-align:center;color:var(--text-secondary);font-size:.78rem;text-transform:uppercase;width:160px">Amallar</th>
                     </tr>
                 </thead>
                 <tbody id="userList">
-                    <tr><td colspan="7" style="text-align:center;padding:3rem;color:var(--text-secondary)">⏳ Yuklanmoqda...</td></tr>
+                    <tr><td colspan="6" style="text-align:center;padding:3rem;color:var(--text-secondary)">Yuklanmoqda...</td></tr>
                 </tbody>
             </table>
             <div id="userPagination"></div>
         </div>
+    </div>
 
-        <!-- View Modal -->
-        <div class="modal" id="userViewModal">
-            <div class="modal-content" style="max-width:460px">
-                <div class="modal-header">
-                    <h2>Foydalanuvchi ma'lumotlari</h2>
-                    <button class="close-modal" onclick="document.getElementById('userViewModal').classList.remove('show')">×</button>
-                </div>
-                <div class="modal-body" id="userViewBody"></div>
-            </div>
+    <!-- DETAIL VIEW -->
+    <div id="userDetailView" style="display:none">
+        <div style="margin-bottom:1.5rem">
+            <button onclick="showUserList()" style="display:inline-flex;align-items:center;gap:.5rem;padding:.7rem 1.4rem;background:rgba(58,58,58,.5);border:1.5px solid rgba(255,255,255,.15);border-radius:9px;color:var(--text-secondary);font-family:inherit;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s"
+                onmouseover="this.style.color='var(--text-primary)';this.style.borderColor='rgba(255,107,53,.4)'"
+                onmouseout="this.style.color='var(--text-secondary)';this.style.borderColor='rgba(255,255,255,.15)'">
+                &#8592; Orqaga
+            </button>
         </div>
+        <div id="userDetailContent"></div>
+    </div>
     `;
     }
 
-    // ─── State ───────────────────────────────────────────
-    let userCurrentPage = 0;
-    const USER_PAGE_SIZE = 10;
-    let userSearchQuery = '';
-    let userSearchTimer = null;
+    // ─── List / Detail almashtirish ───────────────────────
+    function showUserList() {
+        document.getElementById('userListView').style.display = 'block';
+        document.getElementById('userDetailView').style.display = 'none';
+        // header ni qaytarish
+        document.querySelector('.content-header h1').textContent = 'Telegram va Foydalanuvchilar';
+        document.querySelector('.content-header p').textContent = '';
+    }
 
-    // ─── Rol config ───────────────────────────────────────
-    const ROLE_CONFIG = {
-        MANAGER: {label: 'Manager', color: '#818cf8', bg: 'rgba(99,102,241,.12)', icon: '👔'},
-        WAREHOUSEMAN: {label: 'Omborchi', color: '#34d399', bg: 'rgba(52,211,153,.12)', icon: '🏭'},
-        DRIVER: {label: 'Haydovchi', color: '#fbbf24', bg: 'rgba(251,191,36,.12)', icon: '🚗'},
-        MUDIRA: {label: 'Mudira', color: '#f472b6', bg: 'rgba(244,114,182,.12)', icon: '👩‍💼'},
-    };
+    function showUserDetail(u) {
+        document.getElementById('userListView').style.display = 'none';
+        document.getElementById('userDetailView').style.display = 'block';
 
-    // ─── Yuklash ─────────────────────────────────────────
-    async function loadUsers(page = 0) {
-        if (!requireAuth()) return;
-        userCurrentPage = page;
-        const tbody = document.getElementById('userList');
-        if (!tbody) return;
+        var role = ROLE_CONFIG[u.role] || { label: u.role, color: '#94a3b8', bg: 'rgba(148,163,184,.12)' };
+        var hasTg = u.chatId && u.chatId !== 0;
+        var initials = (u.fullName || '?').split(' ').map(function(w){ return w[0]; }).join('').slice(0,2).toUpperCase();
+        var isMudira = u.role === 'MUDIRA';
 
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:3rem;color:var(--text-secondary)">⏳ Yuklanmoqda...</td></tr>`;
+        document.querySelector('.content-header h1').textContent = u.fullName || 'Foydalanuvchi';
+        document.querySelector('.content-header p').textContent = role.label;
 
+        document.getElementById('userDetailContent').innerHTML =
+            '<div style="background:rgba(45,45,45,.5);border:1px solid rgba(255,107,53,.15);border-radius:16px;overflow:hidden;margin-bottom:1.5rem">' +
+
+            // ── BANNER (avatar + ism shu yerda) ──────────────────
+            '<div style="background:linear-gradient(135deg,' + role.color + '33, rgba(45,45,45,0));border-bottom:1px solid rgba(255,255,255,.06);padding:1.5rem 2rem;display:flex;align-items:center;gap:1rem">' +
+            '<div style="width:64px;height:64px;border-radius:50%;background:' + role.color + ';display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.4rem;color:#000;flex-shrink:0">' +
+            initials +
+            '</div>' +
+            '<div>' +
+            '<div style="font-size:1.2rem;font-weight:700;color:var(--text-primary);margin-bottom:.35rem">' + (u.fullName || '-') + '</div>' +
+            '<span style="padding:.25rem .8rem;border-radius:100px;font-size:.75rem;font-weight:600;background:' + role.bg + ';color:' + role.color + ';border:1px solid ' + role.color + '44">' + role.label + '</span>' +
+            '</div>' +
+            '</div>' +
+
+            // ── INFO CARDLAR ──────────────────────────────────────
+            '<div style="padding:1.5rem 2rem 2rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.75rem">' +
+            uInfoCard('Username', '@' + (u.username || '-')) +
+            uInfoCard('Email', u.email || '-') +
+            uInfoCard('Telefon', u.phoneNumber || '-') +
+            uInfoCard('Tugulgan sana', u.brithDate || '-') +
+            uInfoCard('Telegram', hasTg ? 'Chat ID: ' + u.chatId : 'Ulanmagan') +
+            uInfoCard('ID', '#' + u.id) +
+            '</div>' +
+            '</div>' +
+
+            // ── AMALLAR ───────────────────────────────────────────────
+            '<div style="display:flex;gap:.75rem;margin-bottom:1.5rem">' +
+            '<button onclick="editUser(' + u.id + ')" class="cta-button" style="padding:.7rem 1.5rem;font-size:.9rem">Tahrirlash</button>' +
+            '<button onclick="deleteUserAndBack(' + u.id + ',\'' + (u.fullName||'').replace(/'/g,"\\'") + '\')" style="padding:.7rem 1.5rem;background:rgba(239,68,68,.15);border:1.5px solid rgba(239,68,68,.3);border-radius:50px;color:#ef4444;font-family:inherit;font-size:.9rem;font-weight:600;cursor:pointer">Ochirish</button>' +
+            '</div>' +
+
+            // ── MUDIRA BOGCHA ─────────────────────────────────────────
+            (isMudira ?
+                '<div id="mudiraKgSection">' +
+                '<div style="background:rgba(45,45,45,.5);border:1px solid rgba(255,107,53,.15);border-radius:16px;padding:1.5rem">' +
+                '<div style="color:var(--text-secondary);font-size:.9rem">Bogcha yuklanmoqda...</div>' +
+                '</div>' +
+                '</div>'
+                : '');
+
+        if (isMudira) loadMudiraKindergarten(u.id);
+    }
+
+    function uInfoCard(label, value) {
+        return '<div class="uinfo-card"><div class="uinfo-label">' + label + '</div><div class="uinfo-value">' + value + '</div></div>';
+    }
+
+    // ─── Mudira bogcha ────────────────────────────────────
+    async function loadMudiraKindergarten(userId) {
+        const section = document.getElementById('mudiraKgSection');
+        if (!section) return;
         try {
-            const url = userSearchQuery
-                ? `${BASE_API}/user/get-all?page=${page}&size=${USER_PAGE_SIZE}&search=${encodeURIComponent(userSearchQuery)}`
-                : `${BASE_API}/user/get-all?page=${page}&size=${USER_PAGE_SIZE}`;
-
-            const res = await fetch(url, {
-                    method: 'GET',
-                    headers:
-                        getAuthHeaders()
-                })
-            ;
-            if (res.status === 401) {
-                handleUnauth();
-                return;
-            }
-            if (!res.ok) throw new Error('Status: ' + res.status);
-
+            const res = await fetch(BASE_API + '/kindergarten/' + userId, { headers: getAuthHeaders() });
+            if (!res.ok) throw new Error(res.status);
             const result = await res.json();
-            const list = result.data || [];
-            const meta = result.meta;
+            const kg = result.data || result;
 
-            if (!list.length) {
-                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:3rem;color:var(--text-secondary)">
-                ${userSearchQuery ? `🔍 "${userSearchQuery}" topilmadi` : '📭 Foydalanuvchilar yo\'q'}
-            </td></tr>`;
-                document.getElementById('userPagination').innerHTML = '';
+            if (!kg || !kg.name) {
+                section.innerHTML = '<div style="background:rgba(45,45,45,.5);border:1px solid rgba(255,107,53,.15);border-radius:16px;padding:1.5rem;color:var(--text-secondary)">Bogcha biriktirilmagan</div>';
                 return;
             }
 
-            renderUserRows(list, page);
-            renderUserPagination(meta);
-
-        } catch (e) {
-            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:3rem;color:#ef4444">❌ Xatolik: ${e.message}</td></tr>`;
+            section.innerHTML =
+                '<div style="background:rgba(45,45,45,.5);border:1px solid rgba(244,114,182,.2);border-radius:16px;overflow:hidden">' +
+                '<div style="padding:1.25rem 1.5rem;border-bottom:1px solid rgba(244,114,182,.15);background:rgba(244,114,182,.06)">' +
+                '<div style="font-size:.78rem;font-weight:700;color:#f472b6;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.3rem">Bogcha</div>' +
+                '<div style="font-size:1.1rem;font-weight:700;color:var(--text-primary)">' + (kg.name || '-') + '</div>' +
+                '</div>' +
+                '<div style="padding:1.25rem 1.5rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.75rem">' +
+                uInfoCard('Viloyat', kg.regionName || '-') +
+                uInfoCard('Jami bolalar', (kg.totalChildren || 0) + ' ta') +
+                uInfoCard('1-3 yosh', (kg.totalChildren1to3 || 0) + ' ta') +
+                uInfoCard('3-7 yosh', (kg.totalChildren3to7 || 0) + ' ta') +
+                (kg.latitude ? uInfoCard('Koordinata', kg.latitude + ', ' + kg.longitude) : '') +
+                '</div>' +
+                '</div>';
+        } catch(e) {
+            section.innerHTML = '<div style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:12px;padding:1rem;color:#f87171;font-size:.85rem">Bogcha topilmadi</div>';
         }
     }
 
-    // ─── Qatorlarni chizish ──────────────────────────────
-    function renderUserRows(list, page = 0) {
-        const tbody = document.getElementById('userList');
+    // ─── Tab ─────────────────────────────────────────────
+    function switchUserTab(role) {
+        userActiveTab = role;
+        userCurrentPage = 0;
+        userSearchQuery = '';
+        var s = document.getElementById('userSearch');
+        if (s) s.value = '';
+        document.querySelectorAll('.utab').forEach(function(b){ b.classList.remove('utab-on'); });
+        var btn = document.getElementById('tab-' + role);
+        if (btn) btn.classList.add('utab-on');
+        loadUsers(0);
+    }
+
+    // ─── Yuklash ─────────────────────────────────────────
+    async function loadUsers(page) {
+        if (page === undefined) page = 0;
+        if (!requireAuth()) return;
+        userCurrentPage = page;
+        var tbody = document.getElementById('userList');
         if (!tbody) return;
-
-        tbody.innerHTML = list.map((u, i) => {
-            const role = ROLE_CONFIG[u.role] || {
-                label: u.role,
-                color: '#94a3b8',
-                bg: 'rgba(148,163,184,.12)',
-                icon: '👤'
-            };
-            const hasTg = u.chatId && u.chatId !== 0;
-            const initials = (u.fullName || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
-
-            return `
-        <tr style="border-bottom:1px solid rgba(255,255,255,.05);transition:background .15s"
-            onmouseover="this.style.background='rgba(255,107,53,.04)'"
-            onmouseout="this.style.background='transparent'">
-            <td style="padding:.85rem 1rem;text-align:center">
-                <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;background:rgba(255,107,53,.1);border:1px solid rgba(255,107,53,.2);border-radius:6px;font-size:.75rem;color:var(--text-secondary)">
-                    ${page * USER_PAGE_SIZE + i + 1}
-                </span>
-            </td>
-            <td style="padding:.85rem 1rem">
-                <div style="display:flex;align-items:center;gap:.75rem">
-                    <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--accent-primary),#ff8c42);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;color:#000;flex-shrink:0">
-                        ${initials}
-                    </div>
-                    <div>
-                        <div style="font-weight:600;color:var(--text-primary)">${u.fullName || '—'}</div>
-                        <div style="font-size:.73rem;color:var(--text-secondary);margin-top:2px">${u.email || '—'}</div>
-                    </div>
-                </div>
-            </td>
-            <td style="padding:.85rem 1rem">
-                <code style="font-size:.82rem;color:var(--accent-primary);background:rgba(255,107,53,.08);padding:.2rem .5rem;border-radius:5px">@${u.username || '—'}</code>
-            </td>
-            <td style="padding:.85rem 1rem">
-                <span style="padding:.3rem .75rem;border-radius:100px;font-size:.75rem;font-weight:600;background:${role.bg};color:${role.color};border:1px solid ${role.color}33">
-                    ${role.icon} ${role.label}
-                </span>
-            </td>
-            <td style="padding:.85rem 1rem;color:var(--text-secondary);font-size:.88rem">
-                ${u.phoneNumber || '—'}
-            </td>
-            <td style="padding:.85rem 1rem;text-align:center">
-                ${hasTg
-                ? `<span style="display:inline-flex;align-items:center;gap:.35rem;padding:.3rem .7rem;border-radius:100px;background:rgba(0,136,204,.15);color:#38bdf8;border:1px solid rgba(56,189,248,.2);font-size:.75rem;font-weight:600">
-                            ✈️ Ulangan
-                       </span>`
-                : `<span style="color:var(--text-secondary);font-size:.8rem">— Ulanmagan</span>`
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:3rem;color:var(--text-secondary)">Yuklanmoqda...</td></tr>';
+        try {
+            var filter = (ROLE_CONFIG[userActiveTab] && ROLE_CONFIG[userActiveTab].filter) || userActiveTab.toLowerCase();
+            var url = BASE_API + '/user/get-all?filter=' + filter + '&page=' + page + '&size=' + USER_PAGE_SIZE;
+            if (userSearchQuery) url += '&search=' + encodeURIComponent(userSearchQuery);
+            var res = await fetch(url, { method: 'GET', headers: getAuthHeaders() });
+            if (res.status === 401) { handleUnauth(); return; }
+            if (!res.ok) throw new Error('Status: ' + res.status);
+            var result = await res.json();
+            var list = result.data || [];
+            var meta = result.meta;
+            if (!list.length) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:3rem;color:var(--text-secondary)">' +
+                    (userSearchQuery ? '"' + userSearchQuery + '" topilmadi' : 'Foydalanuvchilar yoq') + '</td></tr>';
+                document.getElementById('userPagination').innerHTML = '';
+                return;
             }
-            </td>
-            <td style="padding:.85rem 1rem;text-align:center">
-                <div style="display:flex;align-items:center;justify-content:center;gap:.4rem">
-                    <button onclick="viewUser(${JSON.stringify(u).replace(/"/g, '&quot;')})"
-                        title="Ko'rish"
-                        style="padding:.4rem .6rem;background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.25);border-radius:7px;color:#818cf8;cursor:pointer;font-size:.85rem;transition:background .2s"
-                        onmouseover="this.style.background='rgba(99,102,241,.3)'"
-                        onmouseout="this.style.background='rgba(99,102,241,.15)'">👁️</button>
-                    <button onclick="editUser(${u.id})" class="btn-edit" title="Tahrirlash">✏️</button>
-                    <button onclick="deleteUser(${u.id}, '${(u.fullName || '').replace(/'/g, "\\'")}' )" class="btn-delete" title="O'chirish">🗑️</button>
-                </div>
-            </td>
-        </tr>`;
+            renderUserRows(list, page);
+            renderUserPagination(meta);
+        } catch(e) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:3rem;color:#ef4444">Xatolik: ' + e.message + '</td></tr>';
+        }
+    }
+
+    // ─── Qatorlar ─────────────────────────────────────────
+    function renderUserRows(list, page) {
+        var tbody = document.getElementById('userList');
+        if (!tbody) return;
+        tbody.innerHTML = list.map(function(u, i) {
+            var role = ROLE_CONFIG[u.role] || { label: u.role, color: '#94a3b8', icon: '?' };
+            var hasTg = u.chatId && u.chatId !== 0;
+            var initials = (u.fullName || '?').split(' ').map(function(w){ return w[0]; }).join('').slice(0,2).toUpperCase();
+            var dataStr = encodeURIComponent(JSON.stringify(u));
+            return '<tr style="border-bottom:1px solid rgba(255,255,255,.05);cursor:pointer;transition:background .15s" ' +
+                'onmouseover="this.style.background=\'rgba(255,107,53,.04)\'" onmouseout="this.style.background=\'transparent\'">' +
+                '<td style="padding:.85rem 1rem;text-align:center"><span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;background:rgba(255,107,53,.1);border:1px solid rgba(255,107,53,.2);border-radius:6px;font-size:.75rem;color:var(--text-secondary)">' + (page * USER_PAGE_SIZE + i + 1) + '</span></td>' +
+                '<td style="padding:.85rem 1rem"><div style="display:flex;align-items:center;gap:.75rem">' +
+                '<div style="width:38px;height:38px;border-radius:50%;background:' + role.color + ';display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;color:#000;flex-shrink:0">' + initials + '</div>' +
+                '<div><div style="font-weight:600;color:var(--text-primary)">' + (u.fullName || '-') + '</div>' +
+                '<div style="font-size:.73rem;color:var(--text-secondary)">' + (u.email || '-') + '</div></div>' +
+                '</div></td>' +
+                '<td style="padding:.85rem 1rem"><code style="font-size:.82rem;color:var(--accent-primary);background:rgba(255,107,53,.08);padding:.2rem .5rem;border-radius:5px">@' + (u.username || '-') + '</code></td>' +
+                '<td style="padding:.85rem 1rem;color:var(--text-secondary);font-size:.88rem">' + (u.phoneNumber || '-') + '</td>' +
+                '<td style="padding:.85rem 1rem;text-align:center">' +
+                (hasTg ? '<span style="padding:.3rem .7rem;border-radius:100px;background:rgba(0,136,204,.15);color:#38bdf8;border:1px solid rgba(56,189,248,.2);font-size:.75rem;font-weight:600">Ulangan</span>'
+                    : '<span style="color:var(--text-secondary);font-size:.8rem">Ulanmagan</span>') +
+                '</td>' +
+                '<td style="padding:.85rem 1rem;text-align:center"><div style="display:flex;align-items:center;justify-content:center;gap:.4rem">' +
+                '<button onclick="event.stopPropagation();viewUserPage(\'' + dataStr + '\')" class="btn-edit">Korish</button>' +
+                '<button onclick="event.stopPropagation();editUser(' + u.id + ')" class="btn-edit">Tahrir</button>' +
+                '<button onclick="event.stopPropagation();deleteUser(' + u.id + ',\'' + (u.fullName||'').replace(/'/g,"\\'") + '\')" class="btn-delete">Ochir</button>' +
+                '</div></td>' +
+                '</tr>';
         }).join('');
     }
 
-    // ─── Ko'rish ─────────────────────────────────────────
-    function viewUser(u) {
-        const role = ROLE_CONFIG[u.role] || {label: u.role, color: '#94a3b8', icon: '👤'};
-        const initials = (u.fullName || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
-        const hasTg = u.chatId && u.chatId !== 0;
-
-        document.getElementById('userViewBody').innerHTML = `
-        <div style="text-align:center;padding:1rem 0 1.5rem">
-            <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--accent-primary),#ff8c42);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.5rem;color:#000;margin:0 auto .75rem">
-                ${initials}
-            </div>
-            <div style="font-size:1.15rem;font-weight:700;color:var(--text-primary)">${u.fullName}</div>
-            <span style="padding:.3rem .9rem;border-radius:100px;font-size:.78rem;font-weight:600;background:${role.bg || 'rgba(148,163,184,.12)'};color:${role.color};margin-top:.4rem;display:inline-block">
-                ${role.icon} ${role.label}
-            </span>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
-            ${infoCard('👤', 'Username', '@' + (u.username || '—'))}
-            ${infoCard('📧', 'Email', u.email || '—')}
-            ${infoCard('📞', 'Telefon', u.phoneNumber || '—')}
-            ${infoCard('🎂', 'Tug\'ilgan sana', u.brithDate || '—')}
-            ${infoCard('✈️', 'Telegram Chat ID', hasTg ? u.chatId : 'Ulanmagan')}
-            ${infoCard('🆔', 'ID', u.id || '—')}
-        </div>
-    `;
-        document.getElementById('userViewModal').classList.add('show');
-    }
-
-    function infoCard(icon, label, value) {
-        return `
-        <div style="background:rgba(58,58,58,.3);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:.75rem">
-            <div style="font-size:.72rem;color:var(--text-secondary);margin-bottom:.25rem">${icon} ${label}</div>
-            <div style="font-size:.88rem;font-weight:600;color:var(--text-primary);word-break:break-all">${value}</div>
-        </div>`;
+    // ─── Ko'rish (sahifada) ────────────────────────────────
+    function viewUserPage(dataStr) {
+        var u = JSON.parse(decodeURIComponent(dataStr));
+        showUserDetail(u);
     }
 
     // ─── Qidiruv ─────────────────────────────────────────
     function searchUsers(query) {
         clearTimeout(userSearchTimer);
-        userSearchTimer = setTimeout(() => {
+        userSearchTimer = setTimeout(function() {
             userSearchQuery = query.trim();
             loadUsers(0);
         }, 400);
@@ -4247,55 +4295,58 @@
 
     // ─── Pagination ──────────────────────────────────────
     function renderUserPagination(meta) {
-        const container = document.getElementById('userPagination');
+        var container = document.getElementById('userPagination');
         if (!container || !meta) return;
-        const {currentPage = 0, totalPages = 1, totalElements = 0} = meta;
-
-        let html = `
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:1rem 1.2rem;border-top:1px solid rgba(255,107,53,.15)">
-            <div style="color:var(--text-secondary);font-size:.85rem">
-                Jami: <strong style="color:var(--accent-primary)">${totalElements}</strong> ta foydalanuvchi
-            </div>
-            <div style="display:flex;gap:.4rem;align-items:center">
-                <button onclick="loadUsers(${currentPage - 1})" ${currentPage === 0 ? 'disabled' : ''}
-                    style="padding:.4rem .7rem;background:rgba(58,58,58,.5);border:1px solid rgba(255,107,53,.2);border-radius:6px;color:var(--text-primary);cursor:pointer;opacity:${currentPage === 0 ? .4 : 1}">◀</button>`;
-
-        const start = Math.max(0, currentPage - 2), end = Math.min(totalPages - 1, start + 4);
-        for (let i = start; i <= end; i++) {
-            html += `<button onclick="loadUsers(${i})"
-            style="padding:.4rem .7rem;background:${i === currentPage ? 'var(--accent-primary)' : 'rgba(58,58,58,.5)'};border:1px solid rgba(255,107,53,.2);border-radius:6px;color:${i === currentPage ? '#000' : 'var(--text-primary)'};font-weight:${i === currentPage ? 700 : 400};cursor:pointer">${i + 1}</button>`;
+        var cp = meta.currentPage || 0;
+        var tp = meta.totalPages || 1;
+        var te = meta.totalElements || 0;
+        var html = '<div style="display:flex;align-items:center;justify-content:space-between;padding:1rem 1.2rem;border-top:1px solid rgba(255,107,53,.15)">' +
+            '<div style="color:var(--text-secondary);font-size:.85rem">Jami: <strong style="color:var(--accent-primary)">' + te + '</strong> ta</div>' +
+            '<div style="display:flex;gap:.4rem">' +
+            '<button onclick="loadUsers(' + (cp-1) + ')" ' + (cp===0?'disabled':'') + ' style="padding:.4rem .7rem;background:rgba(58,58,58,.5);border:1px solid rgba(255,107,53,.2);border-radius:6px;color:var(--text-primary);cursor:pointer;opacity:' + (cp===0?.4:1) + '">&#9664;</button>';
+        var s = Math.max(0, cp-2), e2 = Math.min(tp-1, s+4);
+        for (var i = s; i <= e2; i++) {
+            html += '<button onclick="loadUsers(' + i + ')" style="padding:.4rem .7rem;background:' + (i===cp?'var(--accent-primary)':'rgba(58,58,58,.5)') + ';border:1px solid rgba(255,107,53,.2);border-radius:6px;color:' + (i===cp?'#000':'var(--text-primary)') + ';font-weight:' + (i===cp?700:400) + ';cursor:pointer">' + (i+1) + '</button>';
         }
-
-        html += `
-                <button onclick="loadUsers(${currentPage + 1})" ${currentPage >= totalPages - 1 ? 'disabled' : ''}
-                    style="padding:.4rem .7rem;background:rgba(58,58,58,.5);border:1px solid rgba(255,107,53,.2);border-radius:6px;color:var(--text-primary);cursor:pointer;opacity:${currentPage >= totalPages - 1 ? .4 : 1}">▶</button>
-            </div>
-        </div>`;
+        html += '<button onclick="loadUsers(' + (cp+1) + ')" ' + (cp>=tp-1?'disabled':'') + ' style="padding:.4rem .7rem;background:rgba(58,58,58,.5);border:1px solid rgba(255,107,53,.2);border-radius:6px;color:var(--text-primary);cursor:pointer;opacity:' + (cp>=tp-1?.4:1) + '">&#9654;</button>' +
+            '</div></div>';
         container.innerHTML = html;
     }
 
-    // ─── Tahrirlash ──────────────────────────────────────
+    // ─── Tahrirlash / O'chirish ──────────────────────────
     async function editUser(id) {
         try {
-            const res = await fetch(`${BASE_API}/user/${id}`, {headers: getAuthHeaders()});
+            var res = await fetch(BASE_API + '/user/' + id, { headers: getAuthHeaders() });
             if (!res.ok) throw new Error('Status: ' + res.status);
-            const result = await res.json();
+            var result = await res.json();
             openUserModal(result.data || result);
-        } catch (e) {
-            showToast("❌ Yuklab bo'lmadi", 'error');
+        } catch(e) {
+            showToast('Yuklab bolmadi', 'error');
         }
     }
 
-    // ─── O'chirish ───────────────────────────────────────
     async function deleteUser(id, name) {
-        if (!confirm(`"${name}" foydalanuvchisini o'chirmoqchimisiz?`)) return;
+        if (!confirm('"' + name + '" ni ochirmoqchimisiz?')) return;
         try {
-            const res = await fetch(`${BASE_API}/user/${id}`, {method: 'DELETE', headers: getAuthHeaders()});
+            var res = await fetch(BASE_API + '/user/' + id, { method: 'DELETE', headers: getAuthHeaders() });
             if (!res.ok) throw new Error('Status: ' + res.status);
-            showToast("🗑️ Foydalanuvchi o'chirildi");
+            showToast("Foydalanuvchi ochirildi");
             loadUsers(userCurrentPage);
-        } catch (e) {
-            showToast("❌ O'chirishda xato", 'error');
+        } catch(e) {
+            showToast("Ochirishda xato", 'error');
+        }
+    }
+
+    async function deleteUserAndBack(id, name) {
+        if (!confirm('"' + name + '" ni ochirmoqchimisiz?')) return;
+        try {
+            var res = await fetch(BASE_API + '/user/' + id, { method: 'DELETE', headers: getAuthHeaders() });
+            if (!res.ok) throw new Error('Status: ' + res.status);
+            showToast("Foydalanuvchi ochirildi");
+            showUserList();
+            loadUsers(userCurrentPage);
+        } catch(e) {
+            showToast("Ochirishda xato", 'error');
         }
     }
 </script>
