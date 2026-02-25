@@ -2234,6 +2234,355 @@
     </div>
 </div>
 <script>
+    const TRANSLATIONS = {
+        uz: {
+            // Landing
+            landing_title: "Ombor Boshqaruv",
+            landing_subtitle: "Zamonaviy ombor tizimini boshqaring",
+            landing_btn: "Tizimga Kirish",
+            feat_dashboard: "Dashboard", feat_dashboard_desc: "Real-time statistika va hisobotlar",
+            feat_products: "Mahsulotlar", feat_products_desc: "Mahsulotlarni taqsimlash va qabul qilish",
+            feat_warehouses: "Omborlar", feat_warehouses_desc: "Ko'p omborlarni boshqarish",
+            feat_reports: "Hisobotlar", feat_reports_desc: "Batafsil tahlil va hisobotlar",
+            // Login
+            login_title: "Tizimga Kirish",
+            login_subtitle: "Ombor boshqaruv tizimiga xush kelibsiz",
+            login_username: "Foydalanuvchi nomi",
+            login_password: "Parol",
+            login_btn: "Kirish",
+            login_loading: "Kirilmoqda...",
+            // Sidebar nav
+            nav_dashboard: "Dashboard",
+            nav_distribute: "Mahsulotlarni taqsimlash",
+            nav_receive: "Mahsulot qabul qilish",
+            nav_warehouse: "Ombordagi Mahsulotlar",
+            nav_reports: "Hisobotlar",
+            nav_settings: "Sozlamalar",
+            // Submenu
+            sub_profile: "Profil",
+            sub_warehouses: "Omborlar",
+            sub_products: "Mahsulotlar",
+            sub_category: "Kategoriyalar",
+            sub_regions: "Rayonlar",
+            sub_telegram: "Telegram va Foydalanuvchilar",
+            sub_suppliers: "Yetkazib beruvchilar",
+            sub_packages: "Bog'chalar",
+            sub_logout: "Chiqish",
+            // Stats
+            stat_warehouses: "Omborlar soni",
+            stat_suppliers: "Yetkazib beruvchilar",
+            stat_regions: "Rayonlar",
+            stat_kg: "Bog'chalar",
+            // Common
+            add_new: "+ Yangi",
+            save: "Saqlash",
+            cancel: "Bekor qilish",
+            edit: "Tahrir",
+            delete: "O'chir",
+            loading: "Yuklanmoqda...",
+            logout_confirm: "Tizimdan chiqmoqchimisiz?",
+            session_expired: "Sessiya tugadi. Qaytadan kiring.",
+            // Topbar
+            theme_dark: "Qorong'i",
+            theme_light: "Yorug'",
+        },
+        ru: {
+            landing_title: "Управление Складом",
+            landing_subtitle: "Управляйте современной складской системой",
+            landing_btn: "Войти в систему",
+            feat_dashboard: "Панель", feat_dashboard_desc: "Статистика и отчёты в реальном времени",
+            feat_products: "Продукты", feat_products_desc: "Распределение и получение продуктов",
+            feat_warehouses: "Склады", feat_warehouses_desc: "Управление несколькими складами",
+            feat_reports: "Отчёты", feat_reports_desc: "Подробный анализ и отчёты",
+            login_title: "Войти",
+            login_subtitle: "Добро пожаловать в систему управления складом",
+            login_username: "Имя пользователя",
+            login_password: "Пароль",
+            login_btn: "Войти",
+            login_loading: "Вход...",
+            nav_dashboard: "Панель",
+            nav_distribute: "Распределение продуктов",
+            nav_receive: "Приём продуктов",
+            nav_warehouse: "Продукты на складе",
+            nav_reports: "Отчёты",
+            nav_settings: "Настройки",
+            sub_profile: "Профиль",
+            sub_warehouses: "Склады",
+            sub_products: "Продукты",
+            sub_category: "Категории",
+            sub_regions: "Районы",
+            sub_telegram: "Telegram и Пользователи",
+            sub_suppliers: "Поставщики",
+            sub_packages: "Детские сады",
+            sub_logout: "Выйти",
+            stat_warehouses: "Кол-во складов",
+            stat_suppliers: "Поставщики",
+            stat_regions: "Районы",
+            stat_kg: "Детские сады",
+            add_new: "+ Новый",
+            save: "Сохранить",
+            cancel: "Отмена",
+            edit: "Изменить",
+            delete: "Удалить",
+            loading: "Загрузка...",
+            logout_confirm: "Вы хотите выйти из системы?",
+            session_expired: "Сессия истекла. Войдите снова.",
+            theme_dark: "Тёмный",
+            theme_light: "Светлый",
+        },
+        en: {
+            landing_title: "Warehouse Management",
+            landing_subtitle: "Manage your modern warehouse system",
+            landing_btn: "Sign In",
+            feat_dashboard: "Dashboard", feat_dashboard_desc: "Real-time statistics and reports",
+            feat_products: "Products", feat_products_desc: "Distribute and receive products",
+            feat_warehouses: "Warehouses", feat_warehouses_desc: "Manage multiple warehouses",
+            feat_reports: "Reports", feat_reports_desc: "Detailed analysis and reports",
+            login_title: "Sign In",
+            login_subtitle: "Welcome to the warehouse management system",
+            login_username: "Username",
+            login_password: "Password",
+            login_btn: "Sign In",
+            login_loading: "Signing in...",
+            nav_dashboard: "Dashboard",
+            nav_distribute: "Distribute Products",
+            nav_receive: "Receive Products",
+            nav_warehouse: "Warehouse Products",
+            nav_reports: "Reports",
+            nav_settings: "Settings",
+            sub_profile: "Profile",
+            sub_warehouses: "Warehouses",
+            sub_products: "Products",
+            sub_category: "Categories",
+            sub_regions: "Regions",
+            sub_telegram: "Telegram & Users",
+            sub_suppliers: "Suppliers",
+            sub_packages: "Kindergartens",
+            sub_logout: "Sign Out",
+            stat_warehouses: "Warehouses",
+            stat_suppliers: "Suppliers",
+            stat_regions: "Regions",
+            stat_kg: "Kindergartens",
+            add_new: "+ New",
+            save: "Save",
+            cancel: "Cancel",
+            edit: "Edit",
+            delete: "Delete",
+            loading: "Loading...",
+            logout_confirm: "Do you want to sign out?",
+            session_expired: "Session expired. Please sign in again.",
+            theme_dark: "Dark",
+            theme_light: "Light",
+        }
+    };
+
+    // ─── MAVJUD TIL VA TEMA ───────────────────────────────
+    let currentLang = localStorage.getItem('lang') || 'uz';
+    let currentTheme = localStorage.getItem('theme') || 'dark';
+
+    function t(key) {
+        return (TRANSLATIONS[currentLang] && TRANSLATIONS[currentLang][key]) || TRANSLATIONS['uz'][key] || key;
+    }
+
+    // ─── TEMA QOLLASH ─────────────────────────────────────
+    function applyTheme(theme) {
+        currentTheme = theme;
+        localStorage.setItem('theme', theme);
+        const root = document.documentElement;
+        if (theme === 'light') {
+            root.style.setProperty('--bg-primary', '#f8f9fa');
+            root.style.setProperty('--bg-secondary', '#ffffff');
+            root.style.setProperty('--bg-tertiary', '#e9ecef');
+            root.style.setProperty('--text-primary', '#1a1a2e');
+            root.style.setProperty('--text-secondary', '#555e6e');
+            document.body.style.background = 'linear-gradient(135deg, #f0f2f5 0%, #e8eaf0 100%)';
+
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar) {
+                sidebar.style.background = 'rgba(255,255,255,.97)';
+                sidebar.style.borderRight = '1px solid rgba(255,107,53,.15)';
+            }
+
+            // Nav itemlar
+            document.querySelectorAll('.nav-item').forEach(el => {
+                el.style.color = '#555e6e';
+            });
+            document.querySelectorAll('.nav-item.active').forEach(el => {
+                el.style.color = 'var(--accent-primary)';
+            });
+
+            // Submenu
+            const submenu = document.getElementById('userSubmenu');
+            if (submenu) submenu.style.background = 'rgba(255,255,255,.98)';
+            document.querySelectorAll('.user-submenu-item').forEach(el => {
+                el.style.color = '#1a1a2e';
+            });
+
+            // User info
+            const userTrigger = document.querySelector('.user-info-trigger');
+            if (userTrigger) userTrigger.style.borderTop = '1px solid rgba(0,0,0,.08)';
+
+            // Main content
+            document.querySelectorAll('.stat-card').forEach(el => {
+                el.style.background = 'rgba(255,255,255,.9)';
+                el.style.border = '1px solid rgba(255,107,53,.15)';
+            });
+        } else {
+            root.style.setProperty('--bg-primary', '#1a1a1a');
+            root.style.setProperty('--bg-secondary', '#2d2d2d');
+            root.style.setProperty('--bg-tertiary', '#3a3a3a');
+            root.style.setProperty('--text-primary', '#f5f5f5');
+            root.style.setProperty('--text-secondary', '#b0b0b0');
+            document.body.style.background = 'linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%)';
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar) sidebar.style.background = 'rgba(26,26,26,.95)';
+            document.querySelectorAll('.nav-item').forEach(el => {
+                el.style.color = '';
+            });
+            document.querySelectorAll('.user-submenu-item').forEach(el => {
+                el.style.color = '';
+            });
+            const submenu = document.getElementById('userSubmenu');
+            if (submenu) submenu.style.background = '';
+            document.querySelectorAll('.stat-card').forEach(el => {
+                el.style.background = '';
+                el.style.border = '';
+            });
+        }
+        // Toggle button holati
+        const themeBtn = document.getElementById('themeToggleBtn');
+        if (themeBtn) {
+            themeBtn.textContent = theme === 'dark' ? '☀️' : '🌙';
+            themeBtn.title = theme === 'dark' ? t('theme_light') : t('theme_dark');
+        }
+    }
+
+    // ─── TIL QOLLASH ──────────────────────────────────────
+    function applyLang(lang) {
+        currentLang = lang;
+        localStorage.setItem('lang', lang);
+
+        // Landing
+        const lt = document.querySelector('.landing-page h1');
+        if (lt) lt.textContent = t('landing_title');
+        const ls = document.querySelector('.landing-page .subtitle');
+        if (ls) ls.textContent = t('landing_subtitle');
+        const lb = document.querySelector('.cta-button');
+        if (lb) lb.textContent = t('landing_btn');
+
+        // Login
+        const loginTitle = document.querySelector('.login-box h2');
+        if (loginTitle) loginTitle.textContent = t('login_title');
+        const loginSub = document.querySelector('.login-box p');
+        if (loginSub) loginSub.textContent = t('login_subtitle');
+        const loginBtn = document.getElementById('loginBtn');
+        if (loginBtn && !loginBtn.disabled) loginBtn.textContent = t('login_btn');
+
+        // Nav labels
+        const navTexts = document.querySelectorAll('.nav-text');
+        const navKeys = ['nav_dashboard', 'nav_distribute', 'nav_receive', 'nav_warehouse', 'nav_reports'];
+        navTexts.forEach((el, i) => {
+            if (navKeys[i]) el.textContent = t(navKeys[i]);
+        });
+
+        // User settings label
+        const userNameEl = document.querySelector('.user-name');
+        if (userNameEl) userNameEl.textContent = t('nav_settings');
+
+        // Submenu items
+        const subItems = document.querySelectorAll('.user-submenu-item span:last-child');
+        const subKeys = ['sub_profile', 'sub_warehouses', 'sub_products', 'sub_category', 'sub_regions', 'sub_telegram', 'sub_suppliers', 'sub_packages', 'sub_logout'];
+        subItems.forEach((el, i) => {
+            if (subKeys[i]) el.textContent = t(subKeys[i]);
+        });
+
+        // Lang buttons active holati
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.style.background = btn.dataset.lang === lang
+                ? 'var(--accent-primary)'
+                : 'rgba(255,255,255,.08)';
+            btn.style.color = btn.dataset.lang === lang ? '#fff' : 'var(--text-secondary)';
+        });
+    }
+
+    // ─── TOPBAR (tema + til) HTML ─────────────────────────
+    function renderTopbar() {
+        const existing = document.getElementById('globalTopbar');
+        if (existing) return;
+
+        const bar = document.createElement('div');
+        bar.id = 'globalTopbar';
+        bar.innerHTML = `
+        <style>
+            #globalTopbar {
+                position: fixed;
+                top: 12px;
+                right: 16px;
+                z-index: 9000;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            .topbar-pill {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                background: var(--bg-secondary);
+                border: 1px solid rgba(255,107,53,.2);
+                border-radius: 50px;
+                padding: 5px 10px;
+                backdrop-filter: blur(10px);
+                box-shadow: 0 4px 16px rgba(0,0,0,.2);
+            }
+            .lang-btn {
+                padding: 4px 10px;
+                border-radius: 50px;
+                border: none;
+                font-size: .78rem;
+                font-weight: 700;
+                cursor: pointer;
+                transition: all .2s;
+                font-family: inherit;
+                letter-spacing: .03em;
+            }
+            .lang-btn:hover { opacity: .85; }
+            #themeToggleBtn {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                border: none;
+                background: rgba(255,107,53,.15);
+                cursor: pointer;
+                font-size: 1rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all .2s;
+                margin-left: 4px;
+            }
+            #themeToggleBtn:hover { background: rgba(255,107,53,.3); transform: rotate(20deg); }
+        </style>
+
+        <div class="topbar-pill">
+            <button class="lang-btn" data-lang="uz" onclick="applyLang('uz')">UZ</button>
+            <button class="lang-btn" data-lang="ru" onclick="applyLang('ru')">RU</button>
+            <button class="lang-btn" data-lang="en" onclick="applyLang('en')">EN</button>
+        </div>
+        <button id="themeToggleBtn" onclick="toggleTheme()" title="Temani o'zgartirish">🌙</button>
+    `;
+        document.body.appendChild(bar);
+    }
+
+    function toggleTheme() {
+        applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
+    }
+
+    // ─── INIT ─────────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', function () {
+        renderTopbar();
+        applyTheme(currentTheme);
+        applyLang(currentLang);
+    });
     // ===== CONFIG =====
     // const BASE_API = 'http://localhost:8085/api/v1';
     const BASE_API = 'https://omborxona-kx4v.onrender.com/api/v1';
@@ -2463,7 +2812,8 @@
             </div>
         `);
             loadCategories();
-        } else if (page === 'regions') {
+        }
+        else if (page === 'regions') {
             mainContent.insertAdjacentHTML('beforeend', `
             <div style="margin-bottom:1.5rem"><button onclick="showAddRegionModal()" class="cta-button" style="padding:.8rem 2rem;font-size:.9rem">+ Yangi Rayon</button></div>
             <div style="background:rgba(45,45,45,.5);border:1px solid rgba(255,107,53,.2);border-radius:12px;overflow:hidden">
@@ -2490,7 +2840,8 @@
             </div>
         `);
             loadRegions();
-        } else if (page === 'suppliers') {
+        }
+        else if (page === 'suppliers') {
             mainContent.insertAdjacentHTML('beforeend', `
             <div style="margin-bottom:1.5rem"><button onclick="showAddSupplierModal()" class="cta-button" style="padding:.8rem 2rem;font-size:.9rem">+ Yangi Yetkazib Beruvchi</button></div>
             <div style="background:rgba(45,45,45,.5);border:1px solid rgba(255,107,53,.2);border-radius:12px;overflow:hidden">
@@ -2510,7 +2861,8 @@
             </div>
         `);
             loadSuppliers(0);
-        } else if (page === 'warehouses') {
+        }
+        else if (page === 'warehouses') {
             mainContent.insertAdjacentHTML('beforeend', `
             <div style="margin-bottom:1.5rem;display:flex;gap:1rem;align-items:center">
                 <button onclick="openWarehouseModal()" class="cta-button" style="padding:.8rem 2rem;font-size:.9rem">+ Yangi Ombor</button>
@@ -2534,7 +2886,8 @@
             </div>
         `);
             loadWarehouses(0);
-        } else if (page === 'packages') {
+        }
+        else if (page === 'packages') {
             mainContent.insertAdjacentHTML('beforeend', `
             <div class="kg-topbar">
                 <div class="kg-left">
@@ -2556,17 +2909,23 @@
         `);
             kgLoadRegionsFilter();
             kgLoad(0);
-        } else if (page === 'products') {
-            mainContent.insertAdjacentHTML('beforeend', `
-            <div style="display:flex;gap:1rem;flex-wrap:wrap">
-<button class="cta-button" onclick="openProductModal()" style="padding:.8rem 2rem;font-size:.9rem">+ Yangi Mahsulot</button>
-       <button class="cta-button" style="padding:.8rem 2rem;font-size:.9rem" onclick="openProductNormModal()">📋 Norma qo'shish</button>
-            </div>
-        `);
-            loadProducts(0);
-        } else if (page === 'telegram') {
+        }
+
+//         else if (page === 'products') {
+//             mainContent.insertAdjacentHTML('beforeend', `
+//             <div style="display:flex;gap:1rem;flex-wrap:wrap">
+// <button class="cta-button" onclick="openProductModal()" style="padding:.8rem 2rem;font-size:.9rem">+ Yangi Mahsulot</button>
+//        <button class="cta-button" style="padding:.8rem 2rem;font-size:.9rem" onclick="openProductNormModal()">📋 Norma qo'shish</button>
+//             </div>
+//         `);
+//             loadProducts(0);
+//         }
+        else if (page === 'telegram') {
             mainContent.insertAdjacentHTML('beforeend', telegramPageHTML());
             loadUsers(0);
+        } else if (page === 'products') {
+            mainContent.insertAdjacentHTML('beforeend', productsPageHTML());
+            loadProducts(0);
         } else if (page === 'logout') {
             if (confirm('Tizimdan chiqmoqchimisiz?')) {
                 localStorage.removeItem('authToken');
@@ -3617,17 +3976,22 @@
         tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:3rem;color:var(--text-secondary)">⏳ Yuklanmoqda...</td></tr>`;
         try {
             const res = await fetch(`${BASE_API}/product/get-all?page=${page}&size=${PRODUCT_PAGE_SIZE}`, {headers: getAuthHeaders()});
+
             if (res.status === 401) {
-                handleUnauth();
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:3rem;color:#f59e0b">⚠️ Yuklab bo'lmadi. Qaytadan urinib ko'ring.</td></tr>`;
                 return;
             }
+
             if (!res.ok) throw new Error('Status: ' + res.status);
+
             const result = await res.json();
             const list = result.data || [];
             const meta = result.meta;
             allProductsCache = list;
             if (!list.length) {
-                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:3rem;color:var(--text-secondary)">📭 Mahsulotlar yo'q</td></tr>`;
+                tbody.innerHTML = `<tr>
+<td colspan="7" style="text-align:center;padding:3rem;color:var(--text-secondary)">📭 Mahsulotlar yo'q</td>
+</tr>`;
                 return;
             }
             renderProductRows(list, page);
@@ -4034,10 +4398,16 @@
     let userSearchTimer = null;
 
     const ROLE_CONFIG = {
-        MANAGER:     { label: 'Manager',   color: '#818cf8', bg: 'rgba(99,102,241,.12)',  icon: 'M', filter: 'manager'     },
-        WAREHOUSEMAN:{ label: 'Omborchi',  color: '#34d399', bg: 'rgba(52,211,153,.12)',  icon: 'O', filter: 'warehouseman' },
-        DRIVER:      { label: 'Haydovchi', color: '#fbbf24', bg: 'rgba(251,191,36,.12)',  icon: 'H', filter: 'driver'       },
-        MUDIRA:      { label: 'Mudira',    color: '#f472b6', bg: 'rgba(244,114,182,.12)', icon: 'Mu', filter: 'mudira'      },
+        MANAGER: {label: 'Manager', color: '#818cf8', bg: 'rgba(99,102,241,.12)', icon: 'M', filter: 'manager'},
+        WAREHOUSEMAN: {
+            label: 'Omborchi',
+            color: '#34d399',
+            bg: 'rgba(52,211,153,.12)',
+            icon: 'O',
+            filter: 'warehouseman'
+        },
+        DRIVER: {label: 'Haydovchi', color: '#fbbf24', bg: 'rgba(251,191,36,.12)', icon: 'H', filter: 'driver'},
+        MUDIRA: {label: 'Mudira', color: '#f472b6', bg: 'rgba(244,114,182,.12)', icon: 'Mu', filter: 'mudira'},
     };
 
     // ─── Asosiy HTML ──────────────────────────────────────
@@ -4113,9 +4483,11 @@
         document.getElementById('userListView').style.display = 'none';
         document.getElementById('userDetailView').style.display = 'block';
 
-        var role = ROLE_CONFIG[u.role] || { label: u.role, color: '#94a3b8', bg: 'rgba(148,163,184,.12)' };
+        var role = ROLE_CONFIG[u.role] || {label: u.role, color: '#94a3b8', bg: 'rgba(148,163,184,.12)'};
         var hasTg = u.chatId && u.chatId !== 0;
-        var initials = (u.fullName || '?').split(' ').map(function(w){ return w[0]; }).join('').slice(0,2).toUpperCase();
+        var initials = (u.fullName || '?').split(' ').map(function (w) {
+            return w[0];
+        }).join('').slice(0, 2).toUpperCase();
         var isMudira = u.role === 'MUDIRA';
 
         document.querySelector('.content-header h1').textContent = u.fullName || 'Foydalanuvchi';
@@ -4149,7 +4521,7 @@
             // ── AMALLAR ───────────────────────────────────────────────
             '<div style="display:flex;gap:.75rem;margin-bottom:1.5rem">' +
             '<button onclick="editUser(' + u.id + ')" class="cta-button" style="padding:.7rem 1.5rem;font-size:.9rem">Tahrirlash</button>' +
-            '<button onclick="deleteUserAndBack(' + u.id + ',\'' + (u.fullName||'').replace(/'/g,"\\'") + '\')" style="padding:.7rem 1.5rem;background:rgba(239,68,68,.15);border:1.5px solid rgba(239,68,68,.3);border-radius:50px;color:#ef4444;font-family:inherit;font-size:.9rem;font-weight:600;cursor:pointer">Ochirish</button>' +
+            '<button onclick="deleteUserAndBack(' + u.id + ',\'' + (u.fullName || '').replace(/'/g, "\\'") + '\')" style="padding:.7rem 1.5rem;background:rgba(239,68,68,.15);border:1.5px solid rgba(239,68,68,.3);border-radius:50px;color:#ef4444;font-family:inherit;font-size:.9rem;font-weight:600;cursor:pointer">Ochirish</button>' +
             '</div>' +
 
             // ── MUDIRA BOGCHA ─────────────────────────────────────────
@@ -4173,7 +4545,7 @@
         const section = document.getElementById('mudiraKgSection');
         if (!section) return;
         try {
-            const res = await fetch(BASE_API + '/kindergarten/' + userId, { headers: getAuthHeaders() });
+            const res = await fetch(BASE_API + '/kindergarten/' + userId, {headers: getAuthHeaders()});
             if (!res.ok) throw new Error(res.status);
             const result = await res.json();
             const kg = result.data || result;
@@ -4197,7 +4569,7 @@
                 (kg.latitude ? uInfoCard('Koordinata', kg.latitude + ', ' + kg.longitude) : '') +
                 '</div>' +
                 '</div>';
-        } catch(e) {
+        } catch (e) {
             section.innerHTML = '<div style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:12px;padding:1rem;color:#f87171;font-size:.85rem">Bogcha topilmadi</div>';
         }
     }
@@ -4209,7 +4581,9 @@
         userSearchQuery = '';
         var s = document.getElementById('userSearch');
         if (s) s.value = '';
-        document.querySelectorAll('.utab').forEach(function(b){ b.classList.remove('utab-on'); });
+        document.querySelectorAll('.utab').forEach(function (b) {
+            b.classList.remove('utab-on');
+        });
         var btn = document.getElementById('tab-' + role);
         if (btn) btn.classList.add('utab-on');
         loadUsers(0);
@@ -4227,9 +4601,14 @@
             var filter = (ROLE_CONFIG[userActiveTab] && ROLE_CONFIG[userActiveTab].filter) || userActiveTab.toLowerCase();
             var url = BASE_API + '/user/get-all?filter=' + filter + '&page=' + page + '&size=' + USER_PAGE_SIZE;
             if (userSearchQuery) url += '&search=' + encodeURIComponent(userSearchQuery);
-            var res = await fetch(url, { method: 'GET', headers: getAuthHeaders() });
-            if (res.status === 401) { handleUnauth(); return; }
+            var res = await fetch(url, {method: 'GET', headers: getAuthHeaders()});
+
+            if (res.status === 401) {
+                handleUnauth();
+                return;
+            }
             if (!res.ok) throw new Error('Status: ' + res.status);
+
             var result = await res.json();
             var list = result.data || [];
             var meta = result.meta;
@@ -4241,7 +4620,7 @@
             }
             renderUserRows(list, page);
             renderUserPagination(meta);
-        } catch(e) {
+        } catch (e) {
             tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:3rem;color:#ef4444">Xatolik: ' + e.message + '</td></tr>';
         }
     }
@@ -4250,10 +4629,12 @@
     function renderUserRows(list, page) {
         var tbody = document.getElementById('userList');
         if (!tbody) return;
-        tbody.innerHTML = list.map(function(u, i) {
-            var role = ROLE_CONFIG[u.role] || { label: u.role, color: '#94a3b8', icon: '?' };
+        tbody.innerHTML = list.map(function (u, i) {
+            var role = ROLE_CONFIG[u.role] || {label: u.role, color: '#94a3b8', icon: '?'};
             var hasTg = u.chatId && u.chatId !== 0;
-            var initials = (u.fullName || '?').split(' ').map(function(w){ return w[0]; }).join('').slice(0,2).toUpperCase();
+            var initials = (u.fullName || '?').split(' ').map(function (w) {
+                return w[0];
+            }).join('').slice(0, 2).toUpperCase();
             var dataStr = encodeURIComponent(JSON.stringify(u));
             return '<tr style="border-bottom:1px solid rgba(255,255,255,.05);cursor:pointer;transition:background .15s" ' +
                 'onmouseover="this.style.background=\'rgba(255,107,53,.04)\'" onmouseout="this.style.background=\'transparent\'">' +
@@ -4272,7 +4653,7 @@
                 '<td style="padding:.85rem 1rem;text-align:center"><div style="display:flex;align-items:center;justify-content:center;gap:.4rem">' +
                 '<button onclick="event.stopPropagation();viewUserPage(\'' + dataStr + '\')" class="btn-edit">Korish</button>' +
                 '<button onclick="event.stopPropagation();editUser(' + u.id + ')" class="btn-edit">Tahrir</button>' +
-                '<button onclick="event.stopPropagation();deleteUser(' + u.id + ',\'' + (u.fullName||'').replace(/'/g,"\\'") + '\')" class="btn-delete">Ochir</button>' +
+                '<button onclick="event.stopPropagation();deleteUser(' + u.id + ',\'' + (u.fullName || '').replace(/'/g, "\\'") + '\')" class="btn-delete">Ochir</button>' +
                 '</div></td>' +
                 '</tr>';
         }).join('');
@@ -4287,7 +4668,7 @@
     // ─── Qidiruv ─────────────────────────────────────────
     function searchUsers(query) {
         clearTimeout(userSearchTimer);
-        userSearchTimer = setTimeout(function() {
+        userSearchTimer = setTimeout(function () {
             userSearchQuery = query.trim();
             loadUsers(0);
         }, 400);
@@ -4303,12 +4684,12 @@
         var html = '<div style="display:flex;align-items:center;justify-content:space-between;padding:1rem 1.2rem;border-top:1px solid rgba(255,107,53,.15)">' +
             '<div style="color:var(--text-secondary);font-size:.85rem">Jami: <strong style="color:var(--accent-primary)">' + te + '</strong> ta</div>' +
             '<div style="display:flex;gap:.4rem">' +
-            '<button onclick="loadUsers(' + (cp-1) + ')" ' + (cp===0?'disabled':'') + ' style="padding:.4rem .7rem;background:rgba(58,58,58,.5);border:1px solid rgba(255,107,53,.2);border-radius:6px;color:var(--text-primary);cursor:pointer;opacity:' + (cp===0?.4:1) + '">&#9664;</button>';
-        var s = Math.max(0, cp-2), e2 = Math.min(tp-1, s+4);
+            '<button onclick="loadUsers(' + (cp - 1) + ')" ' + (cp === 0 ? 'disabled' : '') + ' style="padding:.4rem .7rem;background:rgba(58,58,58,.5);border:1px solid rgba(255,107,53,.2);border-radius:6px;color:var(--text-primary);cursor:pointer;opacity:' + (cp === 0 ? .4 : 1) + '">&#9664;</button>';
+        var s = Math.max(0, cp - 2), e2 = Math.min(tp - 1, s + 4);
         for (var i = s; i <= e2; i++) {
-            html += '<button onclick="loadUsers(' + i + ')" style="padding:.4rem .7rem;background:' + (i===cp?'var(--accent-primary)':'rgba(58,58,58,.5)') + ';border:1px solid rgba(255,107,53,.2);border-radius:6px;color:' + (i===cp?'#000':'var(--text-primary)') + ';font-weight:' + (i===cp?700:400) + ';cursor:pointer">' + (i+1) + '</button>';
+            html += '<button onclick="loadUsers(' + i + ')" style="padding:.4rem .7rem;background:' + (i === cp ? 'var(--accent-primary)' : 'rgba(58,58,58,.5)') + ';border:1px solid rgba(255,107,53,.2);border-radius:6px;color:' + (i === cp ? '#000' : 'var(--text-primary)') + ';font-weight:' + (i === cp ? 700 : 400) + ';cursor:pointer">' + (i + 1) + '</button>';
         }
-        html += '<button onclick="loadUsers(' + (cp+1) + ')" ' + (cp>=tp-1?'disabled':'') + ' style="padding:.4rem .7rem;background:rgba(58,58,58,.5);border:1px solid rgba(255,107,53,.2);border-radius:6px;color:var(--text-primary);cursor:pointer;opacity:' + (cp>=tp-1?.4:1) + '">&#9654;</button>' +
+        html += '<button onclick="loadUsers(' + (cp + 1) + ')" ' + (cp >= tp - 1 ? 'disabled' : '') + ' style="padding:.4rem .7rem;background:rgba(58,58,58,.5);border:1px solid rgba(255,107,53,.2);border-radius:6px;color:var(--text-primary);cursor:pointer;opacity:' + (cp >= tp - 1 ? .4 : 1) + '">&#9654;</button>' +
             '</div></div>';
         container.innerHTML = html;
     }
@@ -4316,11 +4697,11 @@
     // ─── Tahrirlash / O'chirish ──────────────────────────
     async function editUser(id) {
         try {
-            var res = await fetch(BASE_API + '/user/' + id, { headers: getAuthHeaders() });
+            var res = await fetch(BASE_API + '/user/' + id, {headers: getAuthHeaders()});
             if (!res.ok) throw new Error('Status: ' + res.status);
             var result = await res.json();
             openUserModal(result.data || result);
-        } catch(e) {
+        } catch (e) {
             showToast('Yuklab bolmadi', 'error');
         }
     }
@@ -4328,11 +4709,11 @@
     async function deleteUser(id, name) {
         if (!confirm('"' + name + '" ni ochirmoqchimisiz?')) return;
         try {
-            var res = await fetch(BASE_API + '/user/' + id, { method: 'DELETE', headers: getAuthHeaders() });
+            var res = await fetch(BASE_API + '/user/' + id, {method: 'DELETE', headers: getAuthHeaders()});
             if (!res.ok) throw new Error('Status: ' + res.status);
             showToast("Foydalanuvchi ochirildi");
             loadUsers(userCurrentPage);
-        } catch(e) {
+        } catch (e) {
             showToast("Ochirishda xato", 'error');
         }
     }
@@ -4340,12 +4721,12 @@
     async function deleteUserAndBack(id, name) {
         if (!confirm('"' + name + '" ni ochirmoqchimisiz?')) return;
         try {
-            var res = await fetch(BASE_API + '/user/' + id, { method: 'DELETE', headers: getAuthHeaders() });
+            var res = await fetch(BASE_API + '/user/' + id, {method: 'DELETE', headers: getAuthHeaders()});
             if (!res.ok) throw new Error('Status: ' + res.status);
             showToast("Foydalanuvchi ochirildi");
             showUserList();
             loadUsers(userCurrentPage);
-        } catch(e) {
+        } catch (e) {
             showToast("Ochirishda xato", 'error');
         }
     }

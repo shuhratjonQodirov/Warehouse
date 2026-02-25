@@ -5,9 +5,9 @@ spring:
 #    username: postgres
 #    url: jdbc:postgresql://localhost:5432/warehouse
 #    password: 1234
-      username: transport_menegment_user
-      password: oP3ulOMLOS2S2vFI74m6lNCjFB6NXQO7
-      url: jdbc:postgresql://dpg-d5r2pj9r0fns73dt1r2g-a.oregon-postgres.render.com:5432/transport_menegment
+      username: neondb_owner
+      password: npg_8ZmLW5yApKEt
+      url: jdbc:postgresql://ep-fancy-dust-ai0hos94-pooler.c-4.us-east-1.aws.neon.tech:5432/neondb?sslmode=require
       driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -18,7 +18,7 @@ spring:
         format_sql: true
   sql:
     init:
-      mode: never
+      mode: always
 
   mail:
     host: smtp.gmail.com
