@@ -2711,8 +2711,11 @@
         event.target.closest('.nav-item').classList.add('active');
         const mainContent = document.querySelector('.main-content');
         document.querySelector('.content-header h1').textContent = {
-            dashboard: 'Dashboard', distribute: 'Taqsimlash', receive: 'Qabul qilish',
-            warehouse: 'Ombordagi Mahsulotlar', reports: 'Hisobotlar'
+            dashboard: 'Dashboard',
+            distribute: 'Taqsimlash',
+            receive: 'Qabul qilish',
+            warehouse: 'Ombordagi Mahsulotlar',
+            reports: 'Hisobotlar'
         }[page] || page;
         document.querySelector('.content-header p').textContent = 'Tizimingizning umumiy ko\'rinishi';
         let sibling = mainContent.querySelector('.content-header').nextElementSibling;
@@ -2731,7 +2734,18 @@
             </div>
         `);
             loadDashboardStats();
-        } else {
+        }else if (page === 'receive') {
+            injectProfileCSS();
+            mainContent.insertAdjacentHTML('beforeend', receivePageHTML());
+            initReceivePage();
+
+        }
+        else if (page === 'warehouse') {
+            injectProfileCSS();
+            mainContent.insertAdjacentHTML('beforeend', warehouseStockPageHTML());
+            initStockPage();
+        }
+        else {
             mainContent.insertAdjacentHTML('beforeend', `
             <div class="stat-card" style="padding:3rem;text-align:center;max-width:600px">
                 <div style="font-size:3rem;margin-bottom:1rem">🚧</div>
@@ -2812,7 +2826,8 @@
             </div>
         `);
             loadCategories();
-        } else if (page === 'regions') {
+        }
+        else if (page === 'regions') {
             mainContent.insertAdjacentHTML('beforeend', `
             <div style="margin-bottom:1.5rem"><button onclick="showAddRegionModal()" class="cta-button" style="padding:.8rem 2rem;font-size:.9rem">+ Yangi Rayon</button></div>
             <div style="background:rgba(45,45,45,.5);border:1px solid rgba(255,107,53,.2);border-radius:12px;overflow:hidden">
@@ -2839,7 +2854,8 @@
             </div>
         `);
             loadRegions();
-        } else if (page === 'suppliers') {
+        }
+        else if (page === 'suppliers') {
             mainContent.insertAdjacentHTML('beforeend', `
             <div style="margin-bottom:1.5rem"><button onclick="showAddSupplierModal()" class="cta-button" style="padding:.8rem 2rem;font-size:.9rem">+ Yangi Yetkazib Beruvchi</button></div>
             <div style="background:rgba(45,45,45,.5);border:1px solid rgba(255,107,53,.2);border-radius:12px;overflow:hidden">
@@ -2859,7 +2875,8 @@
             </div>
         `);
             loadSuppliers(0);
-        } else if (page === 'warehouses') {
+        }
+        else if (page === 'warehouses') {
             mainContent.insertAdjacentHTML('beforeend', `
             <div style="margin-bottom:1.5rem;display:flex;gap:1rem;align-items:center">
                 <button onclick="openWarehouseModal()" class="cta-button" style="padding:.8rem 2rem;font-size:.9rem">+ Yangi Ombor</button>
@@ -2883,7 +2900,8 @@
             </div>
         `);
             loadWarehouses(0);
-        } else if (page === 'packages') {
+        }
+        else if (page === 'packages') {
             mainContent.insertAdjacentHTML('beforeend', `
             <div class="kg-topbar">
                 <div class="kg-left">
@@ -2905,23 +2923,28 @@
         `);
             kgLoadRegionsFilter();
             kgLoad(0);
-        } else if (page === 'telegram') {
+        }
+        else if (page === 'telegram') {
             mainContent.insertAdjacentHTML('beforeend', telegramPageHTML());
             loadUsers(0);
-        } else if (page === 'products') {
+        }
+        else if (page === 'products') {
             mainContent.insertAdjacentHTML('beforeend', productsPageHTML());
             loadProducts(0);
-        } else if (page === 'logout') {
+        }
+        else if (page === 'logout') {
             if (confirm('Tizimdan chiqmoqchimisiz?')) {
                 localStorage.removeItem('authToken');
                 localStorage.removeItem('tokenType');
                 location.reload();
             }
-        } else if (page === 'profile') {
+        }
+        else if (page === 'profile') {
             injectProfileCSS();
             mainContent.insertAdjacentHTML('beforeend', profilePageHTML());
             loadMessages(0);
-        } else {
+        }
+        else {
             mainContent.insertAdjacentHTML('beforeend', `<div class="stat-card" style="padding:2rem;max-width:500px"><p style="color:var(--text-secondary)">Bu bo'lim tez orada tayyor bo'ladi</p></div>`);
         }
     }
@@ -5751,6 +5774,677 @@
         info.textContent = count + ' / 255';
         info.style.color = count >= 240 ? '#ef4444' : count >= 200 ? '#fbbf24' : 'var(--text-secondary)';
     }
+
+    function receivePageHTML() {
+        return `
+    <style>
+        .rcv-table { width:100%; border-collapse:collapse; font-size:.88rem; }
+        .rcv-table thead tr { background:rgba(58,58,58,.4); border-bottom:1px solid rgba(255,107,53,.2); }
+        .rcv-table th { padding:.75rem 1rem; text-align:left; color:var(--text-secondary); font-size:.75rem; text-transform:uppercase; letter-spacing:.05em; font-weight:700; white-space:nowrap; }
+        .rcv-table td { padding:.6rem .75rem; border-bottom:1px solid rgba(255,255,255,.04); vertical-align:middle; }
+        .rcv-table tbody tr:hover td { background:rgba(255,107,53,.03); }
+        .rcv-input {
+            width:100%; padding:.55rem .75rem;
+            background:rgba(58,58,58,.6);
+            border:1.5px solid rgba(255,255,255,.1);
+            border-radius:8px; color:var(--text-primary);
+            font-family:inherit; font-size:.85rem; outline:none;
+            transition:border-color .2s;
+        }
+        .rcv-input:focus { border-color:var(--accent-primary); }
+        .rcv-select { appearance:none; cursor:pointer; }
+        .rcv-input::placeholder { color:rgba(255,255,255,.25); }
+        .rcv-del {
+            width:30px; height:30px; border:none;
+            background:rgba(239,68,68,.12);
+            border-radius:7px; color:#ef4444;
+            cursor:pointer; font-size:1rem;
+            display:flex; align-items:center; justify-content:center;
+            transition:all .18s; flex-shrink:0;
+        }
+        .rcv-del:hover { background:rgba(239,68,68,.25); }
+        .rcv-add-row {
+            width:100%; padding:.7rem;
+            background:rgba(255,107,53,.07);
+            border:1.5px dashed rgba(255,107,53,.3);
+            border-radius:9px; color:var(--accent-primary);
+            font-family:inherit; font-size:.88rem; font-weight:600;
+            cursor:pointer; transition:all .2s; margin-top:.5rem;
+        }
+        .rcv-add-row:hover { background:rgba(255,107,53,.14); border-color:var(--accent-primary); }
+        .rcv-card {
+            background:rgba(45,45,45,.5);
+            border:1px solid rgba(255,107,53,.15);
+            border-radius:14px; overflow:hidden;
+        }
+        .rcv-topbar {
+            display:flex; align-items:center; justify-content:space-between;
+            padding:1.25rem 1.5rem;
+            border-bottom:1px solid rgba(255,255,255,.06);
+            flex-wrap:wrap; gap:.75rem;
+        }
+        .rcv-meta {
+            display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+            gap:.75rem; padding:1.25rem 1.5rem;
+            border-bottom:1px solid rgba(255,255,255,.06);
+        }
+        .rcv-meta-field label { display:block; font-size:.75rem; font-weight:600; color:var(--text-secondary); margin-bottom:.35rem; text-transform:uppercase; letter-spacing:.04em; }
+        .rcv-footer { padding:1.25rem 1.5rem; display:flex; justify-content:flex-end; gap:.75rem; align-items:center; }
+        .rcv-summary { font-size:.85rem; color:var(--text-secondary); }
+        .rcv-submit {
+            padding:.75rem 2rem;
+            background:linear-gradient(135deg,var(--accent-primary),#ffa500);
+            border:none; border-radius:10px;
+            color:#fff; font-family:inherit; font-size:.95rem; font-weight:700;
+            cursor:pointer; transition:all .2s;
+        }
+        .rcv-submit:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 6px 18px rgba(255,107,53,.4); }
+        .rcv-submit:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+
+        /* History tab */
+        .rcv-hist-row { border-bottom:1px solid rgba(255,255,255,.05); transition:background .15s; }
+        .rcv-hist-row:hover td { background:rgba(255,107,53,.04); }
+    </style>
+
+
+        <div style="display:flex;gap:.5rem;margin-bottom:1.25rem;flex-wrap:wrap">
+        <button class="ptab-btn active" id="rcvtab-new"     onclick="switchRcvTab('new')">📥 Yangi qabul</button>
+        <button class="ptab-btn"        id="rcvtab-history" onclick="switchRcvTab('history')">📋 Qabul tarixi</button>
+        </div>
+        <div id="rcvPanel-new">
+        <div class="rcv-card">
+        <div class="rcv-topbar">
+        <div style="font-size:.9rem;font-weight:700;color:var(--text-primary)">📥 Mahsulot qabul qilish</div>
+        <div style="font-size:.78rem;color:var(--text-secondary)" id="rcvRowCount">0 ta mahsulot</div>
+        </div>
+        <div class="rcv-meta">
+        <div class="rcv-meta-field">
+        <label>Ombor *</label>
+        <select id="rcvWarehouse" class="rcv-input rcv-select">
+        <option value="">— Tanlang —</option>
+        </select>
+        </div>
+        <div class="rcv-meta-field">
+        <label>Yetkazib beruvchi *</label>
+        <select id="rcvSupplier" class="rcv-input rcv-select">
+        <option value="">— Tanlang —</option>
+        </select>
+        </div>
+        <div class="rcv-meta-field">
+        <label>Sana *</label>
+        <input type="date" id="rcvDate" class="rcv-input" style="color-scheme:dark">
+        </div>
+        <div class="rcv-meta-field">
+        <label>Hujjat raqami</label>
+        <input type="text" id="rcvDocNum" class="rcv-input" placeholder="№ 123">
+        </div>
+        </div>
+
+        <div style="padding:1rem 1.5rem 0">
+        <table class="rcv-table">
+        <thead>
+        <tr>
+        <th style="width:36px">#</th>
+        <th>Mahsulot *</th>
+        <th style="width:130px">Miqdor *</th>
+        <th style="width:110px">Birlik</th>
+        <th style="width:150px">Narx (so'm)</th>
+        <th style="width:36px"></th>
+        </tr>
+        </thead>
+        <tbody id="rcvRows"></tbody>
+        </table>
+        <button class="rcv-add-row" onclick="rcvAddRow()">+ Mahsulot qo'shish</button>
+        </div>
+
+        <div class="rcv-footer">
+        <div class="rcv-summary" id="rcvTotalSummary"></div>
+        <button onclick="rcvSubmit()" id="rcvSubmitBtn" class="rcv-submit">✓ Qabul qilish</button>
+        </div>
+        </div>
+        </div>
+
+        <div id="rcvPanel-history" style="display:none">
+        <div style="margin-bottom:1rem;display:flex;gap:.75rem;flex-wrap:wrap;align-items:center">
+        <select id="rcvHistWarehouse" onchange="loadReceiveHistory(0)"
+        style="padding:.6rem 1rem;background:rgba(58,58,58,.5);border:1.5px solid rgba(255,255,255,.1);border-radius:8px;color:var(--text-primary);font-family:inherit;font-size:.85rem;outline:none;min-width:180px">
+        <option value="">🏭 Barcha omborlar</option>
+        </select>
+        <input type="date" id="rcvHistDate" onchange="loadReceiveHistory(0)"
+        style="padding:.6rem 1rem;background:rgba(58,58,58,.5);border:1.5px solid rgba(255,255,255,.1);border-radius:8px;color:var(--text-primary);font-family:inherit;font-size:.85rem;outline:none;color-scheme:dark">
+        </div>
+        <div style="background:rgba(45,45,45,.5);border:1px solid rgba(255,107,53,.15);border-radius:12px;overflow:hidden">
+        <table class="rcv-table">
+        <thead><tr>
+        <th>#</th>
+        <th>Mahsulot</th>
+        <th>Ombor</th>
+        <th>Yetkazib beruvchi</th>
+        <th style="text-align:right">Miqdor</th>
+        <th style="text-align:right">Narx</th>
+        <th>Sana</th>
+        <th>Hujjat</th>
+        </tr></thead>
+        <tbody id="rcvHistList">
+        <tr><td colspan="8" style="text-align:center;padding:3rem;color:var(--text-secondary)">⏳ Yuklanmoqda...</td></tr>
+        </tbody>
+        </table>
+        <div id="rcvHistPagination"></div>
+        </div>
+        </div>
+        `;
+        }
+
+        // ── Receive state ──────────────────────────────────────────────────
+        let rcvProductsCache = [];
+        let rcvRowId = 0;
+
+        function switchRcvTab(tab) {
+        ['new','history'].forEach(t => {
+        document.getElementById('rcvtab-' + t)?.classList.toggle('active', t === tab);
+        const p = document.getElementById('rcvPanel-' + t);
+        if (p) p.style.display = t === tab ? 'block' : 'none';
+        });
+        if (tab === 'history') {
+        rcvFillHistWarehouse();
+        loadReceiveHistory(0);
+        }
+        }
+
+        // ── Init receive page ──────────────────────────────────────────────
+        async function initReceivePage() {
+            // Set today's date
+        document.getElementById('rcvDate').value = new Date().toISOString().slice(0, 10);
+
+            // Load warehouses
+        try {
+        const res = await fetch(`${BASE_API}/warehouse/get-all?size=100`, { headers: getAuthHeaders() });
+        const result = await res.json();
+        const sel = document.getElementById('rcvWarehouse');
+        (result.data || []).forEach(w => {
+        const o = document.createElement('option');
+        o.value = w.id; o.textContent = w.name;
+        sel.appendChild(o);
+        });
+        } catch (e) { console.error(e); }
+
+            // Load suppliers
+        try {
+        const res = await fetch(`${BASE_API}/supplier/get-all?size=100`, { headers: getAuthHeaders() });
+        const result = await res.json();
+        const sel = document.getElementById('rcvSupplier');
+        (result.data || []).forEach(s => {
+        const o = document.createElement('option');
+        o.value = s.id; o.textContent = s.name;
+        sel.appendChild(o);
+        });
+        } catch (e) { console.error(e); }
+
+            // Load products cache
+        try {
+        const res = await fetch(`${BASE_API}/product/get-all?size=200`, { headers: getAuthHeaders() });
+        const result = await res.json();
+        rcvProductsCache = result.data || [];
+        } catch (e) { console.error(e); }
+
+            // Add first row
+        rcvAddRow();
+        }
+
+        // ── Add row ────────────────────────────────────────────────────────
+        function rcvAddRow() {
+        const id = ++rcvRowId;
+        const tbody = document.getElementById('rcvRows');
+        if (!tbody) return;
+
+        const options = rcvProductsCache.map(p =>
+        `<option value="${p.id}" data-unit="${p.unit || ''}">${p.name}</option>`
+        ).join('');
+
+        const tr = document.createElement('tr');
+        tr.id = 'rcvRow-' + id;
+        tr.innerHTML = `
+        <td style="color:var(--text-secondary);font-size:.8rem;text-align:center;width:36px">
+            <span class="rcv-row-num"></span>
+        </td>
+        <td>
+            <select class="rcv-input rcv-select" onchange="rcvOnProductChange(this, ${id})" style="min-width:160px">
+                <option value="">— Mahsulot —</option>
+                ${options}
+            </select>
+        </td>
+        <td>
+            <input type="number" class="rcv-input" id="rcvQty-${id}" min="0" step="0.001"
+                placeholder="0.000" oninput="rcvUpdateSummary()">
+        </td>
+        <td>
+            <span id="rcvUnit-${id}" style="color:var(--text-secondary);font-size:.82rem;padding:.4rem .6rem;background:rgba(255,255,255,.05);border-radius:6px;display:inline-block">—</span>
+        </td>
+        <td>
+            <input type="number" class="rcv-input" id="rcvPrice-${id}" min="0" step="0.01"
+                placeholder="0.00" oninput="rcvUpdateSummary()">
+        </td>
+        <td>
+            <button class="rcv-del" onclick="rcvDelRow(${id})">✕</button>
+        </td>
+    `;
+        tbody.appendChild(tr);
+        rcvUpdateRowNums();
+        rcvUpdateSummary();
+        }
+
+        function rcvOnProductChange(sel, id) {
+        const opt = sel.options[sel.selectedIndex];
+        const unit = opt?.dataset?.unit || '—';
+        const unitEl = document.getElementById('rcvUnit-' + id);
+        if (unitEl) unitEl.textContent = unit;
+        }
+
+        function rcvDelRow(id) {
+        document.getElementById('rcvRow-' + id)?.remove();
+        rcvUpdateRowNums();
+        rcvUpdateSummary();
+        }
+
+        function rcvUpdateRowNums() {
+        document.querySelectorAll('.rcv-row-num').forEach((el, i) => {
+        el.textContent = i + 1;
+        });
+        const count = document.querySelectorAll('#rcvRows tr').length;
+        const el = document.getElementById('rcvRowCount');
+        if (el) el.textContent = count + ' ta mahsulot';
+        }
+
+        function rcvUpdateSummary() {
+        let total = 0;
+        document.querySelectorAll('[id^="rcvQty-"]').forEach(qtyEl => {
+        const id = qtyEl.id.replace('rcvQty-', '');
+        const qty = parseFloat(qtyEl.value) || 0;
+        const price = parseFloat(document.getElementById('rcvPrice-' + id)?.value) || 0;
+        total += qty * price;
+        });
+        const el = document.getElementById('rcvTotalSummary');
+        if (el) el.textContent = total > 0 ? `Jami: ${total.toLocaleString('uz-UZ')} so'm` : '';
+        }
+
+        // ── Submit ─────────────────────────────────────────────────────────
+        async function rcvSubmit() {
+        const warehouseId = document.getElementById('rcvWarehouse').value;
+        const supplierId  = document.getElementById('rcvSupplier').value;
+        const date        = document.getElementById('rcvDate').value;
+        const docNum      = document.getElementById('rcvDocNum').value.trim();
+
+        if (!warehouseId) { showToast('Omborni tanlang!', 'error'); return; }
+        if (!supplierId)  { showToast('Yetkazib beruvchini tanlang!', 'error'); return; }
+        if (!date)        { showToast('Sanani kiriting!', 'error'); return; }
+
+            // Collect rows
+        const items = [];
+        let hasError = false;
+        document.querySelectorAll('[id^="rcvQty-"]').forEach(qtyEl => {
+        const id = qtyEl.id.replace('rcvQty-', '');
+        const row = document.getElementById('rcvRow-' + id);
+        if (!row) return;
+        const productSel = row.querySelector('select');
+        const productId  = productSel?.value;
+        const qty        = parseFloat(qtyEl.value);
+        const price      = parseFloat(document.getElementById('rcvPrice-' + id)?.value) || 0;
+
+        if (!productId) { hasError = true; return; }
+        if (!qty || qty <= 0) { hasError = true; return; }
+
+        items.push({ productId: parseInt(productId), quantity: qty, price });
+        });
+
+        if (hasError || !items.length) {
+        showToast('Barcha qatorlarda mahsulot va miqdor to\'ldirilsin!', 'error');
+        return;
+        }
+
+        const payload = {
+        warehouseId: parseInt(warehouseId),
+        supplierId:  parseInt(supplierId),
+        receiveDate: date,
+        documentNumber: docNum || null,
+        items
+        };
+
+        const btn = document.getElementById('rcvSubmitBtn');
+        btn.disabled = true; btn.textContent = '⏳ Saqlanmoqda...';
+
+        try {
+        const res = await fetch(`${BASE_API}/receive/create`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(payload)
+        });
+        if (!res.ok) throw new Error('Status: ' + res.status);
+        showToast('✅ Qabul qilindi!');
+            // Reset form
+        document.getElementById('rcvRows').innerHTML = '';
+        rcvRowId = 0;
+        document.getElementById('rcvDocNum').value = '';
+        document.getElementById('rcvDate').value = new Date().toISOString().slice(0, 10);
+        rcvAddRow();
+        } catch (e) {
+        showToast('❌ Xatolik: ' + e.message, 'error');
+        } finally {
+        btn.disabled = false; btn.textContent = '✓ Qabul qilish';
+        }
+        }
+
+        let rcvHistPage = 0;
+        const RCV_HIST_SIZE = 15;
+
+        async function rcvFillHistWarehouse() {
+        const sel = document.getElementById('rcvHistWarehouse');
+        if (!sel || sel.options.length > 1) return;
+        try {
+        const res = await fetch(`${BASE_API}/warehouse/get-all?size=100`, { headers: getAuthHeaders() });
+        const result = await res.json();
+        (result.data || []).forEach(w => {
+        const o = document.createElement('option');
+        o.value = w.id; o.textContent = w.name;
+        sel.appendChild(o);
+        });
+        } catch (e) {}
+        }
+
+        async function loadReceiveHistory(page = 0) {
+        rcvHistPage = page;
+        const tbody = document.getElementById('rcvHistList');
+        if (!tbody) return;
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:3rem;color:var(--text-secondary)">⏳ Yuklanmoqda...</td></tr>`;
+
+        const whId = document.getElementById('rcvHistWarehouse')?.value || '';
+        const date = document.getElementById('rcvHistDate')?.value || '';
+
+        let url = `${BASE_API}/receive/get-all?page=${page}&size=${RCV_HIST_SIZE}`;
+        if (whId) url += `&warehouseId=${whId}`;
+        if (date) url += `&date=${date}`;
+
+        try {
+        const res = await fetch(url, { headers: getAuthHeaders() });
+        if (!res.ok) throw new Error('Status: ' + res.status);
+        const result = await res.json();
+        const list = result.data || [];
+        const meta = result.meta;
+
+        if (!list.length) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:3rem;color:var(--text-secondary)">📭 Qabullar topilmadi</td></tr>`;
+        document.getElementById('rcvHistPagination').innerHTML = '';
+        return;
+        }
+
+        tbody.innerHTML = list.map((r, i) => `
+            <tr class="rcv-hist-row">
+                <td style="padding:.75rem 1rem;color:var(--text-secondary);font-size:.8rem">${page * RCV_HIST_SIZE + i + 1}</td>
+                <td style="padding:.75rem 1rem;font-weight:600;color:var(--text-primary)">${r.productName || r.product?.name || '—'}</td>
+                <td style="padding:.75rem 1rem;color:var(--text-secondary);font-size:.85rem">${r.warehouseName || r.warehouse?.name || '—'}</td>
+                <td style="padding:.75rem 1rem;color:var(--text-secondary);font-size:.85rem">${r.supplierName || r.supplier?.name || '—'}</td>
+                <td style="padding:.75rem 1rem;text-align:right;font-weight:600;color:#4ade80">${r.quantity} ${r.unit || ''}</td>
+                <td style="padding:.75rem 1rem;text-align:right;color:var(--text-secondary);font-size:.85rem">${r.price ? Number(r.price).toLocaleString('uz-UZ') + " so'm" : '—'}</td>
+                <td style="padding:.75rem 1rem;color:var(--text-secondary);font-size:.82rem">${r.receiveDate || r.createdAt?.slice(0,10) || '—'}</td>
+                <td style="padding:.75rem 1rem;color:var(--text-secondary);font-size:.82rem">${r.documentNumber || '—'}</td>
+            </tr>
+        `).join('');
+
+        renderRcvHistPagination(meta);
+        } catch (e) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:2rem;color:#ef4444">❌ Xatolik: ${e.message}</td></tr>`;
+        }
+        }
+
+        function renderRcvHistPagination(meta) {
+        const container = document.getElementById('rcvHistPagination');
+        if (!container || !meta) return;
+        const { currentPage: cp = 0, totalPages: tp = 1, totalElements: te = 0 } = meta;
+        if (tp <= 1) { container.innerHTML = `<div style="padding:.75rem 1.5rem;font-size:.82rem;color:var(--text-secondary)">${te} ta yozuv</div>`; return; }
+
+        let html = `<div style="display:flex;align-items:center;justify-content:space-between;padding:.75rem 1.2rem;border-top:1px solid rgba(255,107,53,.1)">
+        <div style="color:var(--text-secondary);font-size:.82rem">Jami: <strong style="color:var(--accent-primary)">${te}</strong></div>
+        <div style="display:flex;gap:.35rem">
+        <button onclick="loadReceiveHistory(${cp-1})" ${cp===0?'disabled':''} style="padding:.35rem .6rem;background:rgba(58,58,58,.5);border:1px solid rgba(255,107,53,.2);border-radius:6px;color:var(--text-primary);cursor:pointer;opacity:${cp===0?.4:1}">◀</button>`;
+        const s = Math.max(0,cp-2), e = Math.min(tp-1,s+4);
+        for (let i=s;i<=e;i++) {
+        html += `<button onclick="loadReceiveHistory(${i})" style="padding:.35rem .6rem;background:${i===cp?'var(--accent-primary)':'rgba(58,58,58,.5)'};border:1px solid rgba(255,107,53,.2);border-radius:6px;color:${i===cp?'#000':'var(--text-primary)'};font-weight:${i===cp?700:400};cursor:pointer">${i+1}</button>`;
+        }
+        html += `<button onclick="loadReceiveHistory(${cp+1})" ${cp>=tp-1?'disabled':''} style="padding:.35rem .6rem;background:rgba(58,58,58,.5);border:1px solid rgba(255,107,53,.2);border-radius:6px;color:var(--text-primary);cursor:pointer;opacity:${cp>=tp-1?.4:1}">▶</button>
+        </div></div>`;
+        container.innerHTML = html;
+        }
+
+        function warehouseStockPageHTML() {
+        return `
+    <style>
+        .stk-row {
+            background:rgba(45,45,45,.5);
+            border:1px solid rgba(255,107,53,.12);
+            border-radius:12px;
+            overflow:hidden;
+            transition:border-color .2s;
+        }
+        .stk-row:hover { border-color:rgba(255,107,53,.3); }
+        .stk-header {
+            display:flex; align-items:center; gap:1rem;
+            padding:1rem 1.25rem;
+            cursor:pointer;
+            user-select:none;
+        }
+        .stk-icon {
+            width:40px; height:40px; border-radius:10px;
+            background:rgba(255,107,53,.12);
+            display:flex; align-items:center; justify-content:center;
+            font-size:1.15rem; flex-shrink:0;
+        }
+        .stk-name { font-weight:700; font-size:.95rem; color:var(--text-primary); }
+        .stk-category { font-size:.72rem; color:var(--text-secondary); margin-top:.1rem; }
+        .stk-total {
+            margin-left:auto;
+            font-weight:700; font-size:1rem;
+            color:#4ade80;
+            white-space:nowrap;
+        }
+        .stk-total-sub { font-size:.72rem; font-weight:400; color:var(--text-secondary); margin-top:.1rem; text-align:right; }
+        .stk-arrow { font-size:.85rem; color:var(--text-secondary); transition:transform .25s; flex-shrink:0; margin-left:.5rem; }
+        .stk-arrow.open { transform:rotate(180deg); }
+        .stk-collapse {
+            max-height:0; overflow:hidden;
+            transition:max-height .3s ease;
+            border-top:0px solid rgba(255,255,255,.06);
+        }
+        .stk-collapse.open {
+            max-height:600px;
+            border-top-width:1px;
+        }
+        .stk-wh-row {
+            display:flex; align-items:center; gap:.75rem;
+            padding:.7rem 1.25rem .7rem 1.5rem;
+            border-bottom:1px solid rgba(255,255,255,.04);
+        }
+        .stk-wh-row:last-child { border-bottom:none; }
+        .stk-wh-dot {
+            width:8px; height:8px; border-radius:50%;
+            background:var(--accent-primary); flex-shrink:0;
+        }
+        .stk-wh-name { font-size:.85rem; color:var(--text-secondary); flex:1; }
+        .stk-wh-qty { font-weight:600; font-size:.88rem; color:var(--text-primary); }
+        .stk-bar-wrap { flex:1; max-width:200px; height:5px; background:rgba(255,255,255,.08); border-radius:3px; }
+        .stk-bar { height:100%; border-radius:3px; background:linear-gradient(90deg,var(--accent-primary),#ffa500); transition:width .4s ease; }
+    </style>
+
+    <div style="margin-bottom:1.25rem;display:flex;gap:.75rem;flex-wrap:wrap;align-items:center">
+        <div style="position:relative;flex:1;min-width:220px;max-width:340px">
+            <input id="stkSearch" type="text" placeholder="🔍 Mahsulot qidirish..."
+                oninput="stkFilter(this.value)"
+                style="width:100%;padding:.7rem 1rem;background:rgba(58,58,58,.5);border:1.5px solid rgba(255,255,255,.1);border-radius:9px;color:var(--text-primary);font-family:inherit;font-size:.88rem;outline:none;transition:border-color .2s"
+                onfocus="this.style.borderColor='var(--accent-primary)'"
+                onblur="this.style.borderColor='rgba(255,255,255,.1)'">
+        </div>
+        <select id="stkCatFilter" onchange="stkFilter(document.getElementById('stkSearch').value)"
+            style="padding:.7rem 1rem;background:rgba(58,58,58,.5);border:1.5px solid rgba(255,255,255,.1);border-radius:9px;color:var(--text-primary);font-family:inherit;font-size:.88rem;outline:none;min-width:160px">
+            <option value="">🏷️ Barcha kategoriyalar</option>
+        </select>
+        <div style="margin-left:auto;font-size:.82rem;color:var(--text-secondary)" id="stkTotalInfo"></div>
+    </div>
+
+    <div id="stkList" style="display:flex;flex-direction:column;gap:.6rem">
+        <div style="text-align:center;padding:3rem;color:var(--text-secondary)">⏳ Yuklanmoqda...</div>
+    </div>
+    <div id="stkPagination"></div>
+    `;
+        }
+
+        // ── Stock state ────────────────────────────────────────────────────
+        let stkAllCache = [];
+        let stkCurrentPage = 0;
+        const STK_PAGE_SIZE = 20;
+        let stkOpenRows = new Set();
+
+        async function initStockPage() {
+        try {
+        const res = await fetch(`${BASE_API}/category/getAll`, { headers: getAuthHeaders() });
+        const result = await res.json();
+        const sel = document.getElementById('stkCatFilter');
+        (result.data || []).forEach(c => {
+        const o = document.createElement('option');
+        o.value = c.id; o.textContent = c.name;
+        sel.appendChild(o);
+        });
+        } catch (e) {}
+
+        loadStock(0);
+        }
+
+        async function loadStock(page = 0) {
+        stkCurrentPage = page;
+        const list = document.getElementById('stkList');
+        if (!list) return;
+        list.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--text-secondary)">⏳ Yuklanmoqda...</div>';
+
+        try {
+        const res = await fetch(`${BASE_API}/warehouse-product/get-all?page=${page}&size=${STK_PAGE_SIZE}`, { headers: getAuthHeaders() });
+        if (!res.ok) throw new Error('Status: ' + res.status);
+        const result = await res.json();
+        stkAllCache = result.data || [];
+        renderStock(stkAllCache, result.meta);
+        } catch (e) {
+        list.innerHTML = `<div style="text-align:center;padding:3rem;color:#ef4444">❌ Xatolik: ${e.message}</div>`;
+        }
+        }
+
+        function renderStock(data, meta) {
+        const list = document.getElementById('stkList');
+        if (!list) return;
+
+        const info = document.getElementById('stkTotalInfo');
+        if (info && meta) info.textContent = `Jami: ${meta.totalElements || data.length} ta mahsulot`;
+
+        if (!data.length) {
+        list.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--text-secondary)">📭 Mahsulotlar topilmadi</div>';
+        renderStkPagination(meta);
+        return;
+        }
+
+        const productIcons = { KG:'⚖️', G:'🧂', L:'🧴', ML:'💧', DONA:'📦', QUTI:'📫' };
+
+        list.innerHTML = data.map(item => {
+        const warehouses = item.warehouses || item.warehouseStocks || [];
+        const totalQty = item.totalQuantity ?? item.quantity ?? 0;
+        const unit = item.unit || '';
+        const icon = productIcons[unit?.toUpperCase()] || '📦';
+        const maxQty = Math.max(...warehouses.map(w => w.quantity || 0), 1);
+        const isOpen = stkOpenRows.has(item.id || item.productId);
+
+        return `
+        <div class="stk-row" id="stkItem-${item.id || item.productId}">
+            <div class="stk-header" onclick="stkToggle(${item.id || item.productId})">
+                <div class="stk-icon">${icon}</div>
+                <div style="flex:1;min-width:0">
+                    <div class="stk-name">${item.productName || item.name || '—'}</div>
+                    <div class="stk-category">${item.categoryName || item.category?.name || ''}</div>
+                </div>
+                ${warehouses.length > 0 ? `
+                <div style="display:flex;align-items:center;gap:.4rem;flex-shrink:0">
+                    <span style="font-size:.72rem;color:var(--text-secondary);background:rgba(255,255,255,.06);padding:.2rem .55rem;border-radius:100px">${warehouses.length} ta ombor</span>
+                </div>` : ''}
+                <div style="text-align:right;flex-shrink:0">
+                    <div class="stk-total">${Number(totalQty).toLocaleString()} ${unit}</div>
+                    <div class="stk-total-sub">Jami zaxira</div>
+                </div>
+                <div class="stk-arrow ${isOpen ? 'open' : ''}">▼</div>
+            </div>
+            <div class="stk-collapse ${isOpen ? 'open' : ''}" id="stkCollapse-${item.id || item.productId}">
+                ${warehouses.length ? warehouses.map(w => {
+            const pct = Math.min(100, Math.round((w.quantity || 0) / maxQty * 100));
+            return `
+                    <div class="stk-wh-row">
+                        <div class="stk-wh-dot"></div>
+                        <div class="stk-wh-name">🏭 ${w.warehouseName || w.name || '—'}</div>
+                        <div class="stk-bar-wrap"><div class="stk-bar" style="width:${pct}%"></div></div>
+                        <div class="stk-wh-qty">${Number(w.quantity || 0).toLocaleString()} ${unit}</div>
+                    </div>`;
+        }).join('') : `
+                <div style="padding:1rem 1.5rem;color:var(--text-secondary);font-size:.85rem">
+                    Omborlarda ma'lumot yo'q
+                </div>`}
+            </div>
+        </div>`;
+        }).join('');
+
+        renderStkPagination(meta);
+        }
+
+        function stkToggle(id) {
+        const collapse = document.getElementById('stkCollapse-' + id);
+        const arrow = document.querySelector(`#stkItem-${id} .stk-arrow`);
+        if (!collapse) return;
+        const isOpen = collapse.classList.contains('open');
+        if (isOpen) {
+        collapse.classList.remove('open');
+        arrow?.classList.remove('open');
+        stkOpenRows.delete(id);
+        } else {
+        collapse.classList.add('open');
+        arrow?.classList.add('open');
+        stkOpenRows.add(id);
+        }
+        }
+
+        function stkFilter(query) {
+        const catId = document.getElementById('stkCatFilter')?.value || '';
+        const q = (query || '').toLowerCase().trim();
+
+        let filtered = stkAllCache;
+        if (q) filtered = filtered.filter(item =>
+        (item.productName || item.name || '').toLowerCase().includes(q)
+        );
+        if (catId) filtered = filtered.filter(item =>
+        String(item.categoryId || item.category?.id || '') === catId
+        );
+        renderStock(filtered, null);
+        }
+
+        function renderStkPagination(meta) {
+        const container = document.getElementById('stkPagination');
+        if (!container || !meta || meta.totalPages <= 1) {
+        if (container) container.innerHTML = '';
+        return;
+        }
+        const { currentPage: cp = 0, totalPages: tp = 1, totalElements: te = 0 } = meta;
+        let html = `<div style="display:flex;align-items:center;justify-content:space-between;padding:1rem 0;margin-top:.5rem">
+        <div style="color:var(--text-secondary);font-size:.82rem">Jami: <strong style="color:var(--accent-primary)">${te}</strong> ta</div>
+        <div style="display:flex;gap:.35rem">
+        <button onclick="loadStock(${cp-1})" ${cp===0?'disabled':''} style="padding:.4rem .7rem;background:rgba(58,58,58,.5);border:1px solid rgba(255,107,53,.2);border-radius:6px;color:var(--text-primary);cursor:pointer;opacity:${cp===0?.4:1}">◀</button>`;
+        const s=Math.max(0,cp-2), e=Math.min(tp-1,s+4);
+        for(let i=s;i<=e;i++){
+        html += `<button onclick="loadStock(${i})" style="padding:.4rem .7rem;background:${i===cp?'var(--accent-primary)':'rgba(58,58,58,.5)'};border:1px solid rgba(255,107,53,.2);border-radius:6px;color:${i===cp?'#000':'var(--text-primary)'};font-weight:${i===cp?700:400};cursor:pointer">${i+1}</button>`;
+        }
+        html += `<button onclick="loadStock(${cp+1})" ${cp>=tp-1?'disabled':''} style="padding:.4rem .7rem;background:rgba(58,58,58,.5);border:1px solid rgba(255,107,53,.2);border-radius:6px;color:var(--text-primary);cursor:pointer;opacity:${cp>=tp-1?.4:1}">▶</button>
+        </div></div>`;
+        container.innerHTML = html;
+        }
+
 </script>
 </body>
 </html>

@@ -37,3 +37,10 @@ spring:
 freemarker:
   template-loader-path: classpath:/templates/
   suffix: .ftl
+
+
+  # Telegram bot konfiguratsiyasi
+telegram:
+    bot:
+      token: 8746719605:AAFIriQFmA8vZ4e2LCBnE7zhl4_GeD2Aix8
+      username: WarehouseGold_bot
