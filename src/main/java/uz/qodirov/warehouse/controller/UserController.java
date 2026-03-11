@@ -6,8 +6,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.qodirov.warehouse.dto.req.UserReqDto;
-import uz.qodirov.warehouse.dto.res.UserResDto;
 import uz.qodirov.warehouse.service.UserService;
+import uz.qodirov.warehouse.service.WorkingDayService;
 import uz.qodirov.warehouse.utils.ApiResponse;
 
 @RestController
@@ -15,7 +15,7 @@ import uz.qodirov.warehouse.utils.ApiResponse;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-
+    private final WorkingDayService service;
 
     @GetMapping("/get-all")
     public HttpEntity<?> getAll(@RequestParam(defaultValue = "all") String filter,
@@ -54,6 +54,12 @@ public class UserController {
     @DeleteMapping("/{id}")
     public HttpEntity<?> delete(@PathVariable Long id) {
         ApiResponse<?> response = userService.delete(id);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/reset-password")
+    public HttpEntity<?> resetPassword(@RequestParam String username) {
+        ApiResponse<?> response = userService.resetPassword(username);
         return ResponseEntity.ok(response);
     }
 

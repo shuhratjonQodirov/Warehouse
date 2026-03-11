@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import uz.qodirov.warehouse.enums.RoleName;
 import uz.qodirov.warehouse.model.User;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -18,10 +19,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Page<User> findAllByRoleAndDeletedFalse(RoleName role, Pageable pageable);
 
+    List<User> findAllByRoleAndDeletedFalse(RoleName role);
+
     Page<User> findAllByRoleNotAndDeletedFalse(RoleName roleName, Pageable pageable);
 
     boolean existsByUsernameIgnoreCase(String username);
 
     boolean existsByEmailIgnoreCase(String username);
 
+    RoleName role(RoleName role);
 }

@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 @EntityListeners(AuditingEntityListener.class)
 @EqualsAndHashCode(callSuper = true)
 public class ProductNorm extends AbsEntity {

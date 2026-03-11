@@ -16,4 +16,6 @@ public interface UserService {
     ApiResponse<?> getById(Long id);
 
     ApiResponse<?> delete(Long id);
+
+    ApiResponse<?> resetPassword(String username);
 }

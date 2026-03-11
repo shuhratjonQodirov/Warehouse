@@ -3,6 +3,7 @@ package uz.qodirov.warehouse.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uz.qodirov.warehouse.dto.req.UserReqDto;
@@ -17,6 +18,7 @@ import uz.qodirov.warehouse.model.User;
 import uz.qodirov.warehouse.repository.KindergartenRepository;
 import uz.qodirov.warehouse.repository.UserRepository;
 import uz.qodirov.warehouse.service.EmailService;
+import uz.qodirov.warehouse.service.RandomCodeGenerator;
 import uz.qodirov.warehouse.service.UserService;
 import uz.qodirov.warehouse.utils.ApiResponse;
 import uz.qodirov.warehouse.utils.PaginationUtil;
@@ -32,7 +34,9 @@ public class UserServiceImpl implements UserService {
     private final PaginationUtil pagination;
     private final UserMapper mapper;
     private final EmailService serviceMail;
+    private final PasswordEncoder passwordEncoder;
     private final KindergartenRepository kindergartenRepository;
+    private final RandomCodeGenerator randomCodeGenerator;
 
 
     @Override
@@ -48,6 +52,8 @@ public class UserServiceImpl implements UserService {
             userPage = userRepository.findAllByRoleAndDeletedFalse(RoleName.DRIVER, pageable);
         } else if (upperFilter.equals(RoleName.MANAGER.name())) {
             userPage = userRepository.findAllByRoleAndDeletedFalse(RoleName.MANAGER, pageable);
+        } else if (upperFilter.equals(RoleName.WAREHOUSEMAN.name())) {
+            userPage = userRepository.findAllByRoleAndDeletedFalse(RoleName.WAREHOUSEMAN, pageable);
         } else {
             userPage = userRepository.findAllByRoleNotAndDeletedFalse(RoleName.ADMIN, pageable);
         }
@@ -66,6 +72,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public ApiResponse<?> create(UserReqDto dto) {
 
         if (userRepository.existsByUsernameIgnoreCase(dto.getUsername())) {
@@ -140,4 +147,28 @@ public class UserServiceImpl implements UserService {
         kindergartenRepository.saveAll(kindergartens);
         return new ApiResponse<>("User deleted", true);
     }
+
+    @Override
+    public ApiResponse<?> resetPassword(String username) {
+        User user = userRepository.findByUsernameAndDeletedFalse(username).orElseThrow(() -> new ByIdException("User not found"));
+        String password = randomCodeGenerator.generateCode(8);
+        user.setPassword(passwordEncoder.encode(password));
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("fullName", user.getFullName());
+        model.put("username", user.getUsername());
+        model.put("password", password);
+
+        SendMailDto mailDto = SendMailDto.builder()
+                .sendTo(user.getEmail())
+                .subjectName("Tizimga xush kelibsiz!")
+                .templateName("mail-template.ftl")
+                .model(model)
+                .build();
+        serviceMail.sendMail(mailDto);
+        userRepository.save(user);
+        return new ApiResponse<>("Password update", true);
+    }
+
+
 }

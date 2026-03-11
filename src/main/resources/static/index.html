@@ -2009,9 +2009,9 @@
             <div class="pn-field">
                 <label class="pn-label">Yosh guruhi <span>*</span></label>
                 <div class="pn-pills">
-                    <div class="pn-pill"><input type="radio" name="pnAgeGroup" id="pnAge1" value="AGE_1_TO_3"><label
+                    <div class="pn-pill"><input type="radio" name="pnAgeGroup" id="pnAge1" value="ONE_TO_THREE"><label
                             for="pnAge1">👶 1–3 yosh</label></div>
-                    <div class="pn-pill"><input type="radio" name="pnAgeGroup" id="pnAge2" value="AGE_3_TO_7"><label
+                    <div class="pn-pill"><input type="radio" name="pnAgeGroup" id="pnAge2" value="THREE_TO_SEVEN"><label
                             for="pnAge2">🧒 3–7 yosh</label></div>
                     <div class="pn-pill"><input type="radio" name="pnAgeGroup" id="pnAgeAll" value="ALL"><label
                             for="pnAgeAll">👥 Barcha</label></div>
@@ -2020,13 +2020,13 @@
             <div class="pn-field">
                 <label class="pn-label">Qolish muddati <span>*</span></label>
                 <div class="pn-pills">
-                    <div class="pn-pill"><input type="radio" name="pnStayDuration" id="pnStay3" value="HOURS_3"><label
+                    <div class="pn-pill"><input type="radio" name="pnStayDuration" id="pnStay3" value="H_3_4"><label
                             for="pnStay3">⏱ 3 soat</label></div>
-                    <div class="pn-pill"><input type="radio" name="pnStayDuration" id="pnStay9" value="HOURS_9"><label
+                    <div class="pn-pill"><input type="radio" name="pnStayDuration" id="pnStay9" value="H_9"><label
                             for="pnStay9">⏱ 9 soat</label></div>
-                    <div class="pn-pill"><input type="radio" name="pnStayDuration" id="pnStay12" value="HOURS_12"><label
+                    <div class="pn-pill"><input type="radio" name="pnStayDuration" id="pnStay12" value="H_12"><label
                             for="pnStay12">⏱ 12 soat</label></div>
-                    <div class="pn-pill"><input type="radio" name="pnStayDuration" id="pnStay24" value="HOURS_24"><label
+                    <div class="pn-pill"><input type="radio" name="pnStayDuration" id="pnStay24" value="H_24"><label
                             for="pnStay24">🌙 24 soat</label></div>
                 </div>
             </div>
@@ -2812,8 +2812,7 @@
             </div>
         `);
             loadCategories();
-        }
-        else if (page === 'regions') {
+        } else if (page === 'regions') {
             mainContent.insertAdjacentHTML('beforeend', `
             <div style="margin-bottom:1.5rem"><button onclick="showAddRegionModal()" class="cta-button" style="padding:.8rem 2rem;font-size:.9rem">+ Yangi Rayon</button></div>
             <div style="background:rgba(45,45,45,.5);border:1px solid rgba(255,107,53,.2);border-radius:12px;overflow:hidden">
@@ -2840,8 +2839,7 @@
             </div>
         `);
             loadRegions();
-        }
-        else if (page === 'suppliers') {
+        } else if (page === 'suppliers') {
             mainContent.insertAdjacentHTML('beforeend', `
             <div style="margin-bottom:1.5rem"><button onclick="showAddSupplierModal()" class="cta-button" style="padding:.8rem 2rem;font-size:.9rem">+ Yangi Yetkazib Beruvchi</button></div>
             <div style="background:rgba(45,45,45,.5);border:1px solid rgba(255,107,53,.2);border-radius:12px;overflow:hidden">
@@ -2861,8 +2859,7 @@
             </div>
         `);
             loadSuppliers(0);
-        }
-        else if (page === 'warehouses') {
+        } else if (page === 'warehouses') {
             mainContent.insertAdjacentHTML('beforeend', `
             <div style="margin-bottom:1.5rem;display:flex;gap:1rem;align-items:center">
                 <button onclick="openWarehouseModal()" class="cta-button" style="padding:.8rem 2rem;font-size:.9rem">+ Yangi Ombor</button>
@@ -2886,8 +2883,7 @@
             </div>
         `);
             loadWarehouses(0);
-        }
-        else if (page === 'packages') {
+        } else if (page === 'packages') {
             mainContent.insertAdjacentHTML('beforeend', `
             <div class="kg-topbar">
                 <div class="kg-left">
@@ -2909,18 +2905,7 @@
         `);
             kgLoadRegionsFilter();
             kgLoad(0);
-        }
-
-//         else if (page === 'products') {
-//             mainContent.insertAdjacentHTML('beforeend', `
-//             <div style="display:flex;gap:1rem;flex-wrap:wrap">
-// <button class="cta-button" onclick="openProductModal()" style="padding:.8rem 2rem;font-size:.9rem">+ Yangi Mahsulot</button>
-//        <button class="cta-button" style="padding:.8rem 2rem;font-size:.9rem" onclick="openProductNormModal()">📋 Norma qo'shish</button>
-//             </div>
-//         `);
-//             loadProducts(0);
-//         }
-        else if (page === 'telegram') {
+        } else if (page === 'telegram') {
             mainContent.insertAdjacentHTML('beforeend', telegramPageHTML());
             loadUsers(0);
         } else if (page === 'products') {
@@ -2932,6 +2917,10 @@
                 localStorage.removeItem('tokenType');
                 location.reload();
             }
+        } else if (page === 'profile') {
+            injectProfileCSS();
+            mainContent.insertAdjacentHTML('beforeend', profilePageHTML());
+            loadMessages(0);
         } else {
             mainContent.insertAdjacentHTML('beforeend', `<div class="stat-card" style="padding:2rem;max-width:500px"><p style="color:var(--text-secondary)">Bu bo'lim tez orada tayyor bo'ladi</p></div>`);
         }
@@ -3586,7 +3575,7 @@
         const sel = kgV('kgMudir');
         sel.innerHTML = '<option value="">— Yuklanmoqda... —</option>';
         try {
-            const res = await fetch(`${BASE_API}/user/get-all?filter=mudira`, {headers: getAuthHeaders()});
+            const res = await fetch(`${BASE_API}/user/get-all?filter=mudira&size=-1`, {headers: getAuthHeaders()});
             if (!res.ok) throw new Error(res.status);
             const result = await res.json();
             sel.innerHTML = '<option value="">— Tanlang —</option>';
@@ -3790,7 +3779,7 @@
         const sel = pnV('pnProduct');
         sel.innerHTML = '<option value="">— Yuklanmoqda... —</option>';
         try {
-            const res = await fetch(`${BASE_API}/product/get-all`, {headers: getAuthHeaders()});
+            const res = await fetch(`${BASE_API}/product/get-all?size=-1`, {headers: getAuthHeaders()});
             if (!res.ok) throw new Error(res.status);
             const result = await res.json();
             sel.innerHTML = '<option value="">— Tanlang —</option>';
@@ -3844,11 +3833,15 @@
         }
         const consumptionType = pnRadio('pnConsumptionType');
         const payload = {
-            productId: parseInt(pnVal('pnProduct')), ageGroup: pnRadio('pnAgeGroup'),
-            stayDuration: pnRadio('pnStayDuration'), dailyPerChild: pnNum('pnDailyPerChild'),
-            unit: pnVal('pnUnit'), consumptionType,
-            repeatDays: (consumptionType === 'DECADE' || consumptionType === 'WEEKLY') ? parseInt(pnV('pnRepeatDays').value) || null : null,
-            sourceDocument: pnVal('pnSourceDoc') || null, active: pnV('pnActive').checked
+            productId: parseInt(pnVal('pnProduct')),
+            ageGroup: pnRadio('pnAgeGroup'),
+            stayDuration: pnRadio('pnStayDuration'),
+            dailyPerChild: pnNum('pnDailyPerChild'),
+            unit: pnVal('pnUnit'),
+            consumptionType,
+            repeatDays: consumptionType === 'DAILY' ? 1 : (consumptionType === 'DECADE' || consumptionType === 'WEEKLY') ? parseInt(pnV('pnRepeatDays').value) || null : null,
+            sourceDocument: pnVal('pnSourceDoc') || null,
+            active: pnV('pnActive').checked
         };
         const btn = pnV('pnSaveBtn');
         btn.disabled = true;
@@ -3863,6 +3856,7 @@
             if (res.ok) {
                 closeProductNormModal();
                 showToast('Norma qo\'shildi ✅');
+                loadNorms(0)
             } else {
                 showToast('Xato: ' + (result.message || res.status), 'error');
             }
@@ -3935,11 +3929,21 @@
     //maxsulotlar uchun
     function productsPageHTML() {
         return `
+    <div style="margin-bottom:1.5rem;display:flex;gap:.5rem;flex-wrap:wrap">
+        <button onclick="switchProductTab('products')" id="ptab-products"
+            class="utab utab-on" style="padding:.55rem 1.4rem;border-radius:8px;border:1.5px solid rgba(255,107,53,.5);background:rgba(255,107,53,.18);color:var(--accent-primary);font-family:inherit;font-size:.88rem;font-weight:600;cursor:pointer">
+            📦 Mahsulotlar
+        </button>
+        <button onclick="switchProductTab('norms')" id="ptab-norms"
+            class="utab" style="padding:.55rem 1.4rem;border-radius:8px;border:1.5px solid rgba(255,255,255,.12);background:rgba(58,58,58,.4);color:var(--text-secondary);font-family:inherit;font-size:.88rem;font-weight:600;cursor:pointer">
+            📋 Mahsulot normalari
+        </button>
+    </div>
+
+    <!-- MAHSULOTLAR TAB -->
+    <div id="productTabPanel">
         <div style="margin-bottom:1.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem">
-            <div style="display:flex;gap:.75rem;flex-wrap:wrap">
-                <button onclick="openProductModal()" class="cta-button" style="padding:.8rem 2rem;font-size:.9rem">+ Yangi Mahsulot</button>
-                <button onclick="openProductNormModal()" class="cta-button" style="padding:.8rem 2rem;font-size:.9rem;background:linear-gradient(135deg,#6366f1,#4f46e5)">📋 Norma qo'shish</button>
-            </div>
+            <button onclick="openProductModal()" class="cta-button" style="padding:.8rem 2rem;font-size:.9rem">+ Yangi Mahsulot</button>
             <input id="productSearch" type="text" placeholder="🔍 Qidirish..."
                 oninput="filterProducts(this.value)"
                 style="padding:.7rem 1rem;background:rgba(58,58,58,.5);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:var(--text-primary);font-family:inherit;font-size:.9rem;outline:none;min-width:220px">
@@ -3961,7 +3965,62 @@
             </table>
             <div id="productPagination"></div>
         </div>
+    </div>
+
+    <!-- MAHSULOT NORMALARI TAB -->
+    <div id="normTabPanel" style="display:none">
+        <div style="margin-bottom:1.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem">
+            <button onclick="openProductNormModal()" class="cta-button" style="padding:.8rem 2rem;font-size:.9rem;background:linear-gradient(135deg,#6366f1,#4f46e5)">+ Norma qo'shish</button>
+            <input id="normSearch" type="text" placeholder="🔍 Qidirish..."
+                oninput="filterNorms(this.value)"
+                style="padding:.7rem 1rem;background:rgba(58,58,58,.5);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:var(--text-primary);font-family:inherit;font-size:.9rem;outline:none;min-width:220px">
+        </div>
+        <div style="background:rgba(45,45,45,.5);border:1px solid rgba(99,102,241,.2);border-radius:12px;overflow:hidden">
+            <table style="width:100%;border-collapse:collapse">
+                <thead><tr style="background:rgba(58,58,58,.3);border-bottom:1px solid rgba(99,102,241,.2)">
+                    <th style="padding:.75rem 1rem;color:var(--text-secondary);font-size:.78rem;text-transform:uppercase;width:50px">#</th>
+                    <th style="padding:.75rem 1rem;text-align:left;color:var(--text-secondary);font-size:.78rem;text-transform:uppercase">Mahsulot</th>
+                    <th style="padding:.75rem 1rem;text-align:center;color:var(--text-secondary);font-size:.78rem;text-transform:uppercase">Yosh guruhi</th>
+                    <th style="padding:.75rem 1rem;text-align:center;color:var(--text-secondary);font-size:.78rem;text-transform:uppercase">Qolish muddati</th>
+                    <th style="padding:.75rem 1rem;text-align:center;color:var(--text-secondary);font-size:.78rem;text-transform:uppercase">Kunlik norma</th>
+                    <th style="padding:.75rem 1rem;text-align:center;color:var(--text-secondary);font-size:.78rem;text-transform:uppercase">Iste'mol turi</th>
+                    <th style="padding:.75rem 1rem;text-align:center;color:var(--text-secondary);font-size:.78rem;text-transform:uppercase">Holat</th>
+                    <th style="padding:.75rem 1rem;text-align:center;color:var(--text-secondary);font-size:.78rem;text-transform:uppercase;width:100px">Amallar</th>
+                </tr></thead>
+                <tbody id="normList">
+                    <tr><td colspan="8" style="text-align:center;padding:3rem;color:var(--text-secondary)">⏳ Yuklanmoqda...</td></tr>
+                </tbody>
+            </table>
+            <div id="normPagination"></div>
+        </div>
+    </div>
     `;
+    }
+
+    let activeProductTab = 'products';
+
+    function switchProductTab(tab) {
+        activeProductTab = tab;
+
+        // Tab tugmalar
+        document.querySelectorAll('#ptab-products, #ptab-norms').forEach(b => {
+            b.style.background = 'rgba(58,58,58,.4)';
+            b.style.color = 'var(--text-secondary)';
+            b.style.borderColor = 'rgba(255,255,255,.12)';
+        });
+        const activeBtn = document.getElementById('ptab-' + tab);
+        if (activeBtn) {
+            activeBtn.style.background = 'rgba(255,107,53,.18)';
+            activeBtn.style.color = 'var(--accent-primary)';
+            activeBtn.style.borderColor = 'rgba(255,107,53,.5)';
+        }
+
+        // Panel
+        document.getElementById('productTabPanel').style.display = tab === 'products' ? 'block' : 'none';
+        document.getElementById('normTabPanel').style.display = tab === 'norms' ? 'block' : 'none';
+
+        if (tab === 'products') loadProducts(0);
+        if (tab === 'norms') loadNorms(0);
     }
 
     let productCurrentPage = 0;
@@ -4729,6 +4788,968 @@
         } catch (e) {
             showToast("Ochirishda xato", 'error');
         }
+    }
+
+    ///product norm
+
+    let normCurrentPage = 0;
+    const NORM_PAGE_SIZE = 10;
+    let allNormsCache = [];
+
+    const AGE_LABELS = {ONE_TO_THREE: '👶 1–3 yosh', THREE_TO_SEVEN: '🧒 3–7 yosh', ALL: '👥 Barcha'};
+    const STAY_LABELS = {H_3_4: '3 soat', H_9: '9 soat', H_12: '12 soat', H_24: '24 soat'};
+    const CONSUME_LABELS = {DAILY: 'Kunlik', DECADE: 'Dekadali', WEEKLY: 'Haftalik', MONTHLY: 'Oylik'};
+
+    async function loadNorms(page = 0) {
+        if (!requireAuth()) return;
+        normCurrentPage = page;
+        const tbody = document.getElementById('normList');
+        if (!tbody) return;
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:3rem;color:var(--text-secondary)">⏳ Yuklanmoqda...</td></tr>`;
+        try {
+            const res = await fetch(`${BASE_API}/product-norm/get-all?page=${page}&size=${NORM_PAGE_SIZE}`, {headers: getAuthHeaders()});
+            if (res.status === 401) {
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:3rem;color:#f59e0b">⚠️ Yuklab bo'lmadi.</td></tr>`;
+                return;
+            }
+            if (!res.ok) throw new Error('Status: ' + res.status);
+            const result = await res.json();
+            const list = result.data || [];
+            const meta = result.meta;
+            allNormsCache = list;
+            if (!list.length) {
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:3rem;color:var(--text-secondary)">📭 Normalar yo'q</td></tr>`;
+                return;
+            }
+            renderNormRows(list, page);
+            renderNormPagination(meta);
+        } catch (e) {
+            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:3rem;color:#ef4444">❌ Xatolik: ${e.message}</td></tr>`;
+        }
+    }
+
+    function renderNormRows(list, page = 0) {
+        const tbody = document.getElementById('normList');
+        if (!tbody) return;
+        tbody.innerHTML = list.map((n, i) => `
+        <tr style="border-bottom:1px solid rgba(255,255,255,.05);transition:background .15s"
+            onmouseover="this.style.background='rgba(99,102,241,.05)'" onmouseout="this.style.background='transparent'">
+            <td style="padding:.85rem 1rem;text-align:center">
+                <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);border-radius:6px;font-size:.75rem;color:var(--text-secondary)">
+                    ${page * NORM_PAGE_SIZE + i + 1}
+                </span>
+            </td>
+            <td style="padding:.85rem 1rem;font-weight:600;color:var(--text-primary)">${n.productName || n.product?.name || '—'}</td>
+            <td style="padding:.85rem 1rem;text-align:center">
+                <span style="padding:.25rem .65rem;border-radius:100px;font-size:.75rem;background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2)">
+                    ${AGE_LABELS[n.ageGroup] || n.ageGroup || '—'}
+                </span>
+            </td>
+            <td style="padding:.85rem 1rem;text-align:center;color:var(--text-secondary);font-size:.85rem">
+                ${STAY_LABELS[n.stayDuration] || n.stayDuration || '—'}
+            </td>
+            <td style="padding:.85rem 1rem;text-align:center;font-weight:600;color:#4ade80">
+                ${n.dailyPerChild || 0} ${n.unit || ''}
+            </td>
+            <td style="padding:.85rem 1rem;text-align:center">
+                <span style="padding:.25rem .65rem;border-radius:100px;font-size:.75rem;background:rgba(99,102,241,.1);color:#818cf8;border:1px solid rgba(99,102,241,.2)">
+                    ${CONSUME_LABELS[n.consumptionType] || n.consumptionType || '—'}
+                </span>
+            </td>
+            <td style="padding:.85rem 1rem;text-align:center">
+<span style="padding:.25rem .65rem;border-radius:100px;font-size:.75rem;font-weight:600;background:${n.active ? 'rgba(16,185,129,.1)' : 'rgba(239,68,68,.1)'};color:${n.active ? '#10b981' : '#ef4444'};border-width:1px;border-style:solid;border-color:${n.active ? 'rgba(16,185,129,.2)' : 'rgba(239,68,68,.2)'}">                    ${n.active ? '✓ Faol' : '✗ Nofaol'}
+                </span>
+            </td>
+            <td style="padding:.85rem 1rem;text-align:center">
+                <button onclick="deleteNorm(${n.id})" class="btn-delete">🗑️</button>
+            </td>
+        </tr>
+    `).join('');
+    }
+
+    function renderNormPagination(meta) {
+        const container = document.getElementById('normPagination');
+        if (!container || !meta) return;
+        const {currentPage = 0, totalPages = 1, totalElements = 0} = meta;
+        let html = `<div style="display:flex;align-items:center;justify-content:space-between;padding:1rem 1.2rem;border-top:1px solid rgba(99,102,241,.15)">
+        <div style="color:var(--text-secondary);font-size:.85rem">Jami: <strong style="color:#818cf8">${totalElements}</strong> ta norma</div>
+        <div style="display:flex;gap:.4rem;align-items:center">
+        <button onclick="loadNorms(${currentPage - 1})" ${currentPage === 0 ? 'disabled' : ''}
+            style="padding:.4rem .7rem;background:rgba(58,58,58,.5);border:1px solid rgba(99,102,241,.2);border-radius:6px;color:var(--text-primary);cursor:pointer;opacity:${currentPage === 0 ? .4 : 1}">◀</button>`;
+        const start = Math.max(0, currentPage - 2), end = Math.min(totalPages - 1, start + 4);
+        for (let i = start; i <= end; i++) {
+            html += `<button onclick="loadNorms(${i})" style="padding:.4rem .7rem;background:${i === currentPage ? '#6366f1' : 'rgba(58,58,58,.5)'};border:1px solid rgba(99,102,241,.2);border-radius:6px;color:${i === currentPage ? '#fff' : 'var(--text-primary)'};font-weight:${i === currentPage ? 700 : 400};cursor:pointer">${i + 1}</button>`;
+        }
+        html += `<button onclick="loadNorms(${currentPage + 1})" ${currentPage >= totalPages - 1 ? 'disabled' : ''}
+            style="padding:.4rem .7rem;background:rgba(58,58,58,.5);border:1px solid rgba(99,102,241,.2);border-radius:6px;color:var(--text-primary);cursor:pointer;opacity:${currentPage >= totalPages - 1 ? .4 : 1}">▶</button>
+        </div></div>`;
+        container.innerHTML = html;
+    }
+
+    function filterNorms(query) {
+        if (!query.trim()) {
+            renderNormRows(allNormsCache, normCurrentPage);
+            return;
+        }
+        const q = query.toLowerCase();
+        const filtered = allNormsCache.filter(n =>
+            (n.productName || n.product?.name || '').toLowerCase().includes(q) ||
+            (CONSUME_LABELS[n.consumptionType] || '').toLowerCase().includes(q) ||
+            (AGE_LABELS[n.ageGroup] || '').toLowerCase().includes(q)
+        );
+        const tbody = document.getElementById('normList');
+        if (!filtered.length) {
+            if (tbody) tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--text-secondary)">🔍 "${query}" topilmadi</td></tr>`;
+            return;
+        }
+        renderNormRows(filtered, 0);
+    }
+
+    async function deleteNorm(id) {
+        if (!confirm("Norma o'chirilsinmi?")) return;
+        try {
+            const res = await fetch(`${BASE_API}/product-norm/${id}`, {method: 'DELETE', headers: getAuthHeaders()});
+            if (!res.ok) throw new Error('Status: ' + res.status);
+            showToast("🗑️ Norma o'chirildi");
+            loadNorms(normCurrentPage);
+        } catch (e) {
+            showToast("❌ O'chirishda xato", 'error');
+        }
+    }
+
+    ////profile uchun
+    function injectProfileCSS() {
+        if (document.getElementById('profileCSS')) return;
+        const s = document.createElement('style');
+        s.id = 'profileCSS';
+        s.textContent = `
+        .ptab-btn {
+            padding:.55rem 1.4rem;
+            border-radius:9px;
+            border:1.5px solid rgba(255,255,255,.1);
+            background:rgba(58,58,58,.4);
+            color:var(--text-secondary);
+            font-family:inherit;
+            font-size:.88rem;
+            font-weight:600;
+            cursor:pointer;
+            transition:all .2s;
+            display:inline-flex;
+            align-items:center;
+            gap:.4rem;
+        }
+        .ptab-btn:hover { border-color:rgba(255,107,53,.3); color:var(--accent-primary); }
+        .ptab-btn.active {
+            background:rgba(255,107,53,.18);
+            color:var(--accent-primary);
+            border-color:var(--accent-primary);
+        }
+
+        /* Notify overlay */
+        #pNotifyOverlay {
+            display:none;
+            position:fixed;
+            inset:0;
+            background:rgba(15,23,42,.6);
+            backdrop-filter:blur(4px);
+            z-index:9100;
+            align-items:center;
+            justify-content:center;
+        }
+        #pNotifyOverlay.active { display:flex; }
+        #pNotifyBox {
+            background:var(--bg-secondary,#2d2d2d);
+            border:1px solid rgba(255,107,53,.25);
+            border-radius:16px;
+            padding:2rem;
+            max-width:420px;
+            width:90%;
+            text-align:center;
+            box-shadow:0 24px 80px rgba(0,0,0,.5);
+            animation:pNotifyIn .22s ease;
+        }
+        @keyframes pNotifyIn {
+            from { opacity:0; transform:scale(.92) }
+            to   { opacity:1; transform:scale(1)   }
+        }
+        .pnotify-icon { font-size:2.5rem; margin-bottom:.75rem; }
+        .pnotify-title { font-size:1.05rem; font-weight:700; color:var(--text-primary,#f5f5f5); margin-bottom:.4rem; }
+        .pnotify-msg   { font-size:.88rem; color:var(--text-secondary,#b0b0b0); margin-bottom:1.5rem; line-height:1.5; }
+        .pnotify-btns  { display:flex; gap:.75rem; justify-content:center; }
+        .pnotify-ok {
+            padding:.65rem 1.8rem;
+            background:linear-gradient(135deg,var(--accent-primary,#ff6b35),#ffa500);
+            border:none; border-radius:9px;
+            color:#fff; font-family:inherit; font-size:.9rem; font-weight:700;
+            cursor:pointer; transition:all .18s;
+        }
+        .pnotify-ok:hover { transform:translateY(-1px); box-shadow:0 6px 18px rgba(255,107,53,.4); }
+        .pnotify-cancel {
+            padding:.65rem 1.8rem;
+            background:rgba(255,255,255,.06);
+            border:1.5px solid rgba(255,255,255,.12);
+            border-radius:9px;
+            color:var(--text-secondary,#b0b0b0);
+            font-family:inherit; font-size:.9rem; font-weight:600;
+            cursor:pointer; transition:all .18s;
+        }
+        .pnotify-cancel:hover { background:rgba(255,255,255,.1); }
+
+        /* Message modal */
+        #msgOverlay {
+            display:none; position:fixed; inset:0;
+            background:rgba(15,23,42,.6); backdrop-filter:blur(4px);
+            z-index:9050; align-items:center; justify-content:center; padding:16px;
+        }
+        #msgOverlay.active { display:flex; }
+        #msgModal {
+            background:var(--bg-secondary,#2d2d2d);
+            border:1px solid rgba(255,107,53,.2);
+            border-radius:18px;
+            width:100%; max-width:500px;
+            box-shadow:0 24px 80px rgba(0,0,0,.4);
+            animation:pNotifyIn .22s ease;
+        }
+        .msg-header {
+            display:flex; align-items:center; justify-content:space-between;
+            padding:1.25rem 1.5rem;
+            border-bottom:1px solid rgba(255,255,255,.07);
+        }
+        .msg-header h3 { font-size:1rem; font-weight:700; color:var(--text-primary,#f5f5f5); }
+        .msg-close {
+            width:30px; height:30px; border:none;
+            background:rgba(255,255,255,.07); border-radius:7px;
+            color:var(--text-secondary,#b0b0b0); font-size:1rem;
+            cursor:pointer; display:flex; align-items:center; justify-content:center;
+        }
+        .msg-body { padding:1.25rem 1.5rem 1.5rem; }
+        .msg-field { margin-bottom:1rem; }
+        .msg-label { display:block; font-size:.82rem; font-weight:600; color:var(--text-secondary,#b0b0b0); margin-bottom:.4rem; }
+        .msg-select, .msg-textarea {
+            width:100%; padding:.8rem 1rem;
+            background:rgba(58,58,58,.6);
+            border:1.5px solid rgba(255,255,255,.1);
+            border-radius:9px; color:var(--text-primary,#f5f5f5);
+            font-family:inherit; font-size:.9rem; outline:none;
+            transition:border-color .2s;
+        }
+        .msg-select:focus, .msg-textarea:focus { border-color:var(--accent-primary,#ff6b35); }
+        .msg-select option { background:#2d2d2d; }
+        .msg-textarea { resize:vertical; min-height:110px; }
+        .msg-send {
+            width:100%; padding:.85rem;
+            background:linear-gradient(135deg,var(--accent-primary,#ff6b35),#ffa500);
+            border:none; border-radius:9px;
+            color:#fff; font-family:inherit; font-size:.95rem; font-weight:700;
+            cursor:pointer; transition:all .18s;
+        }
+        .msg-send:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 6px 18px rgba(255,107,53,.4); }
+        .msg-send:disabled { opacity:.6; cursor:not-allowed; transform:none; }
+
+        /* Holiday */
+        .hol-card {
+            background:rgba(45,45,45,.5);
+            border:1px solid rgba(255,107,53,.15);
+            border-radius:12px;
+            padding:1rem 1.25rem;
+            display:flex; align-items:center; justify-content:space-between;
+            gap:1rem; transition:all .2s;
+        }
+        .hol-card:hover { border-color:rgba(255,107,53,.35); }
+        .hol-date-badge {
+            background:rgba(255,107,53,.12);
+            border:1px solid rgba(255,107,53,.25);
+            border-radius:9px;
+            padding:.4rem .75rem;
+            font-size:.8rem; font-weight:700;
+            color:var(--accent-primary,#ff6b35);
+            white-space:nowrap;
+        }
+        .hol-name { font-weight:600; color:var(--text-primary,#f5f5f5); font-size:.92rem; }
+        .hol-national { font-size:.72rem; color:var(--text-secondary,#b0b0b0); margin-top:.15rem; }
+
+        /* Holiday modal */
+        #holOverlay {
+            display:none; position:fixed; inset:0;
+            background:rgba(15,23,42,.6); backdrop-filter:blur(4px);
+            z-index:9050; align-items:center; justify-content:center; padding:16px;
+        }
+        #holOverlay.active { display:flex; }
+        #holModal {
+            background:var(--bg-secondary,#2d2d2d);
+            border:1px solid rgba(255,107,53,.2);
+            border-radius:18px;
+            width:100%; max-width:440px;
+            box-shadow:0 24px 80px rgba(0,0,0,.4);
+            animation:pNotifyIn .22s ease;
+        }
+
+        /* Security */
+        .sec-user-card {
+            padding:.9rem 1rem;
+            background:rgba(45,45,45,.4);
+            border:1.5px solid rgba(255,255,255,.07);
+            border-radius:10px;
+            cursor:pointer; transition:all .2s;
+            display:flex; align-items:center; gap:.75rem;
+        }
+        .sec-user-card:hover { border-color:rgba(255,107,53,.4); background:rgba(255,107,53,.06); }
+        .sec-user-card.selected { border-color:var(--accent-primary,#ff6b35); background:rgba(255,107,53,.1); }
+        .sec-avatar {
+            width:38px; height:38px; border-radius:50%;
+            display:flex; align-items:center; justify-content:center;
+            font-weight:700; font-size:.85rem; flex-shrink:0;
+        }
+    `;
+        document.head.appendChild(s);
+    }
+
+    function showNotify({
+                            icon = '❓',
+                            title = '',
+                            msg = '',
+                            confirmText = 'Ha',
+                            cancelText = "Yo'q",
+                            onConfirm,
+                            onCancel
+                        } = {}) {
+        let overlay = document.getElementById('pNotifyOverlay');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.id = 'pNotifyOverlay';
+            overlay.innerHTML = `<div id="pNotifyBox">
+            <div class="pnotify-icon" id="pni"></div>
+            <div class="pnotify-title" id="pnt"></div>
+            <div class="pnotify-msg" id="pnm"></div>
+            <div class="pnotify-btns">
+                <button class="pnotify-ok" id="pnOk"></button>
+                <button class="pnotify-cancel" id="pnCancel"></button>
+            </div>
+        </div>`;
+            document.body.appendChild(overlay);
+        }
+        document.getElementById('pni').textContent = icon;
+        document.getElementById('pnt').textContent = title;
+        document.getElementById('pnm').textContent = msg;
+        document.getElementById('pnOk').textContent = confirmText;
+        document.getElementById('pnCancel').textContent = cancelText;
+        overlay.classList.add('active');
+
+        const newOk = document.getElementById('pnOk').cloneNode(true);
+        const newCancel = document.getElementById('pnCancel').cloneNode(true);
+        document.getElementById('pnOk').replaceWith(newOk);
+        document.getElementById('pnCancel').replaceWith(newCancel);
+
+        document.getElementById('pnOk').addEventListener('click', () => {
+            overlay.classList.remove('active');
+            if (onConfirm) onConfirm();
+        });
+        document.getElementById('pnCancel').addEventListener('click', () => {
+            overlay.classList.remove('active');
+            if (onCancel) onCancel();
+        });
+    }
+
+    // ── Profile page HTML ──────────────────────────────────────────────
+    function profilePageHTML() {
+        return `
+    <div style="display:flex;gap:.5rem;margin-bottom:1.5rem;flex-wrap:wrap">
+        <button class="ptab-btn active" id="ptab-msg"      onclick="switchProfileTab('msg')">✉️ Xabar yuborish</button>
+        <button class="ptab-btn"        id="ptab-holidays"  onclick="switchProfileTab('holidays')">🎉 Bayram kunlari</button>
+        <button class="ptab-btn"        id="ptab-security"  onclick="switchProfileTab('security')">🔒 Xavfsizlik</button>
+    </div>
+
+        <div id="profileTab-msg">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:1rem">
+        <button onclick="openMsgModal()" class="cta-button" style="padding:.8rem 2rem;font-size:.9rem">
+            ✉️ Xabar yozish
+        </button>
+    </div>
+        <div style="background:rgba(45,45,45,.5);border:1px solid rgba(255,107,53,.2);border-radius:12px;overflow:hidden">
+        <div style="padding:1rem 1.25rem;border-bottom:1px solid rgba(255,255,255,.07)">
+        <span style="font-size:.78rem;font-weight:700;color:var(--accent-primary);letter-spacing:.06em;text-transform:uppercase">
+        📋 Yuborilgan xabarlar
+        </span>
+        </div>
+        <table style="width:100%;border-collapse:collapse">
+        <thead>
+        <tr style="background:rgba(58,58,58,.3);border-bottom:1px solid rgba(255,107,53,.15)">
+        <th style="padding:.75rem 1rem;text-align:left;color:var(--text-secondary);font-size:.78rem;text-transform:uppercase">#</th>
+        <th style="padding:.75rem 1rem;text-align:left;color:var(--text-secondary);font-size:.78rem;text-transform:uppercase">Xabar</th>
+        <th style="padding:.75rem 1rem;text-align:center;color:var(--text-secondary);font-size:.78rem;text-transform:uppercase">Kimga</th>
+        <th style="padding:.75rem 1rem;text-align:left;color:var(--text-secondary);font-size:.78rem;text-transform:uppercase">Kim yubordi</th>
+        <th style="padding:.75rem 1rem;text-align:center;color:var(--text-secondary);font-size:.78rem;text-transform:uppercase">Vaqt</th>
+        </tr>
+        </thead>
+        <tbody id="msgList">
+        <tr><td colspan="5" style="text-align:center;padding:3rem;color:var(--text-secondary)">⏳ Yuklanmoqda...</td></tr>
+        </tbody>
+        </table>
+        <div id="msgPagination"></div>
+        </div>
+        </div>
+
+
+        <div id="profileTab-holidays" style="display:none">
+        <div style="margin-bottom:1.25rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem">
+        <div style="display:flex;gap:.5rem;align-items:center">
+        <select id="holYearFilter" onchange="loadHolidays()"
+        style="padding:.6rem 1rem;background:rgba(58,58,58,.5);border:1.5px solid rgba(255,255,255,.1);border-radius:8px;color:var(--text-primary);font-family:inherit;font-size:.88rem;outline:none"></select>
+        <span id="holCount" style="color:var(--text-secondary);font-size:.85rem"></span>
+        </div>
+        <button onclick="openHolModal()" class="cta-button" style="padding:.75rem 1.75rem;font-size:.9rem">+ Bayram qo'shish</button>
+        </div>
+        <div id="holList" style="display:flex;flex-direction:column;gap:.75rem">
+</div>
+        </div>
+
+
+        <div id="profileTab-security" style="display:none">
+        <div>
+    <div style="background:rgba(45,45,45,.5);border:1px solid rgba(255,107,53,.15);border-radius:16px;padding:1.75rem 2rem">
+        <div style="font-size:.78rem;font-weight:700;color:var(--accent-primary);letter-spacing:.07em;text-transform:uppercase;margin-bottom:1.25rem">
+        🔒 Parolni yangilash (email orqali)
+        </div>
+
+        <div style="margin-bottom:1rem">
+        <label style="display:block;font-size:.82rem;font-weight:600;color:var(--text-secondary);margin-bottom:.6rem">1. Rol tanlang</label>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+        <button onclick="secSelectRole('DRIVER')"      id="secRole-DRIVER"      class="ptab-btn">🚗 Haydovchi</button>
+        <button onclick="secSelectRole('MANAGER')"     id="secRole-MANAGER"     class="ptab-btn">👔 Manager</button>
+        <button onclick="secSelectRole('WAREHOUSEMAN')" id="secRole-WAREHOUSEMAN" class="ptab-btn">🏭 Omborchi</button>
+        <button onclick="secSelectRole('MUDIRA')"      id="secRole-MUDIRA"      class="ptab-btn">👩‍💼 Mudira</button>
+        </div>
+        </div>
+
+        <div id="secUserStep" style="display:none;margin-bottom:1rem">
+        <label style="display:block;font-size:.82rem;font-weight:600;color:var(--text-secondary);margin-bottom:.6rem">2. Foydalanuvchi tanlang</label>
+        <div id="secUserList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:.5rem;max-height:270px;overflow-y:auto;padding-right:4px"></div>
+        </div>
+
+        <div id="secInfoStep" style="display:none">
+        <div style="background:rgba(58,58,58,.3);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:1.1rem 1.25rem;margin-bottom:1rem">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+        <div>
+        <div style="font-size:.72rem;color:var(--text-secondary);margin-bottom:.2rem">Username</div>
+        <div id="secShowUsername" style="font-weight:600;color:var(--accent-primary);font-size:.92rem"></div>
+        </div>
+        <div>
+        <div style="font-size:.72rem;color:var(--text-secondary);margin-bottom:.2rem">Email</div>
+        <div id="secShowEmail" style="font-weight:600;color:var(--text-primary);font-size:.88rem;word-break:break-all"></div>
+        </div>
+        </div>
+        </div>
+        <button onclick="secResetPassword()" id="secResetBtn"
+        style="width:100%;padding:.9rem;background:linear-gradient(135deg,#ef4444,#dc2626);border:none;border-radius:9px;color:#fff;font-family:inherit;font-size:.95rem;font-weight:700;cursor:pointer;transition:all .18s"
+        onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 18px rgba(239,68,68,.4)'"
+        onmouseout="this.style.transform='';this.style.boxShadow=''">
+        🔑 Parolni yangilash
+        </button>
+        <div style="text-align:center;margin-top:.6rem;font-size:.78rem;color:var(--text-secondary)">
+        Yangi parol email orqali yuboriladi
+        </div>
+        </div>
+        </div>
+        </div>
+        </div>
+
+
+        <div id="msgOverlay">
+        <div id="msgModal">
+        <div class="msg-header">
+        <h3>✉️ Xabar yuborish</h3>
+        <button class="msg-close" onclick="closeMsgModal()">✕</button>
+        </div>
+        <div class="msg-body">
+        <div class="msg-field">
+        <label class="msg-label">Kimga *</label>
+        <select id="msgRole" class="msg-select">
+        <option value="">— Rol tanlang —</option>
+        <option value="driver">🚗 Haydovchilar</option>
+        <option value="manager">👔 Managerlar</option>
+        <option value="warehouseman">🏭 Omborchilar</option>
+        <option value="mudira">👩‍💼 Mudiralar</option>
+        </select>
+        </div>
+        <div class="msg-field">
+        <label class="msg-label">Xabar matni *</label>
+        <textarea id="msgText" class="msg-textarea" placeholder="Xabar matnini yozing..."
+    maxlength="255" oninput="msgCharCount(this)"></textarea>
+<div id="msgCharInfo" style="text-align:right;font-size:.75rem;color:var(--text-secondary);margin-top:.3rem">
+    0 / 255
+</div>
+        </div>
+        <button onclick="sendMessage()" id="msgSendBtn" class="msg-send">📤 Jo'natish</button>
+        </div>
+        </div>
+        </div>
+
+
+        <div id="holOverlay">
+        <div id="holModal">
+        <div class="msg-header">
+        <h3 id="holModalTitle">🎉 Bayram qo'shish</h3>
+        <button class="msg-close" onclick="closeHolModal()">✕</button>
+        </div>
+        <div class="msg-body">
+        <div class="msg-field">
+        <label class="msg-label">Bayram nomi *</label>
+        <input id="holName" class="msg-select" type="text" placeholder="Masalan: Navro'z" style="display:block">
+        </div>
+        <div class="msg-field">
+        <label class="msg-label">Sana *</label>
+        <input id="holDate" class="msg-select" type="date" style="display:block;color-scheme:dark">
+        </div>
+        <div class="msg-field" style="display:flex;align-items:center;gap:.6rem">
+        <input id="holNational" type="checkbox" checked style="width:17px;height:17px;accent-color:var(--accent-primary);cursor:pointer">
+        <label for="holNational" style="font-size:.88rem;color:var(--text-secondary);cursor:pointer;margin:0">Milliy bayram</label>
+        </div>
+        <input type="hidden" id="holId">
+        <button onclick="saveHoliday()" id="holSaveBtn" class="msg-send" style="margin-top:.5rem">✓ Saqlash</button>
+        </div>
+        </div>
+        </div>
+        `;
+    }
+
+    // ── Tab switch ─────────────────────────────────────────────────────
+    function switchProfileTab(tab) {
+        ['msg', 'holidays', 'security'].forEach(t => {
+            document.getElementById('ptab-' + t)?.classList.toggle('active', t === tab);
+            const p = document.getElementById('profileTab-' + t);
+            if (p) p.style.display = t === tab ? 'block' : 'none';
+        });
+        if (tab === 'holidays') loadHolidays();
+        if (tab === 'msg') loadMessages(0);
+    }
+
+    // ══ TAB 1: XABAR ══════════════════════════════════════════════════
+    function openMsgModal() {
+        document.getElementById('msgOverlay').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeMsgModal() {
+        document.getElementById('msgOverlay').classList.remove('active');
+        document.body.style.overflow = '';
+        document.getElementById('msgRole').value = '';
+        document.getElementById('msgText').value = '';
+    }
+
+    async function sendMessage() {
+        const role = document.getElementById('msgRole').value;
+        const text = document.getElementById('msgText').value.trim();
+        if (!role) {
+            showToast('Rolni tanlang!', 'error');
+            return;
+        }
+        if (!text) {
+            showToast('Xabar matnini yozing!', 'error');
+            return;
+        }
+        const labels = {
+            driver: 'Haydovchilar',
+            manager: 'Managerlar',
+            warehouseman: 'Omborchilar',
+            mudira: 'Mudiralar'
+        };
+        showNotify({
+            icon: '📤',
+            title: "Xabarni jo'natish",
+            msg: `"${labels[role]}" guruhiga xabar jo'natmoqchimisiz?\n\n"${text.slice(0, 80)}${text.length > 80 ? '...' : ''}"`,
+            confirmText: "Ha, jo'nat",
+            cancelText: 'Bekor',
+            onConfirm: async () => {
+                const btn = document.getElementById('msgSendBtn');
+                if (btn) {
+                    btn.disabled = true;
+                    btn.textContent = '⏳ Yuborilmoqda...';
+                }
+                try {
+                    const res = await fetch(`${BASE_API}/message?filter=${role}`, {
+                        method: 'POST',
+                        headers: getAuthHeaders(),
+                        body: JSON.stringify({message: text})
+                    });
+                    if (!res.ok) throw new Error('Status: ' + res.status);
+                    closeMsgModal();
+                    showToast('✅ Xabar muvaffaqiyatli yuborildi!');
+                } catch (e) {
+                    showToast('❌ Yuborishda xato: ' + e.message, 'error');
+                } finally {
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.textContent = "📤 Jo'natish";
+                    }
+                }
+            }
+        });
+    }
+
+    // ══ TAB 2: BAYRAM KUNLARI ══════════════════════════════════════════
+    function initHolYearFilter() {
+        const sel = document.getElementById('holYearFilter');
+        if (!sel || sel.options.length > 0) return;
+        const y = new Date().getFullYear();
+        for (let i = y - 1; i <= y + 3; i++) {
+            const o = document.createElement('option');
+            o.value = i;
+            o.textContent = i + '-yil';
+            if (i === y) o.selected = true;
+            sel.appendChild(o);
+        }
+    }
+
+    async function loadHolidays() {
+        initHolYearFilter();
+        const year = document.getElementById('holYearFilter')?.value || new Date().getFullYear();
+        const list = document.getElementById('holList');
+        if (!list) return;
+        list.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text-secondary)">⏳ Yuklanmoqda...</div>';
+        try {
+            const res = await fetch(`${BASE_API}/holidays?yearMonth=${year}`, {headers: getAuthHeaders()});
+            if (!res.ok) throw new Error('Status: ' + res.status);
+            const result = await res.json();
+            const data = result.data || result || [];
+
+            const countEl = document.getElementById('holCount');
+            if (countEl) countEl.textContent = data.length ? `${data.length} ta bayram` : '';
+
+            if (!data.length) {
+                list.innerHTML = `<div style="text-align:center;padding:3rem;color:var(--text-secondary)">
+                <div style="font-size:2.5rem;margin-bottom:.75rem">🎉</div>
+                <div>${year}-yil uchun bayramlar qo'shilmagan</div>
+            </div>`;
+                return;
+            }
+
+            const grouped = {};
+            data.forEach(h => {
+                const m = h.yearMonth || (h.holidayDate || '').slice(0, 7) || '—';
+                if (!grouped[m]) grouped[m] = [];
+                grouped[m].push(h);
+            });
+
+            const mNames = ['', 'Yanvar', 'Fevral', 'Mart', 'Aprel', 'May', 'Iyun', 'Iyul', 'Avgust', 'Sentyabr', 'Oktyabr', 'Noyabr', 'Dekabr'];
+            list.innerHTML = Object.keys(grouped).sort().map(month => {
+                const mNum = parseInt((month || '').split('-')[1]) || 0;
+                return `<div>
+                <div style="font-size:.75rem;font-weight:700;color:var(--accent-primary);letter-spacing:.07em;text-transform:uppercase;margin-bottom:.5rem">
+                    ${mNames[mNum] || month} ${year}
+                </div>
+                <div style="display:flex;flex-direction:column;gap:.5rem">
+                ${grouped[month].map(h => `
+                <div class="hol-card">
+                    <div style="display:flex;align-items:center;gap:.85rem;flex:1;min-width:0">
+                        <div class="hol-date-badge">${h.holidayDate || '—'}</div>
+                        <div style="min-width:0">
+                            <div class="hol-name">${h.name || '—'}</div>
+                            <div class="hol-national">${(h.national || h.isNational) ? '🇺🇿 Milliy bayram' : '📅 Mahalliy'}</div>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:.4rem;flex-shrink:0">
+                        <button onclick="editHoliday(${h.id})" class="btn-edit" style="padding:.35rem .7rem;font-size:.75rem">✏️</button>
+                        <button onclick="deleteHoliday(${h.id},'${(h.name || '').replace(/'/g, "\\'")}' )" class="btn-delete" style="padding:.35rem .7rem;font-size:.75rem">🗑️</button>
+                    </div>
+                </div>`).join('')}
+                </div></div>`;
+            }).join('');
+        } catch (e) {
+            list.innerHTML = `<div style="text-align:center;padding:2rem;color:#ef4444">❌ Xatolik: ${e.message}</div>`;
+        }
+    }
+
+    function openHolModal(holiday = null) {
+        document.getElementById('holModalTitle').textContent = holiday ? '✏️ Tahrirlash' : "🎉 Bayram qo'shish";
+        document.getElementById('holName').value = holiday?.name || '';
+        document.getElementById('holDate').value = holiday?.holidayDate || '';
+        document.getElementById('holNational').checked = holiday ? (holiday.national ?? holiday.isNational ?? true) : true;
+        document.getElementById('holId').value = holiday?.id || '';
+        document.getElementById('holOverlay').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeHolModal() {
+        document.getElementById('holOverlay').classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    async function saveHoliday() {
+        const name = document.getElementById('holName').value.trim();
+        const date = document.getElementById('holDate').value;
+        const isNational = document.getElementById('holNational').checked;
+        const id = document.getElementById('holId').value;
+        if (!name) {
+            showToast('Bayram nomini kiriting!', 'error');
+            return;
+        }
+        if (!date) {
+            showToast('Sanani tanlang!', 'error');
+            return;
+        }
+        const payload = {
+            name,
+            holidayDate: date,
+            yearMonth: date.slice(0, 7),
+            isNational,
+            national: isNational
+        };
+        const btn = document.getElementById('holSaveBtn');
+        btn.disabled = true;
+        btn.textContent = '⏳ Saqlanmoqda...';
+        try {
+            const url = id ? `${BASE_API}/holidays/${id}` : `${BASE_API}/holidays/create`;
+            const res = await fetch(url, {
+                method: id ? 'PUT' : 'POST',
+                headers: getAuthHeaders(),
+                body: JSON.stringify(payload)
+            });
+            if (!res.ok) throw new Error('Status: ' + res.status);
+            closeHolModal();
+            showToast(id ? '✅ Yangilandi!' : "✅ Bayram qo'shildi!");
+            loadHolidays();
+        } catch (e) {
+            showToast('❌ Xatolik: ' + e.message, 'error');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = '✓ Saqlash';
+        }
+    }
+
+    async function editHoliday(id) {
+        try {
+            const res = await fetch(`${BASE_API}/holidays/${id}`, {headers: getAuthHeaders()});
+            if (!res.ok) throw new Error(res.status);
+            const result = await res.json();
+            openHolModal(result.data || result);
+        } catch (e) {
+            showToast("Yuklab bo'lmadi", 'error');
+        }
+    }
+
+    function deleteHoliday(id, name) {
+        showNotify({
+            icon: '🗑️', title: "Bayramni o'chirish",
+            msg: `"${name}" ni o'chirmoqchimisiz? Bu amal ortga qaytarib bo'lmaydi.`,
+            confirmText: "Ha, o'chir", cancelText: 'Bekor',
+            onConfirm: async () => {
+                try {
+                    const res = await fetch(`${BASE_API}/holidays/${id}`, {
+                        method: 'DELETE',
+                        headers: getAuthHeaders()
+                    });
+                    if (!res.ok) throw new Error('Status: ' + res.status);
+                    showToast("🗑️ Bayram o'chirildi");
+                    loadHolidays();
+                } catch (e) {
+                    showToast("❌ O'chirishda xato", 'error');
+                }
+            }
+        });
+    }
+
+    // ══ TAB 3: XAVFSIZLIK ══════════════════════════════════════════════
+    let secSelectedUser = null;
+    const SEC_COLORS = {DRIVER: '#fbbf24', MANAGER: '#818cf8', WAREHOUSEMAN: '#34d399', MUDIRA: '#f472b6'};
+    const SEC_FILTERS = {DRIVER: 'driver', MANAGER: 'manager', WAREHOUSEMAN: 'warehouseman', MUDIRA: 'mudira'};
+
+    async function secSelectRole(role) {
+        secSelectedUser = null;
+        ['DRIVER', 'MANAGER', 'WAREHOUSEMAN', 'MUDIRA'].forEach(r => {
+            document.getElementById('secRole-' + r)?.classList.toggle('active', r === role);
+        });
+        const userStep = document.getElementById('secUserStep');
+        const infoStep = document.getElementById('secInfoStep');
+        if (userStep) userStep.style.display = 'block';
+        if (infoStep) infoStep.style.display = 'none';
+
+        const userList = document.getElementById('secUserList');
+        if (!userList) return;
+        userList.innerHTML = '<div style="text-align:center;padding:1.5rem;color:var(--text-secondary)">⏳ Yuklanmoqda...</div>';
+
+        try {
+            const res = await fetch(`${BASE_API}/user/get-all?filter=${SEC_FILTERS[role]}&size=50`, {headers: getAuthHeaders()});
+            if (!res.ok) throw new Error(res.status);
+            const result = await res.json();
+            const list = result.data || [];
+            if (!list.length) {
+                userList.innerHTML = '<div style="color:var(--text-secondary);font-size:.85rem;padding:.5rem">Foydalanuvchilar topilmadi</div>';
+                return;
+            }
+            const color = SEC_COLORS[role] || '#94a3b8';
+            userList.innerHTML = list.map(u => {
+                const initials = (u.fullName || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+                const d = encodeURIComponent(JSON.stringify({
+                    id: u.id,
+                    username: u.username,
+                    email: u.email,
+                    fullName: u.fullName
+                }));
+                return `<div class="sec-user-card" id="secUCard-${u.id}" onclick="secSelectUser('${d}',${u.id})">
+                <div class="sec-avatar" style="background:${color};color:#000">${initials}</div>
+                <div style="min-width:0">
+                    <div style="font-weight:600;font-size:.88rem;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${u.fullName || '-'}</div>
+                    <div style="font-size:.73rem;color:var(--text-secondary)">@${u.username || '-'}</div>
+                </div>
+            </div>`;
+            }).join('');
+        } catch (e) {
+            userList.innerHTML = `<div style="color:#ef4444;font-size:.85rem;padding:.5rem">Xatolik: ${e.message}</div>`;
+        }
+    }
+
+    function secSelectUser(dataStr, id) {
+        secSelectedUser = JSON.parse(decodeURIComponent(dataStr));
+        document.querySelectorAll('.sec-user-card').forEach(c => c.classList.remove('selected'));
+        document.getElementById('secUCard-' + id)?.classList.add('selected');
+        document.getElementById('secShowUsername').textContent = '@' + (secSelectedUser.username || '-');
+        document.getElementById('secShowEmail').textContent = secSelectedUser.email || '-';
+        document.getElementById('secInfoStep').style.display = 'block';
+    }
+
+    function secResetPassword() {
+        if (!secSelectedUser) return;
+        showNotify({
+            icon: '🔑', title: 'Parolni yangilash',
+            msg: `@${secSelectedUser.username} foydalanuvchisining paroli yangilanib, "${secSelectedUser.email}" emailiga yuboriladi. Davom etasizmi?`,
+            confirmText: 'Ha, yangilash', cancelText: 'Bekor',
+            onConfirm: async () => {
+                const btn = document.getElementById('secResetBtn');
+                if (btn) {
+                    btn.disabled = true;
+                    btn.textContent = '⏳ Yuborilmoqda...';
+                }
+                try {
+                    const res = await fetch(`${BASE_API}/user/reset-password?username=${encodeURIComponent(secSelectedUser.username)}`, {
+                        method: 'PUT', headers: getAuthHeaders()
+                    });
+                    if (!res.ok) throw new Error('Status: ' + res.status);
+                    showToast(`✅ Yangi parol ${secSelectedUser.email} ga yuborildi!`);
+                    secSelectedUser = null;
+                    document.getElementById('secInfoStep').style.display = 'none';
+                    document.querySelectorAll('.sec-user-card').forEach(c => c.classList.remove('selected'));
+                } catch (e) {
+                    showToast('❌ Xatolik: ' + e.message, 'error');
+                } finally {
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.textContent = '🔑 Parolni yangilash';
+                    }
+                }
+            }
+        });
+    }
+    // loadMessages funksiyasi
+    let msgCurrentPage = 0;
+    const MSG_PAGE_SIZE = 10;
+
+    const ROLE_LABELS = {
+        driver: '🚗 Haydovchilar',
+        manager: '👔 Managerlar',
+        warehouseman: '🏭 Omborchilar',
+        mudira: '👩‍💼 Mudiralar'
+    };
+
+    async function loadMessages(page = 0) {
+        msgCurrentPage = page;
+        const tbody = document.getElementById('msgList');
+        if (!tbody) return;
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:3rem;color:var(--text-secondary)">⏳ Yuklanmoqda...</td></tr>`;
+        try {
+            const res = await fetch(`${BASE_API}/message/get-all?page=${page}&size=${MSG_PAGE_SIZE}`, {
+                headers: getAuthHeaders()
+            });
+            if (!res.ok) throw new Error('Status: ' + res.status);
+            const result = await res.json();
+            const list = result.data || [];
+            const meta = result.meta;
+
+            if (!list.length) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:3rem;color:var(--text-secondary)">📭 Xabarlar yo'q</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = list.map((m, i) => `
+            <tr style="border-bottom:1px solid rgba(255,255,255,.05);transition:background .15s"
+                onmouseover="this.style.background='rgba(255,107,53,.04)'"
+                onmouseout="this.style.background='transparent'">
+                <td style="padding:.85rem 1rem;text-align:center">
+                    <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;
+                        background:rgba(255,107,53,.1);border:1px solid rgba(255,107,53,.2);border-radius:6px;
+                        font-size:.75rem;color:var(--text-secondary)">
+                        ${page * MSG_PAGE_SIZE + i + 1}
+                    </span>
+                </td>
+                <td style="padding:.85rem 1rem;max-width:320px">
+                    <div style="color:var(--text-primary);font-size:.9rem;line-height:1.5;
+                        overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+                        ${m.messageText}
+                    </div>
+                </td>
+                <td style="padding:.85rem 1rem;text-align:center">
+                    <span style="padding:.3rem .75rem;border-radius:100px;font-size:.75rem;font-weight:600;
+                        background:rgba(255,107,53,.1);color:var(--accent-primary);
+                        border:1px solid rgba(255,107,53,.2)">
+                        ${ROLE_LABELS[m.targetRole] || m.targetRole || '—'}
+                    </span>
+                </td>
+                <td style="padding:.85rem 1rem">
+                    <div style="display:flex;align-items:center;gap:.6rem">
+                        <div style="width:30px;height:30px;border-radius:50%;
+                            background:linear-gradient(135deg,var(--accent-primary),#ffa500);
+                            display:flex;align-items:center;justify-content:center;
+                            font-weight:700;font-size:.75rem;color:#000;flex-shrink:0">
+                            ${(m.senderName || 'A').split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase()}
+                        </div>
+                        <span style="font-size:.88rem;color:var(--text-primary)">${m.senderName || 'Administrator'}</span>
+                    </div>
+                </td>
+                <td style="padding:.85rem 1rem;text-align:center;color:var(--text-secondary);font-size:.82rem;white-space:nowrap">
+                    ${formatDateTime(m.sentAt)}
+                </td>
+            </tr>
+        `).join('');
+
+            renderMsgPagination(meta);
+        } catch (e) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:3rem;color:#ef4444">❌ Xatolik: ${e.message}</td></tr>`;
+        }
+    }
+
+    function formatDateTime(dateStr) {
+        if (!dateStr) return '—';
+        const d = new Date(dateStr);
+        const pad = n => String(n).padStart(2, '0');
+        return `${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    }
+
+    function renderMsgPagination(meta) {
+        const container = document.getElementById('msgPagination');
+        if (!container || !meta) return;
+        const { currentPage = 0, totalPages = 1, totalElements = 0 } = meta;
+        if (totalPages <= 1) {
+            container.innerHTML = `<div style="padding:.75rem 1.2rem;color:var(--text-secondary);font-size:.82rem">
+            Jami: <strong style="color:var(--accent-primary)">${totalElements}</strong> ta xabar</div>`;
+            return;
+        }
+        let html = `<div style="display:flex;align-items:center;justify-content:space-between;padding:1rem 1.2rem;border-top:1px solid rgba(255,107,53,.15)">
+        <div style="color:var(--text-secondary);font-size:.85rem">Jami: <strong style="color:var(--accent-primary)">${totalElements}</strong> ta</div>
+        <div style="display:flex;gap:.4rem">
+        <button onclick="loadMessages(${currentPage-1})" ${currentPage===0?'disabled':''} style="padding:.4rem .7rem;background:rgba(58,58,58,.5);border:1px solid rgba(255,107,53,.2);border-radius:6px;color:var(--text-primary);cursor:pointer;opacity:${currentPage===0?.4:1}">◀</button>`;
+        const start = Math.max(0, currentPage-2), end = Math.min(totalPages-1, start+4);
+        for (let i = start; i <= end; i++) {
+            html += `<button onclick="loadMessages(${i})" style="padding:.4rem .7rem;background:${i===currentPage?'var(--accent-primary)':'rgba(58,58,58,.5)'};border:1px solid rgba(255,107,53,.2);border-radius:6px;color:${i===currentPage?'#000':'var(--text-primary)'};font-weight:${i===currentPage?700:400};cursor:pointer">${i+1}</button>`;
+        }
+        html += `<button onclick="loadMessages(${currentPage+1})" ${currentPage>=totalPages-1?'disabled':''} style="padding:.4rem .7rem;background:rgba(58,58,58,.5);border:1px solid rgba(255,107,53,.2);border-radius:6px;color:var(--text-primary);cursor:pointer;opacity:${currentPage>=totalPages-1?.4:1}">▶</button>
+        </div></div>`;
+        container.innerHTML = html;
+    }
+    function msgCharCount(el) {
+        const count = el.value.length;
+        const info = document.getElementById('msgCharInfo');
+        if (!info) return;
+        info.textContent = count + ' / 255';
+        info.style.color = count >= 240 ? '#ef4444' : count >= 200 ? '#fbbf24' : 'var(--text-secondary)';
     }
 </script>
 </body>

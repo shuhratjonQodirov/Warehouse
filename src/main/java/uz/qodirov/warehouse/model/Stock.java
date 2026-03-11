@@ -1,12 +1,11 @@
 package uz.qodirov.warehouse.model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import uz.qodirov.warehouse.utils.AbsEntity;
 
 import java.math.BigDecimal;
@@ -16,6 +15,8 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@Builder
+@EntityListeners(AuditingEntityListener.class)
 public class Stock extends AbsEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Product product;

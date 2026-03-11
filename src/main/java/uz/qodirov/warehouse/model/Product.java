@@ -12,11 +12,12 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 @EntityListeners(AuditingEntityListener.class)
 @EqualsAndHashCode(callSuper = true)
 public class Product extends AbsEntity {
 
-    @Column(nullable = false,unique = true)
+    @Column(nullable = false)
     private String name;
 
     @Column(nullable = false)
