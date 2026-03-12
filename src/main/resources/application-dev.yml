@@ -2,13 +2,13 @@ spring:
   application:
     name: Warehouse
   datasource:
-#    username: postgres
-#    url: jdbc:postgresql://localhost:5432/warehouse
-#    password: 1234
-      username: neondb_owner
-      password: npg_8ZmLW5yApKEt
-      url: jdbc:postgresql://ep-fancy-dust-ai0hos94-pooler.c-4.us-east-1.aws.neon.tech:5432/neondb?sslmode=require
-      driver-class-name: org.postgresql.Driver
+    username: postgres
+    url: jdbc:postgresql://localhost:5432/warehouse
+    password: 1234
+#      username: neondb_owner
+#      password: npg_8ZmLW5yApKEt
+#      url: jdbc:postgresql://ep-fancy-dust-ai0hos94-pooler.c-4.us-east-1.aws.neon.tech:5432/neondb?sslmode=require
+#      driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
@@ -19,7 +19,6 @@ spring:
   sql:
     init:
       mode: never
-
   mail:
     host: smtp.gmail.com
     port: 587

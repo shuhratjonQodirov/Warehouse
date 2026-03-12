@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import uz.qodirov.warehouse.enums.RoleName;
 import uz.qodirov.warehouse.model.User;
 import uz.qodirov.warehouse.repository.UserRepository;
+import uz.qodirov.warehouse.tgBot.state.BotState;
 
 import java.time.LocalDate;
 
@@ -34,6 +35,7 @@ public class DataLoader implements CommandLineRunner {
                     .chatId(Long.parseLong("01214754"))
                     .brithDate(LocalDate.of(2000, 2, 10))
                     .role(RoleName.ADMIN)
+                    .state(BotState.REGISTRATION.name())
                     .build();
             userRepository.save(user);
         }
