@@ -89,8 +89,6 @@ public class MyGoldTelegramBot implements LongPollingSingleThreadUpdateConsumer 
     @SneakyThrows
     private void handleByState(Update update, BotUser botUser) {
         Long chatId = botUser.getChatId();
-
-        // ENTER_USERNAME, ENTER_PASSWORD — User yo'q, BotUser.state ishlatamiz
         String stateStr = botUser.getState();
         if (stateStr.equals(BotState.ENTER_USERNAME.name()) ||
                 stateStr.equals(BotState.ENTER_PASSWORD.name())) {

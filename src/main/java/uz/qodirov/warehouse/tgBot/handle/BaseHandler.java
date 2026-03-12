@@ -20,9 +20,4 @@ public abstract class BaseHandler implements BotStateHandler {
         user.setState(newState.name());
         botUserRepository.save(user);
     }
-
-    protected void changeState(User user, BotState newState) {
-        user.setState(newState.name());
-        userRepository.save(user);
-    }
 }

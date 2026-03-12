@@ -1,6 +1,5 @@
 package uz.qodirov.warehouse.tgBot.handle;
 
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;

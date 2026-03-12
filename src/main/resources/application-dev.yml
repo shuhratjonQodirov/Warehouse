@@ -5,10 +5,10 @@ spring:
 #    username: postgres
 #    url: jdbc:postgresql://localhost:5432/warehouse
 #    password: 1234
-      username: neondb_owner
-      password: npg_8ZmLW5yApKEt
-      url: jdbc:postgresql://ep-fancy-dust-ai0hos94-pooler.c-4.us-east-1.aws.neon.tech:5432/neondb?sslmode=require
-      driver-class-name: org.postgresql.Driver
+        username: neondb_owner
+        password: npg_8ZmLW5yApKEt
+        url: jdbc:postgresql://ep-fancy-dust-ai0hos94-pooler.c-4.us-east-1.aws.neon.tech:5432/neondb?sslmode=require
+        driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
@@ -40,6 +40,8 @@ freemarker:
 
   # Telegram bot konfiguratsiyasi
 telegram:
-    bot:
-      token: 8746719605:AAFIriQFmA8vZ4e2LCBnE7zhl4_GeD2Aix8
-      username: WarehouseGold_bot
+  bot:
+    token: 8746719605:AAFIriQFmA8vZ4e2LCBnE7zhl4_GeD2Aix8
+    username: WarehouseGold_bot
+#    token: 8187284270:AAHWcpM9-J7qKK50MH69BUDN74uNE6WcUGw
+#    username: OltiariqTTB_bot
