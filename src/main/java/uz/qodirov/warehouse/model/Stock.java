@@ -14,12 +14,7 @@ import java.math.BigDecimal;
 @EqualsAndHashCode(callSuper = true)
 @Builder
 @EntityListeners(AuditingEntityListener.class)
-@Table(
-        name = "stock",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"product_id", "warehouse_id"})
-        }
-)
+@Table(name = "stock", uniqueConstraints = {@UniqueConstraint(columnNames = {"product_id", "warehouse_id"})})
 public class Stock extends AbsEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Product product;

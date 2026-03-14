@@ -5,6 +5,7 @@ import lombok.*;
 import uz.qodirov.warehouse.utils.AbsEntity;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Entity
 @Data
@@ -34,5 +35,6 @@ public class Receipt extends AbsEntity {
     @Column(nullable = false, precision = 15, scale = 2)
     private BigDecimal totalSum;
 
-    private String invoiceNumber;
+    private String documentNumber;
+    private LocalDate receiveDate;
 }

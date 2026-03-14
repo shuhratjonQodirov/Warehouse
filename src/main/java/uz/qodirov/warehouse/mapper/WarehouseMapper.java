@@ -2,7 +2,9 @@ package uz.qodirov.warehouse.mapper;
 
 import org.springframework.stereotype.Component;
 import uz.qodirov.warehouse.dto.req.WarehouseReqDto;
+import uz.qodirov.warehouse.dto.res.StockProjection;
 import uz.qodirov.warehouse.dto.res.WarehouseResDto;
+import uz.qodirov.warehouse.dto.res.WarehouseStockDto;
 import uz.qodirov.warehouse.model.Warehouse;
 
 @Component
@@ -34,5 +36,15 @@ public class WarehouseMapper {
         warehouse.setDescription(dto.getDescription());
         warehouse.setLongitude(dto.getLongitude());
         warehouse.setLatitude(dto.getLatitude());
+    }
+
+    public WarehouseStockDto mapWarehouse(StockProjection row) {
+        return WarehouseStockDto.builder()
+                .warehouseId(row.getWarehouseId())
+                .warehouseName(row.getWarehouseName())
+                .physicalQuantity(row.getPhysicalQuantity())
+                .reservedQuantity(row.getReservedQuantity())
+                .available(row.getPhysicalQuantity().subtract(row.getReservedQuantity()))
+                .build();
     }
 }

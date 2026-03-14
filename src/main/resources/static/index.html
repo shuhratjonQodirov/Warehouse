@@ -1806,24 +1806,24 @@
             <h1>Dashboard</h1>
             <p>Tizimingizning umumiy ko'rinishi</p>
         </div>
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-value">—</div>
-                <div class="stat-label">Jami Mahsulotlar</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value">—</div>
-                <div class="stat-label">Bugungi Taqsimotlar</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value">—</div>
-                <div class="stat-label">Aktiv Buyurtmalar</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value">—</div>
-                <div class="stat-label">Omborlar</div>
-            </div>
-        </div>
+<!--        <div class="stats-grid">-->
+<!--            <div class="stat-card">-->
+<!--                <div class="stat-value">—</div>-->
+<!--                <div class="stat-label">Jami Mahsulotlar</div>-->
+<!--            </div>-->
+<!--            <div class="stat-card">-->
+<!--                <div class="stat-value">—</div>-->
+<!--                <div class="stat-label">Bugungi Taqsimotlar</div>-->
+<!--            </div>-->
+<!--            <div class="stat-card">-->
+<!--                <div class="stat-value">—</div>-->
+<!--                <div class="stat-label">Aktiv Buyurtmalar</div>-->
+<!--            </div>-->
+<!--            <div class="stat-card">-->
+<!--                <div class="stat-value">—</div>-->
+<!--                <div class="stat-label">Omborlar</div>-->
+<!--            </div>-->
+<!--        </div>-->
     </div>
 </div>
 
@@ -2652,6 +2652,12 @@
             document.getElementById('loginPage').style.display = 'none';
             document.getElementById('dashboard').style.display = 'block';
             showToast('Tizimga xush kelibsiz! ✅');
+
+            const mainContent = document.querySelector('.main-content');
+            document.querySelector('.content-header h1').textContent = 'Dashboard';
+            document.querySelector('.content-header p').textContent = '';
+            mainContent.insertAdjacentHTML('beforeend', dashboardHTML());
+            loadDashboardFull();
         } catch (e) {
             showToast('Login yoki parol xato!', 'error');
         } finally {
@@ -2725,15 +2731,9 @@
             sibling = n;
         }
         if (page === 'dashboard') {
-            mainContent.insertAdjacentHTML('beforeend', `
-            <div class="stats-grid">
-                <div class="stat-card"><div class="stat-value" id="dashWh">—</div><div class="stat-label">Omborlar soni</div></div>
-                <div class="stat-card"><div class="stat-value" id="dashSup">—</div><div class="stat-label">Yetkazib beruvchilar</div></div>
-                <div class="stat-card"><div class="stat-value" id="dashReg">—</div><div class="stat-label">Rayonlar</div></div>
-                <div class="stat-card"><div class="stat-value" id="dashKg">—</div><div class="stat-label">Bog'chalar</div></div>
-            </div>
-        `);
-            loadDashboardStats();
+            document.querySelector('.content-header p').textContent = '';
+            mainContent.insertAdjacentHTML('beforeend', dashboardHTML());
+            loadDashboardFull();
         }else if (page === 'receive') {
             injectProfileCSS();
             mainContent.insertAdjacentHTML('beforeend', receivePageHTML());
@@ -3945,6 +3945,13 @@
         if (isAuthenticated()) {
             document.getElementById('landingPage').style.display = 'none';
             document.getElementById('dashboard').style.display = 'block';
+
+            // Dashboard ni avtomatik yuklash
+            const mainContent = document.querySelector('.main-content');
+            document.querySelector('.content-header h1').textContent = 'Dashboard';
+            document.querySelector('.content-header p').textContent = '';
+            mainContent.insertAdjacentHTML('beforeend', dashboardHTML());
+            loadDashboardFull();
         }
     });
 
@@ -6323,7 +6330,7 @@
         list.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--text-secondary)">⏳ Yuklanmoqda...</div>';
 
         try {
-        const res = await fetch(`${BASE_API}/warehouse-product/get-all?page=${page}&size=${STK_PAGE_SIZE}`, { headers: getAuthHeaders() });
+        const res = await fetch(`${BASE_API}/stock/get-all?page=${page}&size=${STK_PAGE_SIZE}`, { headers: getAuthHeaders() });
         if (!res.ok) throw new Error('Status: ' + res.status);
         const result = await res.json();
         stkAllCache = result.data || [];
@@ -6350,10 +6357,10 @@
 
         list.innerHTML = data.map(item => {
         const warehouses = item.warehouses || item.warehouseStocks || [];
-        const totalQty = item.totalQuantity ?? item.quantity ?? 0;
+            const totalQty = item.totalQuantity ?? 0;
         const unit = item.unit || '';
         const icon = productIcons[unit?.toUpperCase()] || '📦';
-        const maxQty = Math.max(...warehouses.map(w => w.quantity || 0), 1);
+        const maxQty = Math.max(...warehouses.map(w => w.physicalQuantity || 0), 1);
         const isOpen = stkOpenRows.has(item.id || item.productId);
 
         return `
@@ -6376,14 +6383,23 @@
             </div>
             <div class="stk-collapse ${isOpen ? 'open' : ''}" id="stkCollapse-${item.id || item.productId}">
                 ${warehouses.length ? warehouses.map(w => {
-            const pct = Math.min(100, Math.round((w.quantity || 0) / maxQty * 100));
+            const pct = Math.min(100, Math.round((w.physicalQuantity || 0) / maxQty * 100));
             return `
                     <div class="stk-wh-row">
-                        <div class="stk-wh-dot"></div>
-                        <div class="stk-wh-name">🏭 ${w.warehouseName || w.name || '—'}</div>
-                        <div class="stk-bar-wrap"><div class="stk-bar" style="width:${pct}%"></div></div>
-                        <div class="stk-wh-qty">${Number(w.quantity || 0).toLocaleString()} ${unit}</div>
-                    </div>`;
+    <div class="stk-wh-dot"></div>
+    <div class="stk-wh-name">🏭 ${w.warehouseName}</div>
+    <div class="stk-bar-wrap"><div class="stk-bar" style="width:${pct}%"></div></div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:.2rem">
+        <div class="stk-wh-qty">${Number(w.physicalQuantity).toLocaleString()} ${unit}</div>
+        ${w.reservedQuantity > 0 ? `
+        <div style="font-size:.75rem;color:#fbbf24">
+            🔒 ${Number(w.reservedQuantity).toLocaleString()} rezerv
+        </div>` : ''}
+        <div style="font-size:.75rem;color:#4ade80">
+            ✅ ${Number(w.available).toLocaleString()} mavjud
+        </div>
+    </div>
+</div>`;
         }).join('') : `
                 <div style="padding:1rem 1.5rem;color:var(--text-secondary);font-size:.85rem">
                     Omborlarda ma'lumot yo'q
@@ -6445,6 +6461,765 @@
         container.innerHTML = html;
         }
 
+        function dashboardHTML() {
+        return `
+    <style>
+        /* ── GRID ── */
+        .db-stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.75rem;
+        }
+        .db-stat {
+            background: rgba(45,45,45,.55);
+            border: 1px solid rgba(255,107,53,.15);
+            border-radius: 14px;
+            padding: 1.25rem 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all .25s;
+            cursor: default;
+        }
+        .db-stat::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,107,53,.06) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .db-stat:hover {
+            border-color: rgba(255,107,53,.4);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(255,107,53,.12);
+        }
+        .db-stat-icon {
+            font-size: 1.6rem;
+            margin-bottom: .5rem;
+            display: block;
+        }
+        .db-stat-val {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--accent-primary);
+            line-height: 1;
+            margin-bottom: .3rem;
+            font-family: 'Space Mono', monospace;
+        }
+        .db-stat-lbl {
+            font-size: .8rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+        }
+        .db-stat-sub {
+            font-size: .75rem;
+            color: var(--text-secondary);
+            margin-top: .3rem;
+            opacity: .7;
+        }
+
+        /* ── CHARTS ROW ── */
+        .db-charts-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+            margin-bottom: 1.75rem;
+        }
+        @media (max-width: 900px) {
+            .db-charts-row { grid-template-columns: 1fr; }
+        }
+        .db-chart-card {
+            background: rgba(45,45,45,.55);
+            border: 1px solid rgba(255,107,53,.15);
+            border-radius: 14px;
+            overflow: hidden;
+        }
+        .db-chart-header {
+            padding: 1.1rem 1.4rem .75rem;
+            border-bottom: 1px solid rgba(255,255,255,.06);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .db-chart-title {
+            font-size: .85rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: .03em;
+        }
+        .db-chart-sub {
+            font-size: .75rem;
+            color: var(--text-secondary);
+        }
+        .db-chart-body {
+            padding: 1rem 1.4rem 1.25rem;
+        }
+
+        /* ── BAR CHART ── */
+        .db-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: .5rem;
+            height: 140px;
+            padding-bottom: 24px;
+            position: relative;
+        }
+        .db-bars::after {
+            content: '';
+            position: absolute;
+            bottom: 24px;
+            left: 0; right: 0;
+            height: 1px;
+            background: rgba(255,255,255,.08);
+        }
+        .db-bar-wrap {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            height: 100%;
+            justify-content: flex-end;
+            position: relative;
+        }
+        .db-bar {
+            width: 100%;
+            border-radius: 5px 5px 0 0;
+            background: linear-gradient(180deg, var(--accent-primary), #ffa500);
+            min-height: 3px;
+            transition: height .6s cubic-bezier(.4,0,.2,1);
+            position: relative;
+            cursor: pointer;
+        }
+        .db-bar:hover { filter: brightness(1.2); }
+        .db-bar-tooltip {
+            position: absolute;
+            top: -32px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(30,30,30,.95);
+            border: 1px solid rgba(255,107,53,.3);
+            border-radius: 6px;
+            padding: 3px 8px;
+            font-size: .72rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity .15s;
+        }
+        .db-bar:hover .db-bar-tooltip { opacity: 1; }
+        .db-bar-lbl {
+            font-size: .65rem;
+            color: var(--text-secondary);
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 60px;
+            text-align: center;
+        }
+
+        /* ── DONUT ── */
+        .db-donut-wrap {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        .db-donut-svg { flex-shrink: 0; }
+        .db-donut-legend { flex: 1; display: flex; flex-direction: column; gap: .5rem; }
+        .db-legend-item {
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+            font-size: .82rem;
+        }
+        .db-legend-dot {
+            width: 10px; height: 10px;
+            border-radius: 50%; flex-shrink: 0;
+        }
+        .db-legend-lbl { color: var(--text-secondary); flex: 1; }
+        .db-legend-val { font-weight: 700; color: var(--text-primary); font-family: 'Space Mono', monospace; }
+
+        /* ── LOW STOCK TABLE ── */
+        .db-low-card {
+            background: rgba(45,45,45,.55);
+            border: 1px solid rgba(239,68,68,.2);
+            border-radius: 14px;
+            overflow: hidden;
+            margin-bottom: 1.75rem;
+        }
+        .db-low-header {
+            padding: 1.1rem 1.4rem;
+            border-bottom: 1px solid rgba(239,68,68,.12);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(239,68,68,.04);
+        }
+        .db-low-title {
+            font-size: .85rem;
+            font-weight: 700;
+            color: #ef4444;
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+        }
+        .db-low-badge {
+            background: rgba(239,68,68,.15);
+            border: 1px solid rgba(239,68,68,.3);
+            color: #ef4444;
+            border-radius: 100px;
+            padding: .2rem .65rem;
+            font-size: .72rem;
+            font-weight: 700;
+        }
+        .db-low-row {
+            display: flex;
+            align-items: center;
+            padding: .85rem 1.4rem;
+            border-bottom: 1px solid rgba(255,255,255,.04);
+            gap: 1rem;
+            transition: background .15s;
+        }
+        .db-low-row:last-child { border-bottom: none; }
+        .db-low-row:hover { background: rgba(239,68,68,.04); }
+        .db-low-name { flex: 1; font-weight: 600; color: var(--text-primary); font-size: .88rem; }
+        .db-low-cat { font-size: .75rem; color: var(--text-secondary); margin-top: 2px; }
+        .db-progress-wrap { width: 120px; }
+        .db-progress-bar {
+            height: 6px;
+            background: rgba(255,255,255,.08);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .db-progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width .8s cubic-bezier(.4,0,.2,1);
+        }
+        .db-progress-txt {
+            font-size: .7rem;
+            color: var(--text-secondary);
+            margin-top: 3px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* ── RECENT RECEIVES ── */
+        .db-recent-card {
+            background: rgba(45,45,45,.55);
+            border: 1px solid rgba(255,107,53,.15);
+            border-radius: 14px;
+            overflow: hidden;
+        }
+        .db-recent-row {
+            display: flex;
+            align-items: center;
+            padding: .85rem 1.4rem;
+            border-bottom: 1px solid rgba(255,255,255,.04);
+            gap: 1rem;
+            transition: background .15s;
+        }
+        .db-recent-row:last-child { border-bottom: none; }
+        .db-recent-row:hover { background: rgba(255,107,53,.04); }
+        .db-recent-icon {
+            width: 36px; height: 36px;
+            background: rgba(255,107,53,.1);
+            border-radius: 9px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; flex-shrink: 0;
+        }
+        .db-recent-info { flex: 1; min-width: 0; }
+        .db-recent-name { font-weight: 600; color: var(--text-primary); font-size: .88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .db-recent-meta { font-size: .75rem; color: var(--text-secondary); margin-top: 2px; }
+        .db-recent-qty { font-weight: 700; color: #4ade80; font-size: .9rem; font-family: 'Space Mono', monospace; white-space: nowrap; }
+
+        /* ── BOTTOM ROW ── */
+        .db-bottom-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+        }
+        @media (max-width: 900px) {
+            .db-bottom-row { grid-template-columns: 1fr; }
+        }
+
+        /* ── PULSE ANIMATION ── */
+        @keyframes dbPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+        .db-loading { animation: dbPulse 1.5s ease infinite; }
+
+        /* ── EMPTY STATE ── */
+        .db-empty {
+            text-align: center;
+            padding: 2.5rem 1rem;
+            color: var(--text-secondary);
+            font-size: .85rem;
+        }
+        .db-empty-icon { font-size: 2rem; margin-bottom: .5rem; }
+    </style>
+
+    <!-- ── STAT CARDS ── -->
+    <div class="db-stats-row">
+        <div class="db-stat">
+            <span class="db-stat-icon">🏭</span>
+            <div class="db-stat-val" id="dbStatWh">—</div>
+            <div class="db-stat-lbl">Omborlar</div>
+        </div>
+        <div class="db-stat">
+            <span class="db-stat-icon">📦</span>
+            <div class="db-stat-val" id="dbStatProd">—</div>
+            <div class="db-stat-lbl">Mahsulotlar</div>
+        </div>
+        <div class="db-stat">
+            <span class="db-stat-icon">🤝</span>
+            <div class="db-stat-val" id="dbStatSup">—</div>
+            <div class="db-stat-lbl">Yetkazib beruvchilar</div>
+        </div>
+        <div class="db-stat">
+            <span class="db-stat-icon">🗺️</span>
+            <div class="db-stat-val" id="dbStatReg">—</div>
+            <div class="db-stat-lbl">Rayonlar</div>
+        </div>
+        <div class="db-stat">
+            <span class="db-stat-icon">🏫</span>
+            <div class="db-stat-val" id="dbStatKg">—</div>
+            <div class="db-stat-lbl">Bog'chalar</div>
+        </div>
+        <div class="db-stat" style="border-color:rgba(239,68,68,.25)">
+            <span class="db-stat-icon">⚠️</span>
+            <div class="db-stat-val" id="dbStatLow" style="color:#ef4444">—</div>
+            <div class="db-stat-lbl" style="color:#ef4444">Kam mahsulotlar</div>
+        </div>
+    </div>
+
+    <!-- ── CHARTS ── -->
+    <div class="db-charts-row">
+        <!-- Stock bar chart -->
+        <div class="db-chart-card">
+            <div class="db-chart-header">
+                <div>
+                    <div class="db-chart-title">📊 Ombor zaxirasi</div>
+                    <div class="db-chart-sub">Top 8 mahsulot (jami miqdor)</div>
+                </div>
+                <div id="dbStockChartLbl" style="font-size:.75rem;color:var(--text-secondary)"></div>
+            </div>
+            <div class="db-chart-body">
+                <div class="db-bars" id="dbStockBars">
+                    <div class="db-empty db-loading" style="width:100%">⏳ Yuklanmoqda...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category donut -->
+        <div class="db-chart-card">
+            <div class="db-chart-header">
+                <div>
+                    <div class="db-chart-title">🏷️ Kategoriyalar</div>
+                    <div class="db-chart-sub">Mahsulot soni bo'yicha</div>
+                </div>
+            </div>
+            <div class="db-chart-body">
+                <div class="db-donut-wrap" id="dbDonutWrap">
+                    <div class="db-empty db-loading" style="width:100%">⏳ Yuklanmoqda...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── LOW STOCK ── -->
+    <div class="db-low-card" id="dbLowStockCard">
+        <div class="db-low-header">
+            <div class="db-low-title">
+                ⚠️ Kam qolgan mahsulotlar
+            </div>
+            <span class="db-low-badge" id="dbLowBadge">...</span>
+        </div>
+        <div id="dbLowList">
+            <div class="db-empty db-loading">⏳ Yuklanmoqda...</div>
+        </div>
+    </div>
+
+    <!-- ── BOTTOM ROW ── -->
+    <div class="db-bottom-row">
+        <!-- Recent receives -->
+        <div class="db-recent-card">
+            <div class="db-chart-header">
+                <div>
+                    <div class="db-chart-title">📥 So'nggi qabullar</div>
+                    <div class="db-chart-sub">Oxirgi 8 ta qabul</div>
+                </div>
+            </div>
+            <div id="dbRecentReceives">
+                <div class="db-empty db-loading">⏳ Yuklanmoqda...</div>
+            </div>
+        </div>
+
+        <!-- Warehouse distribution -->
+        <div class="db-recent-card">
+            <div class="db-chart-header">
+                <div>
+                    <div class="db-chart-title">🏭 Omborlar bo'yicha zaxira</div>
+                    <div class="db-chart-sub">Har bir ombordagi jami miqdor</div>
+                </div>
+            </div>
+            <div id="dbWarehouseDist">
+                <div class="db-empty db-loading">⏳ Yuklanmoqda...</div>
+            </div>
+        </div>
+    </div>
+    `;
+    }
+
+    // =====================================================================
+    // MAIN LOADER
+    // =====================================================================
+    async function loadDashboardFull() {
+        // Parallel load
+        await Promise.allSettled([
+            loadDbStats(),
+            loadDbStockChart(),
+            loadDbCategoryDonut(),
+            loadDbLowStock(),
+            loadDbRecentReceives(),
+            loadDbWarehouseDist(),
+        ]);
+    }
+
+    // ── 1. STAT CARDS ──────────────────────────────────────────────────
+    async function loadDbStats() {
+        const sets = [
+            { id: 'dbStatWh',   url: '/warehouse/get-all?page=0&size=1',      key: 'meta.totalElements' },
+            { id: 'dbStatProd', url: '/product/get-all?page=0&size=1',        key: 'meta.totalElements' },
+            { id: 'dbStatSup',  url: '/supplier/get-all?page=0&size=1',       key: 'meta.totalElements' },
+            { id: 'dbStatKg',   url: '/kindergarten/get-all?page=0&size=1',   key: 'meta.totalElements' },
+        ];
+        for (const s of sets) {
+            try {
+                const res = await fetch(BASE_API + s.url, { headers: getAuthHeaders() });
+                const d = await res.json();
+                const el = document.getElementById(s.id);
+                if (el) el.textContent = d.meta?.totalElements ?? '—';
+            } catch (e) {}
+        }
+        // Regions
+        try {
+            const res = await fetch(`${BASE_API}/region/all`, { headers: getAuthHeaders() });
+            const d = await res.json();
+            const el = document.getElementById('dbStatReg');
+            if (el) el.textContent = Array.isArray(d.data) ? d.data.length : '—';
+        } catch (e) {}
+    }
+
+    // ── 2. STOCK BAR CHART ─────────────────────────────────────────────
+    async function loadDbStockChart() {
+        const container = document.getElementById('dbStockBars');
+        if (!container) return;
+        try {
+            const res = await fetch(`${BASE_API}/stock/get-all?page=0&size=8`, { headers: getAuthHeaders() });
+            if (!res.ok) throw new Error(res.status);
+            const result = await res.json();
+            const data = result.data || [];
+
+            if (!data.length) {
+                container.innerHTML = '<div class="db-empty"><div class="db-empty-icon">📦</div>Ma\'lumot yo\'q</div>';
+                return;
+            }
+
+            const max = Math.max(...data.map(d => Number(d.totalQuantity || 0)), 1);
+            const lbl = document.getElementById('dbStockChartLbl');
+            if (lbl) lbl.textContent = `Max: ${max.toLocaleString()}`;
+
+            container.innerHTML = data.map(item => {
+                const qty = Number(item.totalQuantity || 0);
+                const pct = Math.max(2, Math.round(qty / max * 100));
+                const name = (item.productName || '—').slice(0, 8);
+                const colors = [
+                    'linear-gradient(180deg,#ff6b35,#ffa500)',
+                    'linear-gradient(180deg,#818cf8,#6366f1)',
+                    'linear-gradient(180deg,#34d399,#10b981)',
+                    'linear-gradient(180deg,#f472b6,#ec4899)',
+                    'linear-gradient(180deg,#fb923c,#f97316)',
+                    'linear-gradient(180deg,#38bdf8,#0ea5e9)',
+                    'linear-gradient(180deg,#a78bfa,#8b5cf6)',
+                    'linear-gradient(180deg,#4ade80,#22c55e)',
+                ];
+                const colorIdx = data.indexOf(item) % colors.length;
+                return `
+            <div class="db-bar-wrap">
+                <div class="db-bar" style="height:${pct}%;background:${colors[colorIdx]}">
+                    <div class="db-bar-tooltip">${qty.toLocaleString()} ${item.unit || ''}</div>
+                </div>
+                <span class="db-bar-lbl">${name}</span>
+            </div>`;
+            }).join('');
+
+        } catch (e) {
+            container.innerHTML = `<div class="db-empty">❌ ${e.message}</div>`;
+        }
+    }
+
+    // ── 3. CATEGORY DONUT ──────────────────────────────────────────────
+    async function loadDbCategoryDonut() {
+        const wrap = document.getElementById('dbDonutWrap');
+        if (!wrap) return;
+        try {
+            const res = await fetch(`${BASE_API}/category/getAll`, { headers: getAuthHeaders() });
+            if (!res.ok) throw new Error(res.status);
+            const result = await res.json();
+            const cats = result.data || [];
+
+            // Products per category
+            const res2 = await fetch(`${BASE_API}/product/get-all?page=0&size=200`, { headers: getAuthHeaders() });
+            const result2 = await res2.json();
+            const products = result2.data || [];
+
+            const counts = {};
+            products.forEach(p => {
+                const cn = p.categoryName || p.category?.name || 'Boshqa';
+                counts[cn] = (counts[cn] || 0) + 1;
+            });
+
+            const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 6);
+            const total = entries.reduce((s, [, v]) => s + v, 0);
+
+            if (!entries.length) {
+                wrap.innerHTML = '<div class="db-empty"><div class="db-empty-icon">🏷️</div>Ma\'lumot yo\'q</div>';
+                return;
+            }
+
+            const COLORS = ['#ff6b35','#818cf8','#34d399','#f472b6','#38bdf8','#fbbf24'];
+            const R = 54, cx = 64, cy = 64, stroke = 14;
+            const circ = 2 * Math.PI * R;
+
+            let offset = 0;
+            const segments = entries.map(([name, count], i) => {
+                const pct = count / total;
+                const dash = pct * circ;
+                const seg = `<circle cx="${cx}" cy="${cy}" r="${R}"
+                fill="none" stroke="${COLORS[i % COLORS.length]}"
+                stroke-width="${stroke}"
+                stroke-dasharray="${dash} ${circ - dash}"
+                stroke-dashoffset="${-offset}"
+                transform="rotate(-90 ${cx} ${cy})"
+                style="transition:stroke-dasharray .8s ease"/>`;
+                offset += dash;
+                return seg;
+            });
+
+            wrap.innerHTML = `
+        <svg class="db-donut-svg" width="128" height="128" viewBox="0 0 128 128">
+            <circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="${stroke}"/>
+            ${segments.join('')}
+            <text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="middle"
+                fill="var(--text-primary)" font-size="14" font-weight="800" font-family="Space Mono,monospace">
+                ${total}
+            </text>
+            <text x="${cx}" y="${cy + 14}" text-anchor="middle" dominant-baseline="middle"
+                fill="var(--text-secondary)" font-size="8">
+                ta
+            </text>
+        </svg>
+        <div class="db-donut-legend">
+            ${entries.map(([name, count], i) => `
+            <div class="db-legend-item">
+                <div class="db-legend-dot" style="background:${COLORS[i % COLORS.length]}"></div>
+                <div class="db-legend-lbl">${name}</div>
+                <div class="db-legend-val">${count}</div>
+            </div>`).join('')}
+        </div>`;
+
+        } catch (e) {
+            wrap.innerHTML = `<div class="db-empty">❌ ${e.message}</div>`;
+        }
+    }
+
+    // ── 4. LOW STOCK ───────────────────────────────────────────────────
+    async function loadDbLowStock() {
+        const list = document.getElementById('dbLowList');
+        const badge = document.getElementById('dbLowBadge');
+        if (!list) return;
+        try {
+            // Stock + Product criticalLimit taqqoslash
+            const [stockRes, prodRes] = await Promise.all([
+                fetch(`${BASE_API}/stock/get-all?page=0&size=100`, { headers: getAuthHeaders() }),
+                fetch(`${BASE_API}/product/get-all?page=0&size=200`, { headers: getAuthHeaders() }),
+            ]);
+
+            const stockData = (await stockRes.json()).data || [];
+            const prodData  = (await prodRes.json()).data  || [];
+
+            // Product map
+            const prodMap = {};
+            prodData.forEach(p => { prodMap[p.id] = p; });
+
+            // Low stock: totalQuantity <= criticalLimit
+            const lowItems = stockData
+                .filter(s => {
+                    const prod = prodMap[s.productId];
+                    if (!prod) return false;
+                    const limit = Number(prod.criticalLimit || 0);
+                    const qty   = Number(s.totalQuantity || 0);
+                    return limit > 0 && qty <= limit;
+                })
+                .sort((a, b) => {
+                    const pA = prodMap[a.productId], pB = prodMap[b.productId];
+                    const ratioA = Number(a.totalQuantity) / Number(pA?.criticalLimit || 1);
+                    const ratioB = Number(b.totalQuantity) / Number(pB?.criticalLimit || 1);
+                    return ratioA - ratioB;
+                });
+
+            if (badge) badge.textContent = lowItems.length + ' ta';
+            const statEl = document.getElementById('dbStatLow');
+            if (statEl) statEl.textContent = lowItems.length;
+
+            if (!lowItems.length) {
+                list.innerHTML = `<div class="db-empty">
+                <div class="db-empty-icon">✅</div>
+                Barcha mahsulotlar yetarli miqdorda
+            </div>`;
+                return;
+            }
+
+            list.innerHTML = lowItems.map(s => {
+                const prod  = prodMap[s.productId] || {};
+                const qty   = Number(s.totalQuantity || 0);
+                const limit = Number(prod.criticalLimit || 1);
+                const pct   = Math.min(100, Math.round(qty / limit * 100));
+                const color = pct <= 20 ? '#ef4444' : pct <= 50 ? '#f97316' : '#fbbf24';
+                return `
+            <div class="db-low-row">
+                <div style="width:36px;height:36px;background:rgba(239,68,68,.1);border-radius:9px;
+                    display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0">⚠️</div>
+                <div class="db-low-name">
+                    <div>${s.productName || prod.name || '—'}</div>
+                    <div class="db-low-cat">${s.categoryName || prod.categoryName || ''}</div>
+                </div>
+                <div class="db-progress-wrap">
+                    <div class="db-progress-bar">
+                        <div class="db-progress-fill" style="width:${pct}%;background:${color}"></div>
+                    </div>
+                    <div class="db-progress-txt">
+                        <span style="color:${color};font-weight:700">${qty.toLocaleString()} ${prod.unit || ''}</span>
+                        <span>/${limit.toLocaleString()}</span>
+                    </div>
+                </div>
+                <div style="text-align:right;flex-shrink:0">
+                    <div style="font-size:1.1rem;font-weight:800;color:${color};font-family:'Space Mono',monospace">${pct}%</div>
+                    <div style="font-size:.7rem;color:var(--text-secondary)">qolgan</div>
+                </div>
+            </div>`;
+            }).join('');
+
+        } catch (e) {
+            list.innerHTML = `<div class="db-empty">❌ ${e.message}</div>`;
+        }
+    }
+
+    // ── 5. RECENT RECEIVES ─────────────────────────────────────────────
+    async function loadDbRecentReceives() {
+        const container = document.getElementById('dbRecentReceives');
+        if (!container) return;
+        try {
+            const res = await fetch(`${BASE_API}/receive/get-all?page=0&size=8`, { headers: getAuthHeaders() });
+            if (!res.ok) throw new Error(res.status);
+            const result = await res.json();
+            const data = result.data || [];
+
+            if (!data.length) {
+                container.innerHTML = '<div class="db-empty"><div class="db-empty-icon">📥</div>Qabullar yo\'q</div>';
+                return;
+            }
+
+            const icons = { KG:'⚖️', G:'🧂', L:'🧴', ML:'💧', DONA:'📦', QUTI:'📫' };
+
+            container.innerHTML = data.map(r => {
+                const name = r.productName || r.product?.name || '—';
+                const wh   = r.warehouseName || r.warehouse?.name || '—';
+                const sup  = r.supplierName || r.supplier?.name || '—';
+                const unit = r.unit || '';
+                const icon = icons[unit.toUpperCase()] || '📦';
+                const date = r.receiveDate || r.createdAt?.slice(0,10) || '—';
+                return `
+            <div class="db-recent-row">
+                <div class="db-recent-icon">${icon}</div>
+                <div class="db-recent-info">
+                    <div class="db-recent-name">${name}</div>
+                    <div class="db-recent-meta">🏭 ${wh} · 🤝 ${sup} · 📅 ${date}</div>
+                </div>
+                <div class="db-recent-qty">+${Number(r.quantity || 0).toLocaleString()} ${unit}</div>
+            </div>`;
+            }).join('');
+
+        } catch (e) {
+            container.innerHTML = `<div class="db-empty">❌ ${e.message}</div>`;
+        }
+    }
+
+    // ── 6. WAREHOUSE DISTRIBUTION ──────────────────────────────────────
+    async function loadDbWarehouseDist() {
+        const container = document.getElementById('dbWarehouseDist');
+        if (!container) return;
+        try {
+            const res = await fetch(`${BASE_API}/stock/get-all?page=0&size=100`, { headers: getAuthHeaders() });
+            if (!res.ok) throw new Error(res.status);
+            const result = await res.json();
+            const data = result.data || [];
+
+            if (!data.length) {
+                container.innerHTML = '<div class="db-empty"><div class="db-empty-icon">🏭</div>Ma\'lumot yo\'q</div>';
+                return;
+            }
+
+            // Ombor bo'yicha guruhlash
+            const whMap = {};
+            data.forEach(item => {
+                const warehouses = typeof item.warehouses === 'string'
+                    ? JSON.parse(item.warehouses)
+                    : (item.warehouses || []);
+                warehouses.forEach(w => {
+                    if (!whMap[w.warehouseName]) whMap[w.warehouseName] = 0;
+                    whMap[w.warehouseName] += Number(w.physicalQuantity || 0);
+                });
+            });
+
+            const entries = Object.entries(whMap).sort((a, b) => b[1] - a[1]);
+            const max = Math.max(...entries.map(([,v]) => v), 1);
+            const COLORS = ['#ff6b35','#818cf8','#34d399','#f472b6','#38bdf8','#fbbf24'];
+
+            container.innerHTML = entries.map(([name, qty], i) => {
+                const pct = Math.max(2, Math.round(qty / max * 100));
+                const color = COLORS[i % COLORS.length];
+                return `
+            <div class="db-recent-row">
+                <div class="db-recent-icon" style="background:${color}22;font-size:.85rem">🏭</div>
+                <div class="db-recent-info">
+                    <div class="db-recent-name">${name}</div>
+                    <div style="margin-top:4px">
+                        <div style="height:5px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden">
+                            <div style="height:100%;width:${pct}%;background:${color};border-radius:3px;transition:width .8s ease"></div>
+                        </div>
+                    </div>
+                </div>
+                <div style="font-weight:700;color:${color};font-size:.88rem;font-family:'Space Mono',monospace;white-space:nowrap">
+                    ${qty.toLocaleString()}
+                </div>
+            </div>`;
+            }).join('');
+
+        } catch (e) {
+            container.innerHTML = `<div class="db-empty">❌ ${e.message}</div>`;
+        }
+    }
 </script>
 </body>
 </html>

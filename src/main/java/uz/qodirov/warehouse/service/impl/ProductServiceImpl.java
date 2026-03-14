@@ -45,6 +45,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ApiResponse<?> getAll(int page, int size) {
         Pageable pageable = paginationUtil.createPageable(page, size);
 
@@ -85,6 +86,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ApiResponse<?> getById(Long id) {
         Product product = productRepository.findByIdAndDeletedFalse(id).orElseThrow(() -> new ByIdException("Product not found"));
         ProductResDto dto = mapper.toDto(product);
