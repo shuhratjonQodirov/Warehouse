@@ -1806,24 +1806,24 @@
             <h1>Dashboard</h1>
             <p>Tizimingizning umumiy ko'rinishi</p>
         </div>
-<!--        <div class="stats-grid">-->
-<!--            <div class="stat-card">-->
-<!--                <div class="stat-value">—</div>-->
-<!--                <div class="stat-label">Jami Mahsulotlar</div>-->
-<!--            </div>-->
-<!--            <div class="stat-card">-->
-<!--                <div class="stat-value">—</div>-->
-<!--                <div class="stat-label">Bugungi Taqsimotlar</div>-->
-<!--            </div>-->
-<!--            <div class="stat-card">-->
-<!--                <div class="stat-value">—</div>-->
-<!--                <div class="stat-label">Aktiv Buyurtmalar</div>-->
-<!--            </div>-->
-<!--            <div class="stat-card">-->
-<!--                <div class="stat-value">—</div>-->
-<!--                <div class="stat-label">Omborlar</div>-->
-<!--            </div>-->
-<!--        </div>-->
+        <!--        <div class="stats-grid">-->
+        <!--            <div class="stat-card">-->
+        <!--                <div class="stat-value">—</div>-->
+        <!--                <div class="stat-label">Jami Mahsulotlar</div>-->
+        <!--            </div>-->
+        <!--            <div class="stat-card">-->
+        <!--                <div class="stat-value">—</div>-->
+        <!--                <div class="stat-label">Bugungi Taqsimotlar</div>-->
+        <!--            </div>-->
+        <!--            <div class="stat-card">-->
+        <!--                <div class="stat-value">—</div>-->
+        <!--                <div class="stat-label">Aktiv Buyurtmalar</div>-->
+        <!--            </div>-->
+        <!--            <div class="stat-card">-->
+        <!--                <div class="stat-value">—</div>-->
+        <!--                <div class="stat-label">Omborlar</div>-->
+        <!--            </div>-->
+        <!--        </div>-->
     </div>
 </div>
 
@@ -2734,18 +2734,20 @@
             document.querySelector('.content-header p').textContent = '';
             mainContent.insertAdjacentHTML('beforeend', dashboardHTML());
             loadDashboardFull();
-        }else if (page === 'receive') {
+        } else if (page === 'receive') {
             injectProfileCSS();
             mainContent.insertAdjacentHTML('beforeend', receivePageHTML());
             initReceivePage();
 
-        }
-        else if (page === 'warehouse') {
+        } else if (page === 'distribute') {
+            injectProfileCSS();
+            mainContent.insertAdjacentHTML('beforeend', distributePageHTML());
+            initDistributePage();
+        } else if (page === 'warehouse') {
             injectProfileCSS();
             mainContent.insertAdjacentHTML('beforeend', warehouseStockPageHTML());
             initStockPage();
-        }
-        else {
+        } else {
             mainContent.insertAdjacentHTML('beforeend', `
             <div class="stat-card" style="padding:3rem;text-align:center;max-width:600px">
                 <div style="font-size:3rem;margin-bottom:1rem">🚧</div>
@@ -2826,8 +2828,7 @@
             </div>
         `);
             loadCategories();
-        }
-        else if (page === 'regions') {
+        } else if (page === 'regions') {
             mainContent.insertAdjacentHTML('beforeend', `
             <div style="margin-bottom:1.5rem"><button onclick="showAddRegionModal()" class="cta-button" style="padding:.8rem 2rem;font-size:.9rem">+ Yangi Rayon</button></div>
             <div style="background:rgba(45,45,45,.5);border:1px solid rgba(255,107,53,.2);border-radius:12px;overflow:hidden">
@@ -2854,8 +2855,7 @@
             </div>
         `);
             loadRegions();
-        }
-        else if (page === 'suppliers') {
+        } else if (page === 'suppliers') {
             mainContent.insertAdjacentHTML('beforeend', `
             <div style="margin-bottom:1.5rem"><button onclick="showAddSupplierModal()" class="cta-button" style="padding:.8rem 2rem;font-size:.9rem">+ Yangi Yetkazib Beruvchi</button></div>
             <div style="background:rgba(45,45,45,.5);border:1px solid rgba(255,107,53,.2);border-radius:12px;overflow:hidden">
@@ -2875,8 +2875,7 @@
             </div>
         `);
             loadSuppliers(0);
-        }
-        else if (page === 'warehouses') {
+        } else if (page === 'warehouses') {
             mainContent.insertAdjacentHTML('beforeend', `
             <div style="margin-bottom:1.5rem;display:flex;gap:1rem;align-items:center">
                 <button onclick="openWarehouseModal()" class="cta-button" style="padding:.8rem 2rem;font-size:.9rem">+ Yangi Ombor</button>
@@ -2900,8 +2899,7 @@
             </div>
         `);
             loadWarehouses(0);
-        }
-        else if (page === 'packages') {
+        } else if (page === 'packages') {
             mainContent.insertAdjacentHTML('beforeend', `
             <div class="kg-topbar">
                 <div class="kg-left">
@@ -2923,28 +2921,23 @@
         `);
             kgLoadRegionsFilter();
             kgLoad(0);
-        }
-        else if (page === 'telegram') {
+        } else if (page === 'telegram') {
             mainContent.insertAdjacentHTML('beforeend', telegramPageHTML());
             loadUsers(0);
-        }
-        else if (page === 'products') {
+        } else if (page === 'products') {
             mainContent.insertAdjacentHTML('beforeend', productsPageHTML());
             loadProducts(0);
-        }
-        else if (page === 'logout') {
+        } else if (page === 'logout') {
             if (confirm('Tizimdan chiqmoqchimisiz?')) {
                 localStorage.removeItem('authToken');
                 localStorage.removeItem('tokenType');
                 location.reload();
             }
-        }
-        else if (page === 'profile') {
+        } else if (page === 'profile') {
             injectProfileCSS();
             mainContent.insertAdjacentHTML('beforeend', profilePageHTML());
             loadMessages(0);
-        }
-        else {
+        } else {
             mainContent.insertAdjacentHTML('beforeend', `<div class="stat-card" style="padding:2rem;max-width:500px"><p style="color:var(--text-secondary)">Bu bo'lim tez orada tayyor bo'ladi</p></div>`);
         }
     }
@@ -5528,7 +5521,7 @@
         btn.disabled = true;
         btn.textContent = '⏳ Saqlanmoqda...';
         try {
-            const url = id ? `${BASE_API}/holidays/${id}` : `${BASE_API}/holidays/create`;
+            const url = id ? `${BASE_API}/holidays/${id}` : `${BASE_API}/holidays`;
             const res = await fetch(url, {
                 method: id ? 'PUT' : 'POST',
                 headers: getAuthHeaders(),
@@ -5669,6 +5662,7 @@
             }
         });
     }
+
     // loadMessages funksiyasi
     let msgCurrentPage = 0;
     const MSG_PAGE_SIZE = 10;
@@ -5729,7 +5723,7 @@
                             background:linear-gradient(135deg,var(--accent-primary),#ffa500);
                             display:flex;align-items:center;justify-content:center;
                             font-weight:700;font-size:.75rem;color:#000;flex-shrink:0">
-                            ${(m.senderName || 'A').split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase()}
+                            ${(m.senderName || 'A').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()}
                         </div>
                         <span style="font-size:.88rem;color:var(--text-primary)">${m.senderName || 'Administrator'}</span>
                     </div>
@@ -5750,13 +5744,13 @@
         if (!dateStr) return '—';
         const d = new Date(dateStr);
         const pad = n => String(n).padStart(2, '0');
-        return `${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+        return `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
     }
 
     function renderMsgPagination(meta) {
         const container = document.getElementById('msgPagination');
         if (!container || !meta) return;
-        const { currentPage = 0, totalPages = 1, totalElements = 0 } = meta;
+        const {currentPage = 0, totalPages = 1, totalElements = 0} = meta;
         if (totalPages <= 1) {
             container.innerHTML = `<div style="padding:.75rem 1.2rem;color:var(--text-secondary);font-size:.82rem">
             Jami: <strong style="color:var(--accent-primary)">${totalElements}</strong> ta xabar</div>`;
@@ -5765,15 +5759,16 @@
         let html = `<div style="display:flex;align-items:center;justify-content:space-between;padding:1rem 1.2rem;border-top:1px solid rgba(255,107,53,.15)">
         <div style="color:var(--text-secondary);font-size:.85rem">Jami: <strong style="color:var(--accent-primary)">${totalElements}</strong> ta</div>
         <div style="display:flex;gap:.4rem">
-        <button onclick="loadMessages(${currentPage-1})" ${currentPage===0?'disabled':''} style="padding:.4rem .7rem;background:rgba(58,58,58,.5);border:1px solid rgba(255,107,53,.2);border-radius:6px;color:var(--text-primary);cursor:pointer;opacity:${currentPage===0?.4:1}">◀</button>`;
-        const start = Math.max(0, currentPage-2), end = Math.min(totalPages-1, start+4);
+        <button onclick="loadMessages(${currentPage - 1})" ${currentPage === 0 ? 'disabled' : ''} style="padding:.4rem .7rem;background:rgba(58,58,58,.5);border:1px solid rgba(255,107,53,.2);border-radius:6px;color:var(--text-primary);cursor:pointer;opacity:${currentPage === 0 ? .4 : 1}">◀</button>`;
+        const start = Math.max(0, currentPage - 2), end = Math.min(totalPages - 1, start + 4);
         for (let i = start; i <= end; i++) {
-            html += `<button onclick="loadMessages(${i})" style="padding:.4rem .7rem;background:${i===currentPage?'var(--accent-primary)':'rgba(58,58,58,.5)'};border:1px solid rgba(255,107,53,.2);border-radius:6px;color:${i===currentPage?'#000':'var(--text-primary)'};font-weight:${i===currentPage?700:400};cursor:pointer">${i+1}</button>`;
+            html += `<button onclick="loadMessages(${i})" style="padding:.4rem .7rem;background:${i === currentPage ? 'var(--accent-primary)' : 'rgba(58,58,58,.5)'};border:1px solid rgba(255,107,53,.2);border-radius:6px;color:${i === currentPage ? '#000' : 'var(--text-primary)'};font-weight:${i === currentPage ? 700 : 400};cursor:pointer">${i + 1}</button>`;
         }
-        html += `<button onclick="loadMessages(${currentPage+1})" ${currentPage>=totalPages-1?'disabled':''} style="padding:.4rem .7rem;background:rgba(58,58,58,.5);border:1px solid rgba(255,107,53,.2);border-radius:6px;color:var(--text-primary);cursor:pointer;opacity:${currentPage>=totalPages-1?.4:1}">▶</button>
+        html += `<button onclick="loadMessages(${currentPage + 1})" ${currentPage >= totalPages - 1 ? 'disabled' : ''} style="padding:.4rem .7rem;background:rgba(58,58,58,.5);border:1px solid rgba(255,107,53,.2);border-radius:6px;color:var(--text-primary);cursor:pointer;opacity:${currentPage >= totalPages - 1 ? .4 : 1}">▶</button>
         </div></div>`;
         container.innerHTML = html;
     }
+
     function msgCharCount(el) {
         const count = el.value.length;
         const info = document.getElementById('msgCharInfo');
@@ -5940,72 +5935,80 @@
         </div>
         </div>
         `;
-        }
+    }
 
-        // ── Receive state ──────────────────────────────────────────────────
-        let rcvProductsCache = [];
-        let rcvRowId = 0;
+    // ── Receive state ──────────────────────────────────────────────────
+    let rcvProductsCache = [];
+    let rcvRowId = 0;
 
-        function switchRcvTab(tab) {
-        ['new','history'].forEach(t => {
-        document.getElementById('rcvtab-' + t)?.classList.toggle('active', t === tab);
-        const p = document.getElementById('rcvPanel-' + t);
-        if (p) p.style.display = t === tab ? 'block' : 'none';
+    function switchRcvTab(tab) {
+        ['new', 'history'].forEach(t => {
+            document.getElementById('rcvtab-' + t)?.classList.toggle('active', t === tab);
+            const p = document.getElementById('rcvPanel-' + t);
+            if (p) p.style.display = t === tab ? 'block' : 'none';
         });
         if (tab === 'history') {
-        rcvFillHistWarehouse();
-        loadReceiveHistory(0);
+            rcvFillHistWarehouse();
+            loadReceiveHistory(0);
         }
-        }
+    }
 
-        // ── Init receive page ──────────────────────────────────────────────
-        async function initReceivePage() {
-            // Set today's date
+    // ── Init receive page ──────────────────────────────────────────────
+    async function initReceivePage() {
+        // Set today's date
         document.getElementById('rcvDate').value = new Date().toISOString().slice(0, 10);
 
-            // Load warehouses
+        // Load warehouses
         try {
-        const res = await fetch(`${BASE_API}/warehouse/get-all?size=100`, { headers: getAuthHeaders() });
-        const result = await res.json();
-        const sel = document.getElementById('rcvWarehouse');
-        (result.data || []).forEach(w => {
-        const o = document.createElement('option');
-        o.value = w.id; o.textContent = w.name;
-        sel.appendChild(o);
-        });
-        } catch (e) { console.error(e); }
-
-            // Load suppliers
-        try {
-        const res = await fetch(`${BASE_API}/supplier/get-all?size=100`, { headers: getAuthHeaders() });
-        const result = await res.json();
-        const sel = document.getElementById('rcvSupplier');
-        (result.data || []).forEach(s => {
-        const o = document.createElement('option');
-        o.value = s.id; o.textContent = s.name;
-        sel.appendChild(o);
-        });
-        } catch (e) { console.error(e); }
-
-            // Load products cache
-        try {
-        const res = await fetch(`${BASE_API}/product/get-all?size=200`, { headers: getAuthHeaders() });
-        const result = await res.json();
-        rcvProductsCache = result.data || [];
-        } catch (e) { console.error(e); }
-
-            // Add first row
-        rcvAddRow();
+            const res = await fetch(`${BASE_API}/warehouse/get-all?size=100`, {headers: getAuthHeaders()});
+            const result = await res.json();
+            const sel = document.getElementById('rcvWarehouse');
+            (result.data || []).forEach(w => {
+                const o = document.createElement('option');
+                o.value = w.id;
+                o.textContent = w.name;
+                sel.appendChild(o);
+            });
+        } catch (e) {
+            console.error(e);
         }
 
-        // ── Add row ────────────────────────────────────────────────────────
-        function rcvAddRow() {
+        // Load suppliers
+        try {
+            const res = await fetch(`${BASE_API}/supplier/get-all?size=100`, {headers: getAuthHeaders()});
+            const result = await res.json();
+            const sel = document.getElementById('rcvSupplier');
+            (result.data || []).forEach(s => {
+                const o = document.createElement('option');
+                o.value = s.id;
+                o.textContent = s.name;
+                sel.appendChild(o);
+            });
+        } catch (e) {
+            console.error(e);
+        }
+
+        // Load products cache
+        try {
+            const res = await fetch(`${BASE_API}/product/get-all?size=200`, {headers: getAuthHeaders()});
+            const result = await res.json();
+            rcvProductsCache = result.data || [];
+        } catch (e) {
+            console.error(e);
+        }
+
+        // Add first row
+        rcvAddRow();
+    }
+
+    // ── Add row ────────────────────────────────────────────────────────
+    function rcvAddRow() {
         const id = ++rcvRowId;
         const tbody = document.getElementById('rcvRows');
         if (!tbody) return;
 
         const options = rcvProductsCache.map(p =>
-        `<option value="${p.id}" data-unit="${p.unit || ''}">${p.name}</option>`
+            `<option value="${p.id}" data-unit="${p.unit || ''}">${p.name}</option>`
         ).join('');
 
         const tr = document.createElement('tr');
@@ -6038,126 +6041,145 @@
         tbody.appendChild(tr);
         rcvUpdateRowNums();
         rcvUpdateSummary();
-        }
+    }
 
-        function rcvOnProductChange(sel, id) {
+    function rcvOnProductChange(sel, id) {
         const opt = sel.options[sel.selectedIndex];
         const unit = opt?.dataset?.unit || '—';
         const unitEl = document.getElementById('rcvUnit-' + id);
         if (unitEl) unitEl.textContent = unit;
-        }
+    }
 
-        function rcvDelRow(id) {
+    function rcvDelRow(id) {
         document.getElementById('rcvRow-' + id)?.remove();
         rcvUpdateRowNums();
         rcvUpdateSummary();
-        }
+    }
 
-        function rcvUpdateRowNums() {
+    function rcvUpdateRowNums() {
         document.querySelectorAll('.rcv-row-num').forEach((el, i) => {
-        el.textContent = i + 1;
+            el.textContent = i + 1;
         });
         const count = document.querySelectorAll('#rcvRows tr').length;
         const el = document.getElementById('rcvRowCount');
         if (el) el.textContent = count + ' ta mahsulot';
-        }
+    }
 
-        function rcvUpdateSummary() {
+    function rcvUpdateSummary() {
         let total = 0;
         document.querySelectorAll('[id^="rcvQty-"]').forEach(qtyEl => {
-        const id = qtyEl.id.replace('rcvQty-', '');
-        const qty = parseFloat(qtyEl.value) || 0;
-        const price = parseFloat(document.getElementById('rcvPrice-' + id)?.value) || 0;
-        total += qty * price;
+            const id = qtyEl.id.replace('rcvQty-', '');
+            const qty = parseFloat(qtyEl.value) || 0;
+            const price = parseFloat(document.getElementById('rcvPrice-' + id)?.value) || 0;
+            total += qty * price;
         });
         const el = document.getElementById('rcvTotalSummary');
         if (el) el.textContent = total > 0 ? `Jami: ${total.toLocaleString('uz-UZ')} so'm` : '';
+    }
+
+    // ── Submit ─────────────────────────────────────────────────────────
+    async function rcvSubmit() {
+        const warehouseId = document.getElementById('rcvWarehouse').value;
+        const supplierId = document.getElementById('rcvSupplier').value;
+        const date = document.getElementById('rcvDate').value;
+        const docNum = document.getElementById('rcvDocNum').value.trim();
+
+        if (!warehouseId) {
+            showToast('Omborni tanlang!', 'error');
+            return;
+        }
+        if (!supplierId) {
+            showToast('Yetkazib beruvchini tanlang!', 'error');
+            return;
+        }
+        if (!date) {
+            showToast('Sanani kiriting!', 'error');
+            return;
         }
 
-        // ── Submit ─────────────────────────────────────────────────────────
-        async function rcvSubmit() {
-        const warehouseId = document.getElementById('rcvWarehouse').value;
-        const supplierId  = document.getElementById('rcvSupplier').value;
-        const date        = document.getElementById('rcvDate').value;
-        const docNum      = document.getElementById('rcvDocNum').value.trim();
-
-        if (!warehouseId) { showToast('Omborni tanlang!', 'error'); return; }
-        if (!supplierId)  { showToast('Yetkazib beruvchini tanlang!', 'error'); return; }
-        if (!date)        { showToast('Sanani kiriting!', 'error'); return; }
-
-            // Collect rows
+        // Collect rows
         const items = [];
         let hasError = false;
         document.querySelectorAll('[id^="rcvQty-"]').forEach(qtyEl => {
-        const id = qtyEl.id.replace('rcvQty-', '');
-        const row = document.getElementById('rcvRow-' + id);
-        if (!row) return;
-        const productSel = row.querySelector('select');
-        const productId  = productSel?.value;
-        const qty        = parseFloat(qtyEl.value);
-        const price      = parseFloat(document.getElementById('rcvPrice-' + id)?.value) || 0;
+            const id = qtyEl.id.replace('rcvQty-', '');
+            const row = document.getElementById('rcvRow-' + id);
+            if (!row) return;
+            const productSel = row.querySelector('select');
+            const productId = productSel?.value;
+            const qty = parseFloat(qtyEl.value);
+            const price = parseFloat(document.getElementById('rcvPrice-' + id)?.value) || 0;
 
-        if (!productId) { hasError = true; return; }
-        if (!qty || qty <= 0) { hasError = true; return; }
+            if (!productId) {
+                hasError = true;
+                return;
+            }
+            if (!qty || qty <= 0) {
+                hasError = true;
+                return;
+            }
 
-        items.push({ productId: parseInt(productId), quantity: qty, price });
+            items.push({productId: parseInt(productId), quantity: qty, price});
         });
 
         if (hasError || !items.length) {
-        showToast('Barcha qatorlarda mahsulot va miqdor to\'ldirilsin!', 'error');
-        return;
+            showToast('Barcha qatorlarda mahsulot va miqdor to\'ldirilsin!', 'error');
+            return;
         }
 
         const payload = {
-        warehouseId: parseInt(warehouseId),
-        supplierId:  parseInt(supplierId),
-        receiveDate: date,
-        documentNumber: docNum || null,
-        items
+            warehouseId: parseInt(warehouseId),
+            supplierId: parseInt(supplierId),
+            receiveDate: date,
+            documentNumber: docNum || null,
+            items
         };
 
         const btn = document.getElementById('rcvSubmitBtn');
-        btn.disabled = true; btn.textContent = '⏳ Saqlanmoqda...';
+        btn.disabled = true;
+        btn.textContent = '⏳ Saqlanmoqda...';
 
         try {
-        const res = await fetch(`${BASE_API}/receive/create`, {
-        method: 'POST',
-        headers: getAuthHeaders(),
-        body: JSON.stringify(payload)
-        });
-        if (!res.ok) throw new Error('Status: ' + res.status);
-        showToast('✅ Qabul qilindi!');
+            const res = await fetch(`${BASE_API}/receive/create`, {
+                method: 'POST',
+                headers: getAuthHeaders(),
+                body: JSON.stringify(payload)
+            });
+            if (!res.ok) throw new Error('Status: ' + res.status);
+            showToast('✅ Qabul qilindi!');
             // Reset form
-        document.getElementById('rcvRows').innerHTML = '';
-        rcvRowId = 0;
-        document.getElementById('rcvDocNum').value = '';
-        document.getElementById('rcvDate').value = new Date().toISOString().slice(0, 10);
-        rcvAddRow();
+            document.getElementById('rcvRows').innerHTML = '';
+            rcvRowId = 0;
+            document.getElementById('rcvDocNum').value = '';
+            document.getElementById('rcvDate').value = new Date().toISOString().slice(0, 10);
+            rcvAddRow();
         } catch (e) {
-        showToast('❌ Xatolik: ' + e.message, 'error');
+            showToast('❌ Xatolik: ' + e.message, 'error');
         } finally {
-        btn.disabled = false; btn.textContent = '✓ Qabul qilish';
+            btn.disabled = false;
+            btn.textContent = '✓ Qabul qilish';
         }
-        }
+    }
 
-        let rcvHistPage = 0;
-        const RCV_HIST_SIZE = 15;
+    let rcvHistPage = 0;
+    const RCV_HIST_SIZE = 15;
 
-        async function rcvFillHistWarehouse() {
+    async function rcvFillHistWarehouse() {
         const sel = document.getElementById('rcvHistWarehouse');
         if (!sel || sel.options.length > 1) return;
         try {
-        const res = await fetch(`${BASE_API}/warehouse/get-all?size=100`, { headers: getAuthHeaders() });
-        const result = await res.json();
-        (result.data || []).forEach(w => {
-        const o = document.createElement('option');
-        o.value = w.id; o.textContent = w.name;
-        sel.appendChild(o);
-        });
-        } catch (e) {}
+            const res = await fetch(`${BASE_API}/warehouse/get-all?size=100`, {headers: getAuthHeaders()});
+            const result = await res.json();
+            (result.data || []).forEach(w => {
+                const o = document.createElement('option');
+                o.value = w.id;
+                o.textContent = w.name;
+                sel.appendChild(o);
+            });
+        } catch (e) {
         }
+    }
 
-        async function loadReceiveHistory(page = 0) {
+    async function loadReceiveHistory(page = 0) {
         rcvHistPage = page;
         const tbody = document.getElementById('rcvHistList');
         if (!tbody) return;
@@ -6171,19 +6193,19 @@
         if (date) url += `&date=${date}`;
 
         try {
-        const res = await fetch(url, { headers: getAuthHeaders() });
-        if (!res.ok) throw new Error('Status: ' + res.status);
-        const result = await res.json();
-        const list = result.data || [];
-        const meta = result.meta;
+            const res = await fetch(url, {headers: getAuthHeaders()});
+            if (!res.ok) throw new Error('Status: ' + res.status);
+            const result = await res.json();
+            const list = result.data || [];
+            const meta = result.meta;
 
-        if (!list.length) {
-        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:3rem;color:var(--text-secondary)">📭 Qabullar topilmadi</td></tr>`;
-        document.getElementById('rcvHistPagination').innerHTML = '';
-        return;
-        }
+            if (!list.length) {
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:3rem;color:var(--text-secondary)">📭 Qabullar topilmadi</td></tr>`;
+                document.getElementById('rcvHistPagination').innerHTML = '';
+                return;
+            }
 
-        tbody.innerHTML = list.map((r, i) => `
+            tbody.innerHTML = list.map((r, i) => `
             <tr class="rcv-hist-row">
                 <td style="padding:.75rem 1rem;color:var(--text-secondary);font-size:.8rem">${page * RCV_HIST_SIZE + i + 1}</td>
                 <td style="padding:.75rem 1rem;font-weight:600;color:var(--text-primary)">${r.productName || r.product?.name || '—'}</td>
@@ -6191,37 +6213,40 @@
                 <td style="padding:.75rem 1rem;color:var(--text-secondary);font-size:.85rem">${r.supplierName || r.supplier?.name || '—'}</td>
                 <td style="padding:.75rem 1rem;text-align:right;font-weight:600;color:#4ade80">${r.quantity} ${r.unit || ''}</td>
                 <td style="padding:.75rem 1rem;text-align:right;color:var(--text-secondary);font-size:.85rem">${r.price ? Number(r.price).toLocaleString('uz-UZ') + " so'm" : '—'}</td>
-                <td style="padding:.75rem 1rem;color:var(--text-secondary);font-size:.82rem">${r.receiveDate || r.createdAt?.slice(0,10) || '—'}</td>
+                <td style="padding:.75rem 1rem;color:var(--text-secondary);font-size:.82rem">${r.receiveDate || r.createdAt?.slice(0, 10) || '—'}</td>
                 <td style="padding:.75rem 1rem;color:var(--text-secondary);font-size:.82rem">${r.documentNumber || '—'}</td>
             </tr>
         `).join('');
 
-        renderRcvHistPagination(meta);
+            renderRcvHistPagination(meta);
         } catch (e) {
-        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:2rem;color:#ef4444">❌ Xatolik: ${e.message}</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:2rem;color:#ef4444">❌ Xatolik: ${e.message}</td></tr>`;
         }
-        }
+    }
 
-        function renderRcvHistPagination(meta) {
+    function renderRcvHistPagination(meta) {
         const container = document.getElementById('rcvHistPagination');
         if (!container || !meta) return;
-        const { currentPage: cp = 0, totalPages: tp = 1, totalElements: te = 0 } = meta;
-        if (tp <= 1) { container.innerHTML = `<div style="padding:.75rem 1.5rem;font-size:.82rem;color:var(--text-secondary)">${te} ta yozuv</div>`; return; }
+        const {currentPage: cp = 0, totalPages: tp = 1, totalElements: te = 0} = meta;
+        if (tp <= 1) {
+            container.innerHTML = `<div style="padding:.75rem 1.5rem;font-size:.82rem;color:var(--text-secondary)">${te} ta yozuv</div>`;
+            return;
+        }
 
         let html = `<div style="display:flex;align-items:center;justify-content:space-between;padding:.75rem 1.2rem;border-top:1px solid rgba(255,107,53,.1)">
         <div style="color:var(--text-secondary);font-size:.82rem">Jami: <strong style="color:var(--accent-primary)">${te}</strong></div>
         <div style="display:flex;gap:.35rem">
-        <button onclick="loadReceiveHistory(${cp-1})" ${cp===0?'disabled':''} style="padding:.35rem .6rem;background:rgba(58,58,58,.5);border:1px solid rgba(255,107,53,.2);border-radius:6px;color:var(--text-primary);cursor:pointer;opacity:${cp===0?.4:1}">◀</button>`;
-        const s = Math.max(0,cp-2), e = Math.min(tp-1,s+4);
-        for (let i=s;i<=e;i++) {
-        html += `<button onclick="loadReceiveHistory(${i})" style="padding:.35rem .6rem;background:${i===cp?'var(--accent-primary)':'rgba(58,58,58,.5)'};border:1px solid rgba(255,107,53,.2);border-radius:6px;color:${i===cp?'#000':'var(--text-primary)'};font-weight:${i===cp?700:400};cursor:pointer">${i+1}</button>`;
+        <button onclick="loadReceiveHistory(${cp - 1})" ${cp === 0 ? 'disabled' : ''} style="padding:.35rem .6rem;background:rgba(58,58,58,.5);border:1px solid rgba(255,107,53,.2);border-radius:6px;color:var(--text-primary);cursor:pointer;opacity:${cp === 0 ? .4 : 1}">◀</button>`;
+        const s = Math.max(0, cp - 2), e = Math.min(tp - 1, s + 4);
+        for (let i = s; i <= e; i++) {
+            html += `<button onclick="loadReceiveHistory(${i})" style="padding:.35rem .6rem;background:${i === cp ? 'var(--accent-primary)' : 'rgba(58,58,58,.5)'};border:1px solid rgba(255,107,53,.2);border-radius:6px;color:${i === cp ? '#000' : 'var(--text-primary)'};font-weight:${i === cp ? 700 : 400};cursor:pointer">${i + 1}</button>`;
         }
-        html += `<button onclick="loadReceiveHistory(${cp+1})" ${cp>=tp-1?'disabled':''} style="padding:.35rem .6rem;background:rgba(58,58,58,.5);border:1px solid rgba(255,107,53,.2);border-radius:6px;color:var(--text-primary);cursor:pointer;opacity:${cp>=tp-1?.4:1}">▶</button>
+        html += `<button onclick="loadReceiveHistory(${cp + 1})" ${cp >= tp - 1 ? 'disabled' : ''} style="padding:.35rem .6rem;background:rgba(58,58,58,.5);border:1px solid rgba(255,107,53,.2);border-radius:6px;color:var(--text-primary);cursor:pointer;opacity:${cp >= tp - 1 ? .4 : 1}">▶</button>
         </div></div>`;
         container.innerHTML = html;
-        }
+    }
 
-        function warehouseStockPageHTML() {
+    function warehouseStockPageHTML() {
         return `
     <style>
         .stk-row {
@@ -6300,47 +6325,49 @@
     </div>
     <div id="stkPagination"></div>
     `;
-        }
+    }
 
-        // ── Stock state ────────────────────────────────────────────────────
-        let stkAllCache = [];
-        let stkCurrentPage = 0;
-        const STK_PAGE_SIZE = 20;
-        let stkOpenRows = new Set();
+    // ── Stock state ────────────────────────────────────────────────────
+    let stkAllCache = [];
+    let stkCurrentPage = 0;
+    const STK_PAGE_SIZE = 20;
+    let stkOpenRows = new Set();
 
-        async function initStockPage() {
+    async function initStockPage() {
         try {
-        const res = await fetch(`${BASE_API}/category/getAll`, { headers: getAuthHeaders() });
-        const result = await res.json();
-        const sel = document.getElementById('stkCatFilter');
-        (result.data || []).forEach(c => {
-        const o = document.createElement('option');
-        o.value = c.id; o.textContent = c.name;
-        sel.appendChild(o);
-        });
-        } catch (e) {}
+            const res = await fetch(`${BASE_API}/category/getAll`, {headers: getAuthHeaders()});
+            const result = await res.json();
+            const sel = document.getElementById('stkCatFilter');
+            (result.data || []).forEach(c => {
+                const o = document.createElement('option');
+                o.value = c.id;
+                o.textContent = c.name;
+                sel.appendChild(o);
+            });
+        } catch (e) {
+        }
 
         loadStock(0);
-        }
+    }
 
-        async function loadStock(page = 0) {
+    async function loadStock(page = 0) {
         stkCurrentPage = page;
         const list = document.getElementById('stkList');
         if (!list) return;
         list.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--text-secondary)">⏳ Yuklanmoqda...</div>';
 
         try {
-        const res = await fetch(`${BASE_API}/stock/get-all?page=${page}&size=${STK_PAGE_SIZE}`, { headers: getAuthHeaders() });
-        if (!res.ok) throw new Error('Status: ' + res.status);
-        const result = await res.json();
-        stkAllCache = result.data || [];
-        renderStock(stkAllCache, result.meta);
+            const res = await fetch(`${BASE_API}/stock/get-all?page=${page}&size=${STK_PAGE_SIZE}`, {headers: getAuthHeaders()});
+            if (!res.ok) throw new Error('Status: ' + res.status);
+            const result = await res.json();
+            stkAllCache = result.data || [];
+            renderStock(stkAllCache, result.meta);
         } catch (e) {
-        list.innerHTML = `<div style="text-align:center;padding:3rem;color:#ef4444">❌ Xatolik: ${e.message}</div>`;
+            list.innerHTML = `<div style="text-align:center;padding:3rem;color:#ef4444">❌ Xatolik: ${e.message}</div>`;
         }
-        }
+    }
 
-        function renderStock(data, meta) {
+    function renderStock(data, meta) {
         const list = document.getElementById('stkList');
         if (!list) return;
 
@@ -6348,22 +6375,22 @@
         if (info && meta) info.textContent = `Jami: ${meta.totalElements || data.length} ta mahsulot`;
 
         if (!data.length) {
-        list.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--text-secondary)">📭 Mahsulotlar topilmadi</div>';
-        renderStkPagination(meta);
-        return;
+            list.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--text-secondary)">📭 Mahsulotlar topilmadi</div>';
+            renderStkPagination(meta);
+            return;
         }
 
-        const productIcons = { KG:'⚖️', G:'🧂', L:'🧴', ML:'💧', DONA:'📦', QUTI:'📫' };
+        const productIcons = {KG: '⚖️', G: '🧂', L: '🧴', ML: '💧', DONA: '📦', QUTI: '📫'};
 
         list.innerHTML = data.map(item => {
-        const warehouses = item.warehouses || item.warehouseStocks || [];
+            const warehouses = item.warehouses || item.warehouseStocks || [];
             const totalQty = item.totalQuantity ?? 0;
-        const unit = item.unit || '';
-        const icon = productIcons[unit?.toUpperCase()] || '📦';
-        const maxQty = Math.max(...warehouses.map(w => w.physicalQuantity || 0), 1);
-        const isOpen = stkOpenRows.has(item.id || item.productId);
+            const unit = item.unit || '';
+            const icon = productIcons[unit?.toUpperCase()] || '📦';
+            const maxQty = Math.max(...warehouses.map(w => w.physicalQuantity || 0), 1);
+            const isOpen = stkOpenRows.has(item.id || item.productId);
 
-        return `
+            return `
         <div class="stk-row" id="stkItem-${item.id || item.productId}">
             <div class="stk-header" onclick="stkToggle(${item.id || item.productId})">
                 <div class="stk-icon">${icon}</div>
@@ -6383,8 +6410,8 @@
             </div>
             <div class="stk-collapse ${isOpen ? 'open' : ''}" id="stkCollapse-${item.id || item.productId}">
                 ${warehouses.length ? warehouses.map(w => {
-            const pct = Math.min(100, Math.round((w.physicalQuantity || 0) / maxQty * 100));
-            return `
+                const pct = Math.min(100, Math.round((w.physicalQuantity || 0) / maxQty * 100));
+                return `
                     <div class="stk-wh-row">
     <div class="stk-wh-dot"></div>
     <div class="stk-wh-name">🏭 ${w.warehouseName}</div>
@@ -6400,7 +6427,7 @@
         </div>
     </div>
 </div>`;
-        }).join('') : `
+            }).join('') : `
                 <div style="padding:1rem 1.5rem;color:var(--text-secondary);font-size:.85rem">
                     Omborlarda ma'lumot yo'q
                 </div>`}
@@ -6409,59 +6436,59 @@
         }).join('');
 
         renderStkPagination(meta);
-        }
+    }
 
-        function stkToggle(id) {
+    function stkToggle(id) {
         const collapse = document.getElementById('stkCollapse-' + id);
         const arrow = document.querySelector(`#stkItem-${id} .stk-arrow`);
         if (!collapse) return;
         const isOpen = collapse.classList.contains('open');
         if (isOpen) {
-        collapse.classList.remove('open');
-        arrow?.classList.remove('open');
-        stkOpenRows.delete(id);
+            collapse.classList.remove('open');
+            arrow?.classList.remove('open');
+            stkOpenRows.delete(id);
         } else {
-        collapse.classList.add('open');
-        arrow?.classList.add('open');
-        stkOpenRows.add(id);
+            collapse.classList.add('open');
+            arrow?.classList.add('open');
+            stkOpenRows.add(id);
         }
-        }
+    }
 
-        function stkFilter(query) {
+    function stkFilter(query) {
         const catId = document.getElementById('stkCatFilter')?.value || '';
         const q = (query || '').toLowerCase().trim();
 
         let filtered = stkAllCache;
         if (q) filtered = filtered.filter(item =>
-        (item.productName || item.name || '').toLowerCase().includes(q)
+            (item.productName || item.name || '').toLowerCase().includes(q)
         );
         if (catId) filtered = filtered.filter(item =>
-        String(item.categoryId || item.category?.id || '') === catId
+            String(item.categoryId || item.category?.id || '') === catId
         );
         renderStock(filtered, null);
-        }
+    }
 
-        function renderStkPagination(meta) {
+    function renderStkPagination(meta) {
         const container = document.getElementById('stkPagination');
         if (!container || !meta || meta.totalPages <= 1) {
-        if (container) container.innerHTML = '';
-        return;
+            if (container) container.innerHTML = '';
+            return;
         }
-        const { currentPage: cp = 0, totalPages: tp = 1, totalElements: te = 0 } = meta;
+        const {currentPage: cp = 0, totalPages: tp = 1, totalElements: te = 0} = meta;
         let html = `<div style="display:flex;align-items:center;justify-content:space-between;padding:1rem 0;margin-top:.5rem">
         <div style="color:var(--text-secondary);font-size:.82rem">Jami: <strong style="color:var(--accent-primary)">${te}</strong> ta</div>
         <div style="display:flex;gap:.35rem">
-        <button onclick="loadStock(${cp-1})" ${cp===0?'disabled':''} style="padding:.4rem .7rem;background:rgba(58,58,58,.5);border:1px solid rgba(255,107,53,.2);border-radius:6px;color:var(--text-primary);cursor:pointer;opacity:${cp===0?.4:1}">◀</button>`;
-        const s=Math.max(0,cp-2), e=Math.min(tp-1,s+4);
-        for(let i=s;i<=e;i++){
-        html += `<button onclick="loadStock(${i})" style="padding:.4rem .7rem;background:${i===cp?'var(--accent-primary)':'rgba(58,58,58,.5)'};border:1px solid rgba(255,107,53,.2);border-radius:6px;color:${i===cp?'#000':'var(--text-primary)'};font-weight:${i===cp?700:400};cursor:pointer">${i+1}</button>`;
+        <button onclick="loadStock(${cp - 1})" ${cp === 0 ? 'disabled' : ''} style="padding:.4rem .7rem;background:rgba(58,58,58,.5);border:1px solid rgba(255,107,53,.2);border-radius:6px;color:var(--text-primary);cursor:pointer;opacity:${cp === 0 ? .4 : 1}">◀</button>`;
+        const s = Math.max(0, cp - 2), e = Math.min(tp - 1, s + 4);
+        for (let i = s; i <= e; i++) {
+            html += `<button onclick="loadStock(${i})" style="padding:.4rem .7rem;background:${i === cp ? 'var(--accent-primary)' : 'rgba(58,58,58,.5)'};border:1px solid rgba(255,107,53,.2);border-radius:6px;color:${i === cp ? '#000' : 'var(--text-primary)'};font-weight:${i === cp ? 700 : 400};cursor:pointer">${i + 1}</button>`;
         }
-        html += `<button onclick="loadStock(${cp+1})" ${cp>=tp-1?'disabled':''} style="padding:.4rem .7rem;background:rgba(58,58,58,.5);border:1px solid rgba(255,107,53,.2);border-radius:6px;color:var(--text-primary);cursor:pointer;opacity:${cp>=tp-1?.4:1}">▶</button>
+        html += `<button onclick="loadStock(${cp + 1})" ${cp >= tp - 1 ? 'disabled' : ''} style="padding:.4rem .7rem;background:rgba(58,58,58,.5);border:1px solid rgba(255,107,53,.2);border-radius:6px;color:var(--text-primary);cursor:pointer;opacity:${cp >= tp - 1 ? .4 : 1}">▶</button>
         </div></div>`;
         container.innerHTML = html;
-        }
+    }
 
-        function dashboardHTML() {
+    function dashboardHTML() {
         return `
     <style>
         /* ── GRID ── */
@@ -6898,26 +6925,28 @@
     // ── 1. STAT CARDS ──────────────────────────────────────────────────
     async function loadDbStats() {
         const sets = [
-            { id: 'dbStatWh',   url: '/warehouse/get-all?page=0&size=1',      key: 'meta.totalElements' },
-            { id: 'dbStatProd', url: '/product/get-all?page=0&size=1',        key: 'meta.totalElements' },
-            { id: 'dbStatSup',  url: '/supplier/get-all?page=0&size=1',       key: 'meta.totalElements' },
-            { id: 'dbStatKg',   url: '/kindergarten/get-all?page=0&size=1',   key: 'meta.totalElements' },
+            {id: 'dbStatWh', url: '/warehouse/get-all?page=0&size=1', key: 'meta.totalElements'},
+            {id: 'dbStatProd', url: '/product/get-all?page=0&size=1', key: 'meta.totalElements'},
+            {id: 'dbStatSup', url: '/supplier/get-all?page=0&size=1', key: 'meta.totalElements'},
+            {id: 'dbStatKg', url: '/kindergarten/get-all?page=0&size=1', key: 'meta.totalElements'},
         ];
         for (const s of sets) {
             try {
-                const res = await fetch(BASE_API + s.url, { headers: getAuthHeaders() });
+                const res = await fetch(BASE_API + s.url, {headers: getAuthHeaders()});
                 const d = await res.json();
                 const el = document.getElementById(s.id);
                 if (el) el.textContent = d.meta?.totalElements ?? '—';
-            } catch (e) {}
+            } catch (e) {
+            }
         }
         // Regions
         try {
-            const res = await fetch(`${BASE_API}/region/all`, { headers: getAuthHeaders() });
+            const res = await fetch(`${BASE_API}/region/all`, {headers: getAuthHeaders()});
             const d = await res.json();
             const el = document.getElementById('dbStatReg');
             if (el) el.textContent = Array.isArray(d.data) ? d.data.length : '—';
-        } catch (e) {}
+        } catch (e) {
+        }
     }
 
     // ── 2. STOCK BAR CHART ─────────────────────────────────────────────
@@ -6925,7 +6954,7 @@
         const container = document.getElementById('dbStockBars');
         if (!container) return;
         try {
-            const res = await fetch(`${BASE_API}/stock/get-all?page=0&size=8`, { headers: getAuthHeaders() });
+            const res = await fetch(`${BASE_API}/stock/get-all?page=0&size=8`, {headers: getAuthHeaders()});
             if (!res.ok) throw new Error(res.status);
             const result = await res.json();
             const data = result.data || [];
@@ -6973,13 +7002,13 @@
         const wrap = document.getElementById('dbDonutWrap');
         if (!wrap) return;
         try {
-            const res = await fetch(`${BASE_API}/category/getAll`, { headers: getAuthHeaders() });
+            const res = await fetch(`${BASE_API}/category/getAll`, {headers: getAuthHeaders()});
             if (!res.ok) throw new Error(res.status);
             const result = await res.json();
             const cats = result.data || [];
 
             // Products per category
-            const res2 = await fetch(`${BASE_API}/product/get-all?page=0&size=200`, { headers: getAuthHeaders() });
+            const res2 = await fetch(`${BASE_API}/product/get-all?page=0&size=200`, {headers: getAuthHeaders()});
             const result2 = await res2.json();
             const products = result2.data || [];
 
@@ -6997,7 +7026,7 @@
                 return;
             }
 
-            const COLORS = ['#ff6b35','#818cf8','#34d399','#f472b6','#38bdf8','#fbbf24'];
+            const COLORS = ['#ff6b35', '#818cf8', '#34d399', '#f472b6', '#38bdf8', '#fbbf24'];
             const R = 54, cx = 64, cy = 64, stroke = 14;
             const circ = 2 * Math.PI * R;
 
@@ -7051,16 +7080,18 @@
         try {
             // Stock + Product criticalLimit taqqoslash
             const [stockRes, prodRes] = await Promise.all([
-                fetch(`${BASE_API}/stock/get-all?page=0&size=100`, { headers: getAuthHeaders() }),
-                fetch(`${BASE_API}/product/get-all?page=0&size=200`, { headers: getAuthHeaders() }),
+                fetch(`${BASE_API}/stock/get-all?page=0&size=100`, {headers: getAuthHeaders()}),
+                fetch(`${BASE_API}/product/get-all?page=0&size=200`, {headers: getAuthHeaders()}),
             ]);
 
             const stockData = (await stockRes.json()).data || [];
-            const prodData  = (await prodRes.json()).data  || [];
+            const prodData = (await prodRes.json()).data || [];
 
             // Product map
             const prodMap = {};
-            prodData.forEach(p => { prodMap[p.id] = p; });
+            prodData.forEach(p => {
+                prodMap[p.id] = p;
+            });
 
             // Low stock: totalQuantity <= criticalLimit
             const lowItems = stockData
@@ -7068,7 +7099,7 @@
                     const prod = prodMap[s.productId];
                     if (!prod) return false;
                     const limit = Number(prod.criticalLimit || 0);
-                    const qty   = Number(s.totalQuantity || 0);
+                    const qty = Number(s.totalQuantity || 0);
                     return limit > 0 && qty <= limit;
                 })
                 .sort((a, b) => {
@@ -7091,10 +7122,10 @@
             }
 
             list.innerHTML = lowItems.map(s => {
-                const prod  = prodMap[s.productId] || {};
-                const qty   = Number(s.totalQuantity || 0);
+                const prod = prodMap[s.productId] || {};
+                const qty = Number(s.totalQuantity || 0);
                 const limit = Number(prod.criticalLimit || 1);
-                const pct   = Math.min(100, Math.round(qty / limit * 100));
+                const pct = Math.min(100, Math.round(qty / limit * 100));
                 const color = pct <= 20 ? '#ef4444' : pct <= 50 ? '#f97316' : '#fbbf24';
                 return `
             <div class="db-low-row">
@@ -7130,7 +7161,7 @@
         const container = document.getElementById('dbRecentReceives');
         if (!container) return;
         try {
-            const res = await fetch(`${BASE_API}/receive/get-all?page=0&size=8`, { headers: getAuthHeaders() });
+            const res = await fetch(`${BASE_API}/receive/get-all?page=0&size=8`, {headers: getAuthHeaders()});
             if (!res.ok) throw new Error(res.status);
             const result = await res.json();
             const data = result.data || [];
@@ -7140,15 +7171,15 @@
                 return;
             }
 
-            const icons = { KG:'⚖️', G:'🧂', L:'🧴', ML:'💧', DONA:'📦', QUTI:'📫' };
+            const icons = {KG: '⚖️', G: '🧂', L: '🧴', ML: '💧', DONA: '📦', QUTI: '📫'};
 
             container.innerHTML = data.map(r => {
                 const name = r.productName || r.product?.name || '—';
-                const wh   = r.warehouseName || r.warehouse?.name || '—';
-                const sup  = r.supplierName || r.supplier?.name || '—';
+                const wh = r.warehouseName || r.warehouse?.name || '—';
+                const sup = r.supplierName || r.supplier?.name || '—';
                 const unit = r.unit || '';
                 const icon = icons[unit.toUpperCase()] || '📦';
-                const date = r.receiveDate || r.createdAt?.slice(0,10) || '—';
+                const date = r.receiveDate || r.createdAt?.slice(0, 10) || '—';
                 return `
             <div class="db-recent-row">
                 <div class="db-recent-icon">${icon}</div>
@@ -7170,7 +7201,7 @@
         const container = document.getElementById('dbWarehouseDist');
         if (!container) return;
         try {
-            const res = await fetch(`${BASE_API}/stock/get-all?page=0&size=100`, { headers: getAuthHeaders() });
+            const res = await fetch(`${BASE_API}/stock/get-all?page=0&size=100`, {headers: getAuthHeaders()});
             if (!res.ok) throw new Error(res.status);
             const result = await res.json();
             const data = result.data || [];
@@ -7193,8 +7224,8 @@
             });
 
             const entries = Object.entries(whMap).sort((a, b) => b[1] - a[1]);
-            const max = Math.max(...entries.map(([,v]) => v), 1);
-            const COLORS = ['#ff6b35','#818cf8','#34d399','#f472b6','#38bdf8','#fbbf24'];
+            const max = Math.max(...entries.map(([, v]) => v), 1);
+            const COLORS = ['#ff6b35', '#818cf8', '#34d399', '#f472b6', '#38bdf8', '#fbbf24'];
 
             container.innerHTML = entries.map(([name, qty], i) => {
                 const pct = Math.max(2, Math.round(qty / max * 100));
@@ -7218,6 +7249,1257 @@
 
         } catch (e) {
             container.innerHTML = `<div class="db-empty">❌ ${e.message}</div>`;
+        }
+    }
+
+    function statusLabel(s) {
+        return {
+            PREPARING: '⏳ Tayyorlanmoqda',
+            READY: '✅ Tayyor',
+            DELIVERING: '🚗 Yetkazilmoqda',
+            DELIVERED: '📦 Yetkazildi',
+            CANCELLED: '❌ Bekor'
+        }[s] || s || '—';
+    }
+
+    function statusColor(s) {
+        return {
+            PREPARING: '#fbbf24',
+            READY: '#4ade80',
+            DELIVERING: '#38bdf8',
+            DELIVERED: '#818cf8',
+            CANCELLED: '#ef4444'
+        }[s] || '#94a3b8';
+    }
+
+    function statusBg(s) {
+        return {
+            PREPARING: 'rgba(251,191,36,.1)',
+            READY: 'rgba(74,222,128,.1)',
+            DELIVERING: 'rgba(56,189,248,.1)',
+            DELIVERED: 'rgba(129,140,248,.1)',
+            CANCELLED: 'rgba(239,68,68,.1)'
+        }[s] || 'rgba(148,163,184,.1)';
+    }
+
+    function statusBorder(s) {
+        return {
+            PREPARING: 'rgba(251,191,36,.2)',
+            READY: 'rgba(74,222,128,.2)',
+            DELIVERING: 'rgba(56,189,248,.2)',
+            DELIVERED: 'rgba(129,140,248,.2)',
+            CANCELLED: 'rgba(239,68,68,.2)'
+        }[s] || 'rgba(148,163,184,.2)';
+    }
+
+    // ── HTML ──────────────────────────────────────────────────────────
+    function distributePageHTML() {
+        return `
+    <style>
+        .dst-input {
+            width:100%; padding:.7rem 1rem;
+            background:rgba(58,58,58,.6);
+            border:1.5px solid rgba(255,255,255,.1);
+            border-radius:9px; color:var(--text-primary);
+            font-family:inherit; font-size:.88rem; outline:none;
+            transition:border-color .2s;
+        }
+        .dst-input:focus { border-color:var(--accent-primary); }
+        .dst-input::placeholder { color:rgba(255,255,255,.25); }
+        .dst-select { appearance:none; cursor:pointer; }
+        .dst-select option { background:#2d2d2d; }
+
+        .dst-card {
+            background:rgba(45,45,45,.5);
+            border:1px solid rgba(255,107,53,.15);
+            border-radius:14px; overflow:hidden;
+        }
+        .dst-section {
+            padding:1.1rem 1.5rem;
+            border-bottom:1px solid rgba(255,255,255,.06);
+        }
+        .dst-section:last-child { border-bottom:none; }
+        .dst-section-title {
+            font-size:.75rem; font-weight:700;
+            color:var(--accent-primary);
+            letter-spacing:.07em; text-transform:uppercase;
+            margin-bottom:1rem;
+        }
+        .dst-grid4 {
+            display:grid;
+            grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+            gap:.75rem;
+        }
+        .dst-field label {
+            display:block; font-size:.75rem; font-weight:600;
+            color:var(--text-secondary); margin-bottom:.35rem;
+            text-transform:uppercase; letter-spacing:.04em;
+        }
+        .dst-table { width:100%; border-collapse:collapse; font-size:.85rem; }
+        .dst-table th {
+            padding:.65rem 1rem; text-align:left;
+            color:var(--text-secondary); font-size:.72rem;
+            text-transform:uppercase; letter-spacing:.05em; font-weight:700;
+            background:rgba(58,58,58,.3);
+            border-bottom:1px solid rgba(255,107,53,.15);
+            white-space:nowrap;
+        }
+        .dst-table td {
+            padding:.6rem .75rem;
+            border-bottom:1px solid rgba(255,255,255,.04);
+            vertical-align:middle;
+        }
+        .dst-table tbody tr:hover td { background:rgba(255,107,53,.03); }
+        .dst-info-pill {
+            display:inline-flex; align-items:center; gap:.3rem;
+            padding:.25rem .6rem; border-radius:6px;
+            font-size:.72rem; font-weight:600;
+        }
+        .dst-info-ok   { background:rgba(74,222,128,.1);  color:#4ade80; border:1px solid rgba(74,222,128,.2); }
+        .dst-info-warn { background:rgba(251,191,36,.1);  color:#fbbf24; border:1px solid rgba(251,191,36,.2); }
+        .dst-info-err  { background:rgba(239,68,68,.1);   color:#ef4444; border:1px solid rgba(239,68,68,.2); }
+        .dst-add-row {
+            width:100%; padding:.65rem;
+            background:rgba(255,107,53,.07);
+            border:1.5px dashed rgba(255,107,53,.3);
+            border-radius:9px; color:var(--accent-primary);
+            font-family:inherit; font-size:.85rem; font-weight:600;
+            cursor:pointer; transition:all .2s; margin-top:.5rem;
+        }
+        .dst-add-row:hover { background:rgba(255,107,53,.14); border-color:var(--accent-primary); }
+        .dst-del {
+            width:28px; height:28px; border:none;
+            background:rgba(239,68,68,.12); border-radius:7px;
+            color:#ef4444; cursor:pointer; font-size:.9rem;
+            display:flex; align-items:center; justify-content:center;
+            transition:all .18s;
+        }
+        .dst-del:hover { background:rgba(239,68,68,.25); }
+        .dst-submit {
+            padding:.85rem 2.5rem;
+            background:linear-gradient(135deg,var(--accent-primary),#ffa500);
+            border:none; border-radius:10px;
+            color:#fff; font-family:inherit; font-size:.95rem; font-weight:700;
+            cursor:pointer; transition:all .2s;
+        }
+        .dst-submit:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 6px 18px rgba(255,107,53,.4); }
+        .dst-submit:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+
+        /* Order detail modal */
+        #orderDetailOverlay {
+            display:none; position:fixed; inset:0;
+            background:rgba(15,23,42,.6); backdrop-filter:blur(4px);
+            z-index:9050; align-items:center; justify-content:center; padding:16px;
+        }
+        #orderDetailOverlay.active { display:flex; }
+        #orderDetailModal {
+            background:var(--bg-secondary,#2d2d2d);
+            border:1px solid rgba(255,107,53,.2);
+            border-radius:18px;
+            width:100%; max-width:700px; max-height:90vh;
+            overflow-y:auto;
+            box-shadow:0 24px 80px rgba(0,0,0,.4);
+            animation:pNotifyIn .22s ease;
+        }
+        .ord-modal-header {
+            display:flex; align-items:center; justify-content:space-between;
+            padding:1.25rem 1.5rem;
+            border-bottom:1px solid rgba(255,255,255,.07);
+            position:sticky; top:0; background:var(--bg-secondary,#2d2d2d); z-index:5;
+        }
+
+        /* Driver assign */
+        .drv-kg-card {
+            padding:.85rem 1rem;
+            background:rgba(45,45,45,.4);
+            border:1.5px solid rgba(255,255,255,.07);
+            border-radius:10px; cursor:pointer;
+            transition:all .2s;
+            display:flex; align-items:center; gap:.75rem;
+        }
+        .drv-kg-card:hover { border-color:rgba(255,107,53,.35); background:rgba(255,107,53,.06); }
+        .drv-kg-card.selected { border-color:var(--accent-primary); background:rgba(255,107,53,.1); }
+        .drv-kg-check {
+            width:20px; height:20px; border-radius:5px;
+            border:2px solid rgba(255,255,255,.2);
+            display:flex; align-items:center; justify-content:center;
+            font-size:.8rem; flex-shrink:0; transition:all .15s;
+        }
+        .drv-kg-card.selected .drv-kg-check { background:var(--accent-primary); border-color:var(--accent-primary); color:#000; }
+        .drv-user-card {
+            padding:.85rem 1rem;
+            background:rgba(45,45,45,.4);
+            border:1.5px solid rgba(255,255,255,.07);
+            border-radius:10px; cursor:pointer; transition:all .2s;
+            display:flex; align-items:center; gap:.75rem;
+        }
+        .drv-user-card:hover { border-color:rgba(255,107,53,.35); }
+        .drv-user-card.selected { border-color:var(--accent-primary); background:rgba(255,107,53,.1); }
+    </style>
+
+    <!-- TABS -->
+    <div style="display:flex;gap:.5rem;margin-bottom:1.5rem;flex-wrap:wrap">
+        <button class="ptab-btn active" id="dsttab-new"    onclick="switchDstTab('new')">📤 Taqsimlash</button>
+        <button class="ptab-btn"        id="dsttab-history" onclick="switchDstTab('history')">📋 Taqsimlangan</button>
+        <button class="ptab-btn"        id="dsttab-driver"  onclick="switchDstTab('driver')">🚗 Haydovchi biriktirish</button>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         TAB 1 — YANGI TAQSIMLASH
+    ══════════════════════════════════════════════════════════════════ -->
+    <div id="dstPanel-new">
+        <div class="dst-card">
+            <div class="dst-section">
+                <div class="dst-section-title">📍 Asosiy ma'lumotlar</div>
+                <div class="dst-grid4">
+                    <div class="dst-field">
+                        <label>Region *</label>
+                        <select id="dstRegion" class="dst-input dst-select" onchange="dstOnRegionChange()">
+                            <option value="">— Tanlang —</option>
+                        </select>
+                    </div>
+                    <div class="dst-field">
+                        <label>Bog'cha *</label>
+                        <select id="dstKg" class="dst-input dst-select" onchange="dstOnKgChange()">
+                            <option value="">— Avval region —</option>
+                        </select>
+                    </div>
+                    <div class="dst-field">
+                        <label>Ombor *</label>
+                        <select id="dstWarehouse" class="dst-input dst-select">
+                            <option value="">— Tanlang —</option>
+                        </select>
+                    </div>
+                    <div class="dst-field">
+                        <label>Oy *</label>
+                        <input type="month" id="dstMonth" class="dst-input" style="color-scheme:dark"
+                            onchange="dstOnMonthChange()">
+                    </div>
+                </div>
+            </div>
+
+            <div class="dst-section">
+                <div class="dst-section-title">📦 Mahsulotlar</div>
+                <div style="overflow-x:auto">
+                    <table class="dst-table">
+                        <thead>
+                            <tr>
+                                <th style="width:36px">#</th>
+                                <th style="min-width:180px">Mahsulot *</th>
+                                <th style="min-width:90px">Ish kunlari</th>
+                                <th style="min-width:80px">Berilgan</th>
+                                <th style="min-width:80px">Qolgan</th>
+                                <th style="min-width:110px">Omborda bor</th>
+                                <th style="min-width:110px">Necha kunga *</th>
+                                <th style="min-width:140px">Tavsiya (avto)</th>
+                                <th style="min-width:140px">Miqdor *</th>
+                                <th style="width:36px"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="dstRows"></tbody>
+                    </table>
+                </div>
+                <button class="dst-add-row" onclick="dstAddRow()">+ Mahsulot qo'shish</button>
+            </div>
+
+            <div style="padding:1.25rem 1.5rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap">
+                <div id="dstFormSummary" style="font-size:.85rem;color:var(--text-secondary)"></div>
+                <button class="dst-submit" id="dstSubmitBtn" onclick="dstSubmit()">✓ Taqsimlash</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         TAB 2 — TAQSIMLANGAN (ORDERS)
+    ══════════════════════════════════════════════════════════════════ -->
+    <div id="dstPanel-history" style="display:none">
+        <div style="margin-bottom:1rem;display:flex;gap:.75rem;flex-wrap:wrap;align-items:center">
+            <select id="dstHistRegion" onchange="dstLoadHistory(0)"
+                class="dst-input dst-select" style="width:auto;min-width:180px">
+                <option value="">🗺️ Barcha regionlar</option>
+            </select>
+            <input type="month" id="dstHistMonth" onchange="dstLoadHistory(0)"
+                class="dst-input" style="width:auto;color-scheme:dark">
+            <select id="dstHistStatus" onchange="dstLoadHistory(0)"
+                class="dst-input dst-select" style="width:auto;min-width:160px">
+                <option value="">📋 Barcha statuslar</option>
+                <option value="PREPARING">⏳ Tayyorlanmoqda</option>
+                <option value="READY">✅ Tayyor</option>
+                <option value="DELIVERING">🚗 Yetkazilmoqda</option>
+                <option value="DELIVERED">📦 Yetkazildi</option>
+                <option value="CANCELLED">❌ Bekor</option>
+            </select>
+        </div>
+
+        <div style="background:rgba(45,45,45,.5);border:1px solid rgba(255,107,53,.15);border-radius:12px;overflow:hidden">
+            <table class="dst-table">
+                <thead><tr>
+                    <th style="width:50px">#</th>
+                    <th>Bog'cha</th>
+                    <th style="text-align:center">Status</th>
+                    <th style="text-align:right">Jami summa</th>
+                    <th>Sana</th>
+                    <th>Haydovchi</th>
+                    <th style="text-align:center;width:120px">Amallar</th>
+                </tr></thead>
+                <tbody id="dstHistList">
+                    <tr><td colspan="7" style="text-align:center;padding:3rem;color:var(--text-secondary)">⏳ Yuklanmoqda...</td></tr>
+                </tbody>
+            </table>
+            <div id="dstHistPagination"></div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         TAB 3 — HAYDOVCHI BIRIKTIRISH
+    ══════════════════════════════════════════════════════════════════ -->
+    <div id="dstPanel-driver" style="display:none">
+        <div class="dst-card">
+            <div class="dst-section">
+                <div class="dst-section-title">🗺️ Region tanlang</div>
+                <div style="max-width:280px">
+                    <select id="drvRegion" class="dst-input dst-select" onchange="drvOnRegionChange()">
+                        <option value="">— Region tanlang —</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="dst-section" id="drvKgSection" style="display:none">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;flex-wrap:wrap;gap:.5rem">
+                    <div class="dst-section-title" style="margin-bottom:0">
+                        🏫 Bog'chalar
+                        <span id="drvKgCount" style="font-weight:400;color:var(--text-secondary);font-size:.78rem;text-transform:none;letter-spacing:0"></span>
+                    </div>
+                    <div style="display:flex;gap:.5rem">
+                        <button onclick="drvSelectAllKg()"
+                            style="padding:.35rem .85rem;background:rgba(255,107,53,.1);border:1px solid rgba(255,107,53,.3);border-radius:7px;color:var(--accent-primary);font-family:inherit;font-size:.78rem;font-weight:600;cursor:pointer">
+                            Hammasini tanlash
+                        </button>
+                        <button onclick="drvClearKg()"
+                            style="padding:.35rem .85rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:7px;color:var(--text-secondary);font-family:inherit;font-size:.78rem;font-weight:600;cursor:pointer">
+                            Tozalash
+                        </button>
+                    </div>
+                </div>
+                <div id="drvKgList"
+                    style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.5rem;max-height:280px;overflow-y:auto;padding-right:4px">
+                </div>
+            </div>
+
+            <div class="dst-section" id="drvUserSection" style="display:none">
+                <div class="dst-section-title">🚗 Haydovchi tanlang</div>
+                <div id="drvUserList"
+                    style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.5rem;max-height:280px;overflow-y:auto">
+                </div>
+            </div>
+
+            <div id="drvConfirmSection" style="display:none;padding:1.25rem 1.5rem">
+                <div id="drvConfirmInfo" style="margin-bottom:1rem"></div>
+                <button onclick="drvAssign()" id="drvAssignBtn" class="dst-submit">🚗 Biriktirish</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══ ORDER DETAIL MODAL ══ -->
+    <div id="orderDetailOverlay">
+        <div id="orderDetailModal">
+            <div class="ord-modal-header">
+                <div>
+                    <div style="font-size:1rem;font-weight:700;color:var(--text-primary)" id="ordModalTitle">Order #</div>
+                    <div style="font-size:.8rem;color:var(--text-secondary);margin-top:.2rem" id="ordModalSub"></div>
+                </div>
+                <button onclick="closeOrderDetail()"
+                    style="width:30px;height:30px;border:none;background:rgba(255,255,255,.07);border-radius:7px;
+                    color:var(--text-secondary);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
+            </div>
+            <div id="ordModalBody" style="padding:1.5rem"></div>
+        </div>
+    </div>
+    `;
+    }
+
+    // =====================================================================
+    // STATE
+    // =====================================================================
+    let dstRowId = 0;
+    let dstProductsCache = [];
+    let dstInfoCache = {};
+    let dstHistPage = 0;
+    const DST_HIST_SIZE = 15;
+
+    // =====================================================================
+    // INIT
+    // =====================================================================
+    async function initDistributePage() {
+        const now = new Date();
+        const ym = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+        document.getElementById('dstMonth').value = ym;
+
+        await Promise.all([
+            dstLoadRegions(),
+            dstLoadWarehouses(),
+            dstLoadProductsCache(),
+        ]);
+
+        dstAddRow();
+    }
+
+    async function dstLoadRegions() {
+        try {
+            const res = await fetch(`${BASE_API}/region/all`, {headers: getAuthHeaders()});
+            const result = await res.json();
+            const regions = result.data || [];
+            ['dstRegion', 'dstHistRegion', 'drvRegion'].forEach(id => {
+                const sel = document.getElementById(id);
+                if (!sel) return;
+                const first = sel.options[0].cloneNode(true);
+                sel.innerHTML = '';
+                sel.appendChild(first);
+                regions.forEach(r => {
+                    const o = document.createElement('option');
+                    o.value = r.id;
+                    o.textContent = r.name;
+                    sel.appendChild(o);
+                });
+            });
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    async function dstLoadWarehouses() {
+        try {
+            const res = await fetch(`${BASE_API}/warehouse/get-all?size=-1`, {headers: getAuthHeaders()});
+            const result = await res.json();
+            const sel = document.getElementById('dstWarehouse');
+            if (!sel) return;
+            (result.data || []).forEach(w => {
+                const o = document.createElement('option');
+                o.value = w.id;
+                o.textContent = w.name;
+                sel.appendChild(o);
+            });
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    async function dstLoadProductsCache() {
+        try {
+            const res = await fetch(`${BASE_API}/product/get-all?size=200`, {headers: getAuthHeaders()});
+            const result = await res.json();
+            dstProductsCache = result.data || [];
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    // =====================================================================
+    // TAB SWITCH
+    // =====================================================================
+    function switchDstTab(tab) {
+        ['new', 'history', 'driver'].forEach(t => {
+            document.getElementById('dsttab-' + t)?.classList.toggle('active', t === tab);
+            const p = document.getElementById('dstPanel-' + t);
+            if (p) p.style.display = t === tab ? 'block' : 'none';
+        });
+        if (tab === 'history') dstLoadHistory(0);
+    }
+
+    // =====================================================================
+    // REGION → BOG'CHA
+    // =====================================================================
+    async function dstOnRegionChange() {
+        const regionId = document.getElementById('dstRegion').value;
+        const kgSel = document.getElementById('dstKg');
+        kgSel.innerHTML = '<option value="">— Yuklanmoqda... —</option>';
+        if (!regionId) {
+            kgSel.innerHTML = '<option value="">— Avval region —</option>';
+            return;
+        }
+        try {
+            const res = await fetch(`${BASE_API}/kindergarten/region-filter/${regionId}?size=100`, {headers: getAuthHeaders()});
+            const result = await res.json();
+            kgSel.innerHTML = '<option value="">— Bog\'cha tanlang —</option>';
+            (result.data || []).forEach(k => {
+                const o = document.createElement('option');
+                o.value = k.id;
+                o.textContent = k.name;
+                kgSel.appendChild(o);
+            });
+        } catch (e) {
+            kgSel.innerHTML = '<option value="">— Xato —</option>';
+        }
+    }
+
+    function dstOnKgChange() {
+        // Barcha qatorlardagi info ni qayta yukla
+        document.querySelectorAll('[id^="dstProd-"]').forEach(sel => {
+            if (sel.value) {
+                const rowId = sel.id.replace('dstProd-', '');
+                dstFetchInfo(rowId);
+            }
+        });
+    }
+
+    function dstOnMonthChange() {
+        dstOnKgChange(); // oyni o'zgartirganda ham qayta hisoblash
+    }
+
+    // =====================================================================
+    // PRODUCT ROWS
+    // =====================================================================
+    function dstAddRow() {
+        const id = ++dstRowId;
+        const tbody = document.getElementById('dstRows');
+        if (!tbody) return;
+
+        const options = dstProductsCache.map(p =>
+            `<option value="${p.id}" data-unit="${p.unit || ''}">${p.name}</option>`
+        ).join('');
+
+        const tr = document.createElement('tr');
+        tr.id = 'dstRow-' + id;
+        tr.innerHTML = `
+        <td style="text-align:center;color:var(--text-secondary);font-size:.8rem">
+            <span class="dst-row-num"></span>
+        </td>
+        <td>
+            <select class="dst-input dst-select" id="dstProd-${id}"
+                onchange="dstOnProductChange(${id})" style="min-width:170px">
+                <option value="">— Mahsulot —</option>
+                ${options}
+            </select>
+        </td>
+        <td id="dstTotalDays-${id}">
+            <span style="color:var(--text-secondary);font-size:.8rem">—</span>
+        </td>
+        <td id="dstSupplied-${id}">
+            <span style="color:var(--text-secondary);font-size:.8rem">—</span>
+        </td>
+        <td id="dstRemaining-${id}">
+            <span style="color:var(--text-secondary);font-size:.8rem">—</span>
+        </td>
+        <td id="dstAvail-${id}">
+    <span style="color:var(--text-secondary);font-size:.8rem">—</span>
+</td>
+        <td>
+            <input type="number" class="dst-input" id="dstDays-${id}"
+                min="1" max="31" placeholder="0" style="width:75px"
+                oninput="dstOnDaysChange(${id})">
+        </td>
+        <td id="dstRecommended-${id}">
+            <span style="color:var(--text-secondary);font-size:.8rem">—</span>
+        </td>
+        <td>
+            <div style="display:flex;align-items:center;gap:.4rem">
+                <input type="number" class="dst-input" id="dstQty-${id}"
+                    min="0" step="0.001" placeholder="0.000" style="width:100px">
+                <span id="dstUnit-${id}" style="color:var(--text-secondary);font-size:.8rem;white-space:nowrap;min-width:24px">—</span>
+            </div>
+        </td>
+        <td>
+            <button class="dst-del" onclick="dstDelRow(${id})">✕</button>
+        </td>
+    `;
+        tbody.appendChild(tr);
+        dstUpdateRowNums();
+    }
+
+    function dstDelRow(id) {
+        document.getElementById('dstRow-' + id)?.remove();
+        delete dstInfoCache[id];
+        dstUpdateRowNums();
+    }
+
+    function dstUpdateRowNums() {
+        document.querySelectorAll('.dst-row-num').forEach((el, i) => {
+            el.textContent = i + 1;
+        });
+    }
+
+    function dstOnProductChange(id) {
+        const sel = document.getElementById('dstProd-' + id);
+        const opt = sel?.options[sel.selectedIndex];
+        const unit = opt?.dataset?.unit || '—';
+        const unitEl = document.getElementById('dstUnit-' + id);
+        if (unitEl) unitEl.textContent = unit;
+
+        // Reset info
+        ['dstTotalDays','dstSupplied','dstRemaining','dstAvail','dstRecommended'].forEach(p => {
+            const el = document.getElementById(p + '-' + id);
+            if (el) el.innerHTML = '<span style="color:var(--text-secondary);font-size:.8rem">⏳</span>';
+        });
+
+        dstFetchInfo(id);
+    }
+
+    function formatQty(num) {
+        return parseFloat(Number(num).toFixed(3)).toString();
+    }
+
+    function dstOnDaysChange(id) {
+        const days = parseInt(document.getElementById('dstDays-' + id)?.value) || 0;
+        const info = dstInfoCache[id];
+        if (!info || !days) return;
+
+        const perDay = Number(info.recommendedQuantity || 0);
+        if (!perDay) return;
+
+        const calc = (perDay * days).toFixed(3);
+
+        // recEl ga TEGMAYMIZ — u 1 kunlik miqdorni ko'rsatadi
+        // faqat qty yangilanadi
+        const qtyEl = document.getElementById('dstQty-' + id);
+        if (qtyEl && !qtyEl._userTouched) qtyEl.value = calc;
+    }
+
+    // User touched flag
+    document.addEventListener('input', e => {
+        if (e.target?.id?.startsWith('dstQty-')) e.target._userTouched = true;
+    });
+
+    // ── INFO FETCH ──────────────────────────────────────────────────
+    async function dstFetchInfo(id) {
+        const kgId = document.getElementById('dstKg')?.value;
+        const prodId = document.getElementById('dstProd-' + id)?.value;
+        const month = document.getElementById('dstMonth')?.value;
+        const warehouseId = document.getElementById('dstWarehouse')?.value;
+
+        if (!kgId || !prodId || !month) return;
+
+        try {
+            const res = await fetch(`${BASE_API}/distribution/info`, {
+                method: 'POST',
+                headers: getAuthHeaders(),
+                body: JSON.stringify({
+                    kindergartenId: parseInt(kgId),
+                    productId: parseInt(prodId),
+                    yearMonth: month,
+                    warehouseId: warehouseId
+                })
+            });
+            if (!res.ok) throw new Error(res.status);
+            const result = await res.json();
+            const d = result.data || result;
+            dstInfoCache[id] = d;
+
+            const totalEl = document.getElementById('dstTotalDays-' + id);
+            const suppliedEl = document.getElementById('dstSupplied-' + id);
+            const remainEl = document.getElementById('dstRemaining-' + id);
+            const recEl = document.getElementById('dstRecommended-' + id);
+            const daysEl = document.getElementById('dstDays-' + id);
+            const qtyEl = document.getElementById('dstQty-' + id);
+
+
+            if (totalEl) totalEl.innerHTML =
+                `<span class="dst-info-pill dst-info-ok">📅 ${d.totalWorkingDays ?? '—'}</span>`;
+
+            if (suppliedEl) {
+                const s = d.suppliedWorkingDays ?? 0;
+                suppliedEl.innerHTML =
+                    `<span class="dst-info-pill ${s > 0 ? 'dst-info-warn' : 'dst-info-ok'}">
+                    ${s > 0 ? '✓' : '—'} ${s}
+                </span>`;
+            }
+
+            if (remainEl) {
+                const r = d.remainingWorkingDays ?? 0;
+                remainEl.innerHTML =
+                    `<span class="dst-info-pill ${r > 0 ? 'dst-info-ok' : 'dst-info-err'}">
+                    ${r}
+                </span>`;
+            }
+
+            const availEl = document.getElementById('dstAvail-' + id);
+            const avail = Number(d.availableProduct || 0);
+            if (availEl) {
+                availEl.innerHTML = avail > 0
+                    ? `<span class="dst-info-pill dst-info-ok">✅ ${formatQty(avail)}</span>`
+                    : `<span class="dst-info-pill dst-info-err">❌ Mavjud emas</span>`;
+            }
+
+            if (recEl) {
+                const qty = d.recommendedQuantity;
+                recEl.innerHTML = qty
+                    ? `<span class="dst-info-pill dst-info-ok">📦 ${Number(qty).toFixed(3)} / kun</span>`
+                    : `<span style="color:var(--text-secondary);font-size:.8rem">—</span>`;
+            }
+
+// Days auto-fill (qolgan kunlar)
+            if (daysEl && !daysEl.value && d.remainingWorkingDays > 0) {
+                daysEl.value = d.remainingWorkingDays;
+                // Days to'ldirilgandan keyin qty ham hisoblash
+                if (qtyEl && !qtyEl._userTouched && d.recommendedQuantity) {
+                    qtyEl.value = (Number(d.recommendedQuantity) * d.remainingWorkingDays).toFixed(3);
+                }
+            } else if (daysEl?.value && qtyEl && !qtyEl._userTouched && d.recommendedQuantity) {
+                // Days allaqachon kiritilgan bo'lsa
+                qtyEl.value = (Number(d.recommendedQuantity) * parseInt(daysEl.value)).toFixed(3);
+            }
+
+        } catch (e) {
+            ['dstTotalDays', 'dstSupplied', 'dstRemaining', 'dstRecommended'].forEach(p => {
+                const el = document.getElementById(p + '-' + id);
+                if (el) el.innerHTML = `<span class="dst-info-pill dst-info-err">❌</span>`;
+            });
+        }
+    }
+
+    // =====================================================================
+    // SUBMIT
+    // =====================================================================
+    async function dstSubmit() {
+        const kgId = document.getElementById('dstKg').value;
+        const warehouseId = document.getElementById('dstWarehouse').value;
+        const month = document.getElementById('dstMonth').value;
+
+        let unavailableProduct = null;
+
+        document.querySelectorAll('[id^="dstProd-"]').forEach(sel => {
+            const rowId = sel.id.replace('dstProd-','');
+            const info = dstInfoCache[rowId];
+            const prodName = sel.options[sel.selectedIndex]?.text || '';
+
+            if (info && Number(info.availableProduct || 0) <= 0 && sel.value) {
+                unavailableProduct = prodName;
+            }
+        });
+
+        if (unavailableProduct) {
+            showToast(`❌ "${unavailableProduct}" omborda mavjud emas!`, 'error');
+            return;
+        }
+        if (!kgId) {
+            showToast('Bog\'chani tanlang!', 'error');
+            return;
+        }
+        if (!warehouseId) {
+            showToast('Omborni tanlang!', 'error');
+            return;
+        }
+        if (!month) {
+            showToast('Oyni tanlang!', 'error');
+            return;
+        }
+
+        const items = [];
+        let hasError = false;
+
+        document.querySelectorAll('[id^="dstProd-"]').forEach(sel => {
+            const rowId = sel.id.replace('dstProd-', '');
+            const prodId = sel.value;
+            const days = parseInt(document.getElementById('dstDays-' + rowId)?.value);
+            const qty = parseFloat(document.getElementById('dstQty-' + rowId)?.value);
+            if (!prodId || !days || !qty || qty <= 0) {
+                hasError = true;
+                return;
+            }
+            items.push({productId: parseInt(prodId), days, quantity: qty});
+        });
+
+        if (hasError || !items.length) {
+            showToast('Barcha qatorlarni to\'ldiring!', 'error');
+            return;
+        }
+
+        const payload = {
+            kindergartenId: parseInt(kgId),
+            warehouseId: parseInt(warehouseId),
+            yearMonth: month,
+            items
+        };
+
+        const btn = document.getElementById('dstSubmitBtn');
+        btn.disabled = true;
+        btn.textContent = '⏳ Saqlanmoqda...';
+
+        try {
+            const res = await fetch(`${BASE_API}/distribution/create`, {
+                method: 'POST',
+                headers: getAuthHeaders(),
+                body: JSON.stringify(payload)
+            });
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                throw new Error(err.message || 'Status: ' + res.status);
+            }
+            showToast('✅ Taqsimlash muvaffaqiyatli amalga oshirildi!');
+            // Reset
+            document.getElementById('dstRows').innerHTML = '';
+            dstRowId = 0;
+            dstInfoCache = {};
+            document.getElementById('dstKg').value = '';
+            document.getElementById('dstRegion').value = '';
+            dstAddRow();
+        } catch (e) {
+            showToast('❌ Xatolik: ' + e.message, 'error');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = '✓ Taqsimlash';
+        }
+    }
+
+    // =====================================================================
+    // HISTORY — ORDER LIST
+    // =====================================================================
+    async function dstLoadHistory(page = 0) {
+        dstHistPage = page;
+        const tbody = document.getElementById('dstHistList');
+        if (!tbody) return;
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:3rem;color:var(--text-secondary)">⏳ Yuklanmoqda...</td></tr>`;
+
+        const regionId = document.getElementById('dstHistRegion')?.value || '';
+        const month = document.getElementById('dstHistMonth')?.value || '';
+        const status = document.getElementById('dstHistStatus')?.value || '';
+
+        let url = `${BASE_API}/distribution/get-all?page=${page}&size=${DST_HIST_SIZE}`;
+        if (regionId) url += `&regionId=${regionId}`;
+        if (month) url += `&yearMonth=${month}`;
+        if (status) url += `&status=${status}`;
+
+        try {
+            const res = await fetch(url, {headers: getAuthHeaders()});
+            if (!res.ok) throw new Error('Status: ' + res.status);
+            const result = await res.json();
+            const list = result.data || [];
+            const meta = result.meta;
+
+            if (!list.length) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:3rem;color:var(--text-secondary)">📭 Orderlar topilmadi</td></tr>`;
+                document.getElementById('dstHistPagination').innerHTML = '';
+                return;
+            }
+
+            tbody.innerHTML = list.map((o, i) => `
+            <tr style="border-bottom:1px solid rgba(255,255,255,.05);transition:background .15s"
+                onmouseover="this.style.background='rgba(255,107,53,.04)'"
+                onmouseout="this.style.background='transparent'">
+                <td style="padding:.85rem 1rem;text-align:center">
+                    <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;
+                        background:rgba(255,107,53,.1);border:1px solid rgba(255,107,53,.2);border-radius:6px;
+                        font-size:.75rem;color:var(--text-secondary)">${page * DST_HIST_SIZE + i + 1}</span>
+                </td>
+                <td style="padding:.85rem 1rem">
+                    <div style="font-weight:600;color:var(--text-primary)">${o.kindergartenName || '—'}</div>
+                    <div style="font-size:.73rem;color:var(--text-secondary);margin-top:2px">ID: ${o.id}</div>
+                </td>
+                <td style="padding:.85rem 1rem;text-align:center">
+                    <span style="padding:.3rem .75rem;border-radius:100px;font-size:.75rem;font-weight:600;
+    background:${statusBg(o.status)};color:${statusColor(o.status)};
+    border-width:1px;border-style:solid;border-color:${statusBorder(o.status)}">
+    ${statusLabel(o.status)}
+</span>
+                </td>
+                <td style="padding:.85rem 1rem;text-align:right;font-weight:700;color:#4ade80;font-family:'Space Mono',monospace">
+                    ${o.totalAmount ? Number(o.totalAmount).toLocaleString('uz-UZ') + " so'm" : '—'}
+                </td>
+                <td style="padding:.85rem 1rem;color:var(--text-secondary);font-size:.85rem">${o.orderDate || '—'}</td>
+                <td style="padding:.85rem 1rem">
+                    ${o.driverName
+                ? `<div style="display:flex;align-items:center;gap:.5rem">
+                            <div style="width:28px;height:28px;border-radius:50%;background:#fbbf24;
+                                display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.7rem;color:#000;flex-shrink:0">
+                                ${(o.driverName || '').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()}
+                            </div>
+                            <span style="font-size:.85rem;color:var(--text-primary)">${o.driverName}</span>
+                           </div>`
+                : `<button onclick="openAssignDriver(${o.id})"
+                                style="padding:.3rem .75rem;background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.2);
+                                border-radius:7px;color:#38bdf8;font-family:inherit;font-size:.75rem;font-weight:600;cursor:pointer">
+                                + Biriktirish
+                           </button>`
+            }
+                </td>
+                <td style="padding:.85rem 1rem;text-align:center">
+                    <button onclick="viewOrderDetail(${o.id})" class="btn-edit" style="font-size:.78rem">
+                        👁️ Ko'rish
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+
+            renderDstHistPagination(meta);
+        } catch (e) {
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:2rem;color:#ef4444">❌ Xatolik: ${e.message}</td></tr>`;
+        }
+    }
+
+    function renderDstHistPagination(meta) {
+        const container = document.getElementById('dstHistPagination');
+        if (!container || !meta) return;
+        const {currentPage: cp = 0, totalPages: tp = 1, totalElements: te = 0} = meta;
+        if (tp <= 1) {
+            container.innerHTML = `<div style="padding:.75rem 1.5rem;font-size:.82rem;color:var(--text-secondary)">${te} ta order</div>`;
+            return;
+        }
+        let html = `<div style="display:flex;align-items:center;justify-content:space-between;padding:.75rem 1.2rem;border-top:1px solid rgba(255,107,53,.1)">
+        <div style="color:var(--text-secondary);font-size:.82rem">Jami: <strong style="color:var(--accent-primary)">${te}</strong></div>
+        <div style="display:flex;gap:.35rem">
+        <button onclick="dstLoadHistory(${cp - 1})" ${cp === 0 ? 'disabled' : ''} style="padding:.35rem .6rem;background:rgba(58,58,58,.5);border:1px solid rgba(255,107,53,.2);border-radius:6px;color:var(--text-primary);cursor:pointer;opacity:${cp === 0 ? .4 : 1}">◀</button>`;
+        const s = Math.max(0, cp - 2), e = Math.min(tp - 1, s + 4);
+        for (let i = s; i <= e; i++) {
+            html += `<button onclick="dstLoadHistory(${i})" style="padding:.35rem .6rem;background:${i === cp ? 'var(--accent-primary)' : 'rgba(58,58,58,.5)'};border:1px solid rgba(255,107,53,.2);border-radius:6px;color:${i === cp ? '#000' : 'var(--text-primary)'};font-weight:${i === cp ? 700 : 400};cursor:pointer">${i + 1}</button>`;
+        }
+        html += `<button onclick="dstLoadHistory(${cp + 1})" ${cp >= tp - 1 ? 'disabled' : ''} style="padding:.35rem .6rem;background:rgba(58,58,58,.5);border:1px solid rgba(255,107,53,.2);border-radius:6px;color:var(--text-primary);cursor:pointer;opacity:${cp >= tp - 1 ? .4 : 1}">▶</button>
+        </div></div>`;
+        container.innerHTML = html;
+    }
+
+    // =====================================================================
+    // ORDER DETAIL MODAL
+    // =====================================================================
+    async function viewOrderDetail(id) {
+        const overlay = document.getElementById('orderDetailOverlay');
+        const body = document.getElementById('ordModalBody');
+        const title = document.getElementById('ordModalTitle');
+        const sub = document.getElementById('ordModalSub');
+
+        body.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--text-secondary)">⏳ Yuklanmoqda...</div>';
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+
+        try {
+            const res = await fetch(`${BASE_API}/distribution/${id}`, {headers: getAuthHeaders()});
+            if (!res.ok) throw new Error('Status: ' + res.status);
+            const result = await res.json();
+            const o = result.data || result;
+
+            title.textContent = `Order #${o.id}`;
+            sub.innerHTML = `
+            <span style="padding:.2rem .6rem;border-radius:100px;font-size:.72rem;font-weight:600;
+                background:${statusBg(o.status)};color:${statusColor(o.status)};
+                border:1px solid ${statusBorder(o.status)}">
+                ${statusLabel(o.status)}
+            </span>`;
+
+            const items = o.items || [];
+            body.innerHTML = `
+            <!-- Info cards -->
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:.65rem;margin-bottom:1.5rem">
+                ${ordInfoCard('🏫 Bog\'cha', o.kindergartenName || '—')}
+                ${ordInfoCard('🚗 Haydovchi', o.driverName || 'Biriktirilmagan')}
+                ${ordInfoCard('💰 Jami summa', o.totalAmount ? Number(o.totalAmount).toLocaleString('uz-UZ') + " so'm" : '—')}
+                ${ordInfoCard('📅 Sana', o.orderDate || '—')}
+            </div>
+
+            <!-- Items table -->
+            <div style="font-size:.78rem;font-weight:700;color:var(--accent-primary);letter-spacing:.06em;text-transform:uppercase;margin-bottom:.75rem">
+                📦 Mahsulotlar (${items.length} ta)
+            </div>
+            <div style="background:rgba(58,58,58,.3);border:1px solid rgba(255,107,53,.12);border-radius:10px;overflow:hidden">
+                <table style="width:100%;border-collapse:collapse;font-size:.85rem">
+                    <thead>
+                        <tr style="background:rgba(58,58,58,.4);border-bottom:1px solid rgba(255,107,53,.15)">
+                            <th style="padding:.65rem 1rem;text-align:left;color:var(--text-secondary);font-size:.72rem;text-transform:uppercase;font-weight:700">#</th>
+                            <th style="padding:.65rem 1rem;text-align:left;color:var(--text-secondary);font-size:.72rem;text-transform:uppercase;font-weight:700">Mahsulot</th>
+                            <th style="padding:.65rem 1rem;text-align:center;color:var(--text-secondary);font-size:.72rem;text-transform:uppercase;font-weight:700">Kun</th>
+                            <th style="padding:.65rem 1rem;text-align:right;color:var(--text-secondary);font-size:.72rem;text-transform:uppercase;font-weight:700">Miqdor</th>
+                            <th style="padding:.65rem 1rem;text-align:left;color:var(--text-secondary);font-size:.72rem;text-transform:uppercase;font-weight:700">Oy</th>
+                            <th style="padding:.65rem 1rem;text-align:left;color:var(--text-secondary);font-size:.72rem;text-transform:uppercase;font-weight:700">Ombor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${items.length ? items.map((item, i) => `
+                            <tr style="border-bottom:1px solid rgba(255,255,255,.04)">
+                                <td style="padding:.75rem 1rem;color:var(--text-secondary);font-size:.8rem">${i + 1}</td>
+                                <td style="padding:.75rem 1rem;font-weight:600;color:var(--text-primary)">${item.productName || '—'}</td>
+                                <td style="padding:.75rem 1rem;text-align:center">
+                                    <span class="dst-info-pill dst-info-ok">📅 ${item.days ?? '—'} kun</span>
+                                </td>
+                                <td style="padding:.75rem 1rem;text-align:right;font-weight:700;color:#4ade80;font-family:'Space Mono',monospace">
+                                    ${Number(item.quantity || 0).toLocaleString()} ${item.unit || ''}
+                                </td>
+                                <td style="padding:.75rem 1rem;color:var(--text-secondary);font-size:.82rem">${item.yearMonth || '—'}</td>
+                                <td style="padding:.75rem 1rem;color:var(--text-secondary);font-size:.82rem">${item.warehouseName || '—'}</td>
+                            </tr>
+                        `).join('') : `<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text-secondary)">Mahsulotlar yo'q</td></tr>`}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Haydovchi biriktirish (agar yo'q bo'lsa) -->
+            ${!o.driverName ? `
+            <div style="margin-top:1.25rem;padding:1rem;background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.15);border-radius:10px">
+                <div style="font-size:.82rem;color:#38bdf8;font-weight:600;margin-bottom:.75rem">🚗 Haydovchi biriktirish</div>
+                <div style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:center">
+                    <select id="ordDriverSel" class="dst-input dst-select" style="max-width:260px">
+                        <option value="">— Haydovchi tanlang —</option>
+                    </select>
+                    <button onclick="assignDriverToOrder(${o.id})"
+                        style="padding:.65rem 1.4rem;background:linear-gradient(135deg,#38bdf8,#0ea5e9);border:none;border-radius:9px;
+                        color:#fff;font-family:inherit;font-size:.88rem;font-weight:700;cursor:pointer">
+                        ✓ Biriktirish
+                    </button>
+                </div>
+            </div>` : ''}
+        `;
+
+            // Haydovchilarni yukla
+            if (!o.driverName) dstLoadDriversForModal();
+
+        } catch (e) {
+            body.innerHTML = `<div style="text-align:center;padding:2rem;color:#ef4444">❌ Xatolik: ${e.message}</div>`;
+        }
+    }
+
+    function ordInfoCard(label, value) {
+        return `<div style="background:rgba(58,58,58,.3);border:1px solid rgba(255,255,255,.07);border-radius:9px;padding:.75rem 1rem">
+        <div style="font-size:.72rem;color:var(--text-secondary);margin-bottom:.2rem">${label}</div>
+        <div style="font-weight:600;font-size:.88rem;color:var(--text-primary)">${value}</div>
+    </div>`;
+    }
+
+    function closeOrderDetail() {
+        document.getElementById('orderDetailOverlay').classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    async function dstLoadDriversForModal() {
+        const sel = document.getElementById('ordDriverSel');
+        if (!sel) return;
+        try {
+            const res = await fetch(`${BASE_API}/user/get-all?filter=driver&size=-1`, {headers: getAuthHeaders()});
+            const result = await res.json();
+            (result.data || []).forEach(u => {
+                const o = document.createElement('option');
+                o.value = u.id;
+                o.textContent = u.fullName;
+                sel.appendChild(o);
+            });
+        } catch (e) {
+        }
+    }
+
+    async function assignDriverToOrder(orderId) {
+        const driverId = document.getElementById('ordDriverSel')?.value;
+        if (!driverId) {
+            showToast('Haydovchini tanlang!', 'error');
+            return;
+        }
+
+        try {
+            const res = await fetch(`${BASE_API}/distribution/assign-driver`, {
+                method: 'POST',
+                headers: getAuthHeaders(),
+                body: JSON.stringify({orderId, driverId: parseInt(driverId)})
+            });
+            if (!res.ok) throw new Error('Status: ' + res.status);
+            showToast('✅ Haydovchi biriktirildi!');
+            closeOrderDetail();
+            dstLoadHistory(dstHistPage);
+        } catch (e) {
+            showToast('❌ Xatolik: ' + e.message, 'error');
+        }
+    }
+
+    // Tarix listidan haydovchi biriktirish
+    async function openAssignDriver(orderId) {
+        // Detail modalda ko'rsatamiz
+        viewOrderDetail(orderId);
+    }
+
+    // =====================================================================
+    // HAYDOVCHI BIRIKTIRISH TAB
+    // =====================================================================
+    let drvSelectedKgs = new Set();
+    let drvSelectedDriver = null;
+
+    async function drvOnRegionChange() {
+        const regionId = document.getElementById('drvRegion').value;
+        drvSelectedKgs.clear();
+        drvSelectedDriver = null;
+
+        const kgSection = document.getElementById('drvKgSection');
+        const userSection = document.getElementById('drvUserSection');
+        const confirmSection = document.getElementById('drvConfirmSection');
+
+        if (userSection) userSection.style.display = 'none';
+        if (confirmSection) confirmSection.style.display = 'none';
+
+        if (!regionId) {
+            if (kgSection) kgSection.style.display = 'none';
+            return;
+        }
+
+        kgSection.style.display = 'block';
+        const list = document.getElementById('drvKgList');
+        list.innerHTML = '<div style="color:var(--text-secondary);font-size:.85rem;padding:.5rem">⏳ Yuklanmoqda...</div>';
+
+        try {
+            // Bog'cha emas — haydovchisiz ORDERLAR
+            const res = await fetch(
+                `${BASE_API}/distribution/get-all?regionId=${regionId}&driverIsNull=true&size=100`,
+                {headers: getAuthHeaders()}
+            );
+            const result = await res.json();
+            const orders = result.data || [];
+
+            const count = document.getElementById('drvKgCount');
+            if (count) count.textContent = `— ${orders.length} ta haydovchisiz order`;
+
+            if (!orders.length) {
+                list.innerHTML = '<div style="padding:.75rem;color:var(--text-secondary);font-size:.85rem">✅ Barcha orderlarda haydovchi bor</div>';
+            } else {
+                list.innerHTML = orders.map(o => `
+                <div class="drv-kg-card" id="drvKgCard-${o.id}" onclick="drvToggleKg(${o.id})">
+                    <div class="drv-kg-check" id="drvKgCheck-${o.id}"></div>
+                    <div style="min-width:0">
+                        <div style="font-weight:600;font-size:.88rem;color:var(--text-primary);
+                            white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+                            🏫 ${o.kindergartenName || '—'}
+                        </div>
+                        <div style="font-size:.73rem;color:var(--text-secondary)">
+                            📅 ${o.orderDate || '—'} · ${statusLabel(o.status)}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            }
+
+            drvLoadDrivers();
+
+        } catch (e) {
+            list.innerHTML = `<div style="color:#ef4444;font-size:.85rem">Xatolik: ${e.message}</div>`;
+        }
+    }
+
+    function drvToggleKg(id) {
+        const card = document.getElementById('drvKgCard-' + id);
+        const check = document.getElementById('drvKgCheck-' + id);
+        if (drvSelectedKgs.has(id)) {
+            drvSelectedKgs.delete(id);
+            card?.classList.remove('selected');
+            if (check) check.textContent = '';
+        } else {
+            drvSelectedKgs.add(id);
+            card?.classList.add('selected');
+            if (check) check.textContent = '✓';
+        }
+        drvUpdateConfirm();
+    }
+
+    function drvSelectAllKg() {
+        document.querySelectorAll('[id^="drvKgCard-"]').forEach(card => {
+            const id = parseInt(card.id.replace('drvKgCard-', ''));
+            drvSelectedKgs.add(id);
+            card.classList.add('selected');
+            const check = document.getElementById('drvKgCheck-' + id);
+            if (check) check.textContent = '✓';
+        });
+        drvUpdateConfirm();
+    }
+
+    function drvClearKg() {
+        document.querySelectorAll('[id^="drvKgCard-"]').forEach(card => {
+            const id = parseInt(card.id.replace('drvKgCard-', ''));
+            card.classList.remove('selected');
+            const check = document.getElementById('drvKgCheck-' + id);
+            if (check) check.textContent = '';
+        });
+        drvSelectedKgs.clear();
+        drvUpdateConfirm();
+    }
+
+    async function drvLoadDrivers() {
+        const section = document.getElementById('drvUserSection');
+        const list = document.getElementById('drvUserList');
+        if (!section || !list) return;
+        section.style.display = 'block';
+        list.innerHTML = '<div style="color:var(--text-secondary);font-size:.85rem;padding:.5rem">⏳ Yuklanmoqda...</div>';
+
+        try {
+            const res = await fetch(`${BASE_API}/user/get-all?filter=driver&size=50`, {headers: getAuthHeaders()});
+            const result = await res.json();
+            const drivers = result.data || [];
+
+            if (!drivers.length) {
+                list.innerHTML = '<div style="color:var(--text-secondary);font-size:.85rem;padding:.5rem">Haydovchilar topilmadi</div>';
+                return;
+            }
+
+            list.innerHTML = drivers.map(u => {
+                const initials = (u.fullName || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+                return `
+            <div class="drv-user-card" id="drvUserCard-${u.id}"
+                onclick="drvSelectDriver(${u.id},'${(u.fullName || '').replace(/'/g, "\\'")}')">
+                <div style="width:38px;height:38px;border-radius:50%;background:#fbbf24;
+                    display:flex;align-items:center;justify-content:center;
+                    font-weight:700;font-size:.85rem;color:#000;flex-shrink:0">${initials}</div>
+                <div style="min-width:0">
+                    <div style="font-weight:600;font-size:.88rem;color:var(--text-primary)">${u.fullName || '-'}</div>
+                    <div style="font-size:.73rem;color:var(--text-secondary)">@${u.username || '-'} · ${u.phoneNumber || '-'}</div>
+                </div>
+            </div>`;
+            }).join('');
+        } catch (e) {
+            list.innerHTML = `<div style="color:#ef4444;font-size:.85rem">Xatolik: ${e.message}</div>`;
+        }
+    }
+
+    function drvSelectDriver(id, name) {
+        drvSelectedDriver = {id, name};
+        document.querySelectorAll('[id^="drvUserCard-"]').forEach(c => c.classList.remove('selected'));
+        document.getElementById('drvUserCard-' + id)?.classList.add('selected');
+        drvUpdateConfirm();
+    }
+
+    function drvUpdateConfirm() {
+        const section = document.getElementById('drvConfirmSection');
+        const info = document.getElementById('drvConfirmInfo');
+        if (!section) return;
+
+        if (drvSelectedKgs.size > 0 && drvSelectedDriver) {
+            section.style.display = 'block';
+            if (info) info.innerHTML = `
+            <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">
+                <span style="padding:.3rem .75rem;border-radius:100px;background:rgba(255,107,53,.1);
+                    color:var(--accent-primary);border:1px solid rgba(255,107,53,.2);font-size:.82rem;font-weight:600">
+                    🏫 ${drvSelectedKgs.size} ta bog'cha
+                </span>
+                <span style="color:var(--text-secondary)">→</span>
+                <span style="padding:.3rem .75rem;border-radius:100px;background:rgba(251,191,36,.1);
+                    color:#fbbf24;border:1px solid rgba(251,191,36,.2);font-size:.82rem;font-weight:600">
+                    🚗 ${drvSelectedDriver.name}
+                </span>
+            </div>`;
+        } else {
+            section.style.display = 'none';
+        }
+    }
+
+    async function drvAssign() {
+        if (!drvSelectedDriver || !drvSelectedKgs.size) return;
+
+        const btn = document.getElementById('drvAssignBtn');
+        btn.disabled = true;
+        btn.textContent = '⏳ Biriktirilmoqda...';
+
+        try {
+            const res = await fetch(`${BASE_API}/driver/assign-kindergartens`, {
+                method: 'POST',
+                headers: getAuthHeaders(),
+                body: JSON.stringify({
+                    driverId: drvSelectedDriver.id,
+                    kindergartenIds: Array.from(drvSelectedKgs)
+                })
+            });
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                throw new Error(err.message || 'Status: ' + res.status);
+            }
+            showToast(`✅ ${drvSelectedKgs.size} ta bog'cha ${drvSelectedDriver.name}ga biriktirildi!`);
+            drvSelectedKgs.clear();
+            drvSelectedDriver = null;
+            document.getElementById('drvRegion').value = '';
+            document.getElementById('drvKgSection').style.display = 'none';
+            document.getElementById('drvUserSection').style.display = 'none';
+            document.getElementById('drvConfirmSection').style.display = 'none';
+        } catch (e) {
+            showToast('❌ Xatolik: ' + e.message, 'error');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = '🚗 Biriktirish';
         }
     }
 </script>

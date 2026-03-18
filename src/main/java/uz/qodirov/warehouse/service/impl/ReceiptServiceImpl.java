@@ -57,7 +57,8 @@ public class ReceiptServiceImpl implements ReceiptService {
         List<Stock> stocks =
                 stockRepository.findAllByWarehouseAndProductIdIn(warehouse, productIds);
 
-        Map<Long, Stock> stockMap = stocks.stream().collect(Collectors
+        Map<Long, Stock> stockMap = stocks
+                .stream().collect(Collectors
                 .toMap(
                         s -> s.getProduct().getId(),
                         s -> s));

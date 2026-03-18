@@ -33,7 +33,7 @@ public class WorkingDayService {
             current = current.plusDays(1);
         }
 
-        List<Holiday> holidays = holidayRepo.findByYearMonth(yearMonth.toString());
+        List<Holiday> holidays = holidayRepo.findByYearMonthAndDeletedFalse(yearMonth.toString());
 
         int holidayOnWorkingDay = 0;
         for (Holiday h : holidays) {

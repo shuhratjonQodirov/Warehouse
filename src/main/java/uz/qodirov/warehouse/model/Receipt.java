@@ -37,4 +37,9 @@ public class Receipt extends AbsEntity {
 
     private String documentNumber;
     private LocalDate receiveDate;
+    @PrePersist
+    @PreUpdate
+    public void calculateTotal() {
+        this.totalSum = this.price.multiply(this.quantity);
+    }
 }

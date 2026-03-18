@@ -14,7 +14,6 @@ public class ReceiptMapper {
         return Receipt.builder()
                 .product(product).warehouse(warehouse).supplier(supplier).quantity(item.getQuantity())
                 .price(item.getPrice())
-                .totalSum(item.getPrice().multiply(item.getQuantity()))
                 .documentNumber(dto.getDocumentNumber())
                 .receiveDate(dto.getReceiveDate())
                 .build();

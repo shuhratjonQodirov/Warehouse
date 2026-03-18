@@ -81,9 +81,9 @@
         <td bgcolor="#e6fffa" style="padding: 24px 30px; border-top: 1px solid #b2f5ea;">
             <p style="margin: 0; font-size: 15px; color: #234e52;">
                 Tizimdan foydalanish uchun Telegram botimizga murojaat qiling:
-                <a href="https://t.me/masalan_bot"
+                <a href="https://t.me/WarehouseGold_bot"
                    style="color: #319795; font-weight: bold; text-decoration: none;">
-                    @masalan_bot
+                    @WarehouseGold_bot
                 </a>
             </p>
         </td>

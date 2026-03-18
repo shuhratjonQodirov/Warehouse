@@ -15,20 +15,20 @@ import java.math.BigDecimal;
 @Builder
 @EntityListeners(AuditingEntityListener.class)
 @EqualsAndHashCode(callSuper = true)
-public class Product extends AbsEntity {
+    public class Product extends AbsEntity {
 
-    @Column(nullable = false)
-    private String name;
+        @Column(nullable = false)
+        private String name;
 
-    @Column(nullable = false)
-    private String unit;
+        @Column(nullable = false)
+        private String unit;
 
-    private BigDecimal currentPrice = BigDecimal.ZERO;
+        private BigDecimal currentPrice = BigDecimal.ZERO;
 
-    private BigDecimal criticalLimit = BigDecimal.ZERO;
+        private BigDecimal criticalLimit = BigDecimal.ZERO;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Category category;
+        @ManyToOne(fetch = FetchType.LAZY)
+        private Category category;
 
-    private String description;
-}
+        private String description;
+    }

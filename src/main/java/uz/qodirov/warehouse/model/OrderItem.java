@@ -23,9 +23,18 @@ public class OrderItem extends AbsEntity {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "warehouse_id", nullable = false)
+    private Warehouse warehouse;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "monthly_supply_id", nullable = false)
+    private KindergartenMonthlySupply monthlySupply;  // ← har bir mahsulot uchun alohida oy holati
+
     private BigDecimal quantity;             // haqiqiy yuborilgan miqdor
 
     private BigDecimal priceAtOrder;
+
     private BigDecimal totalPrice;
 
     @Column(nullable = false)
@@ -33,10 +42,9 @@ public class OrderItem extends AbsEntity {
 
     private BigDecimal recommendedQuantity;
 
-    @Column(length = 7, nullable = false)
-    private String yearMonth;                // "2026-03"
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "monthly_supply_id", nullable = false)
-    private KindergartenMonthlySupply monthlySupply;  // ← har bir mahsulot uchun alohida oy holati
+    @PrePersist
+    @PreUpdate
+    public void calculateTotal() {
+        this.totalPrice = this.priceAtOrder.multiply(this.quantity);
+    }
 }

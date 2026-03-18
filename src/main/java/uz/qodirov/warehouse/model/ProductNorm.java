@@ -41,9 +41,6 @@ public class ProductNorm extends AbsEntity {
 
     private Integer repeatDays;  // masalan dekada bo'yicha (10 kun)
 
-    @Column(nullable = false, length = 10)
-    private String unit;  // "g", "ml", "dona", "litr", "kg" va h.k.
-
     @Column(length = 100)
     private String sourceDocument;  // "SanQvaN 0016-21 1-ilova" yoki "2-ilova"
 

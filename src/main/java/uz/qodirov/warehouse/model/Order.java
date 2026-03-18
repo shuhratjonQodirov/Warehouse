@@ -11,6 +11,7 @@ import uz.qodirov.warehouse.utils.AbsEntity;
 
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Entity
 @Data
@@ -31,4 +32,6 @@ public class Order extends AbsEntity {
     private OrderStatus status = OrderStatus.PREPARING;
 
     private BigDecimal totalAmount = BigDecimal.ZERO;
+
+    private LocalDate orderDate;
 }

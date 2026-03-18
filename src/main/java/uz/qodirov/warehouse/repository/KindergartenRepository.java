@@ -27,5 +27,8 @@ public interface KindergartenRepository extends JpaRepository<Kindergarten, Long
 
     List<Kindergarten> findAllByMudir(User mudir);
 
+
     Optional<Kindergarten> findByMudir(User mudir);
+
+    Optional<Kindergarten> findByIdAndDeletedFalse(Long id);
 }

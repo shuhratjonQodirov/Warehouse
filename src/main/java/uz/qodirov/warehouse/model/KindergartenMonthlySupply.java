@@ -14,8 +14,15 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @EntityListeners(AuditingEntityListener.class)
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"kindergarten_id", "year_month","product_id"})})
 public class KindergartenMonthlySupply extends AbsEntity {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "kindergarten_id", nullable = false)
+    private Kindergarten kindergarten;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
     @Column(nullable = false, length = 7)
     private String yearMonth;  // "2026-03"
 
@@ -27,9 +34,6 @@ public class KindergartenMonthlySupply extends AbsEntity {
 
     @Column
     private LocalDate lastSupplyDate;
-
-    @Column(length = 500)
-    private String note;
 
     @Transient
     public Integer getRemainingWorkingDays() {

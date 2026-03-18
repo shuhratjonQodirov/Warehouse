@@ -19,7 +19,6 @@ public class ProductNormMapper {
                 .dailyPerChild(dto.getDailyPerChild())
                 .consumptionType(ConsumptionType.valueOf(dto.getConsumptionType()))
                 .repeatDays(dto.getRepeatDays())
-                .unit(dto.getUnit())
                 .sourceDocument(dto.getSourceDocument())
                 .active(dto.getActive())
                 .build();
@@ -35,7 +34,6 @@ public class ProductNormMapper {
                 .stayDuration(pn.getStayDuration().name())
                 .dailyPerChild(pn.getDailyPerChild())
                 .consumptionType(pn.getConsumptionType().name())
-                .unit(pn.getUnit())
                 .repeatDays(pn.getRepeatDays())
                 .sourceDocument(pn.getSourceDocument())
                 .active(pn.getActive())

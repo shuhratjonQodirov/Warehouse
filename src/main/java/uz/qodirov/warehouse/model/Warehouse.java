@@ -21,4 +21,5 @@ public class Warehouse extends AbsEntity {
     private String description;
     private BigDecimal latitude;
     private BigDecimal longitude;
+    private Boolean active = true;
 }
