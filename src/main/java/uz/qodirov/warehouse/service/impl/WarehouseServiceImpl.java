@@ -33,7 +33,9 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     @Override
     public ApiResponse<?> getOneById(Long id) {
-        Warehouse warehouse = warehouseRepository.findByIdAndDeletedFalse(id).orElseThrow(() -> new ByIdException("Warehouse not found"));
+        Warehouse warehouse = warehouseRepository
+                .findByIdAndDeletedFalse(id)
+                .orElseThrow(() -> new ByIdException("Warehouse not found"));
         WarehouseResDto dto = mapper.toDto(warehouse);
         return new ApiResponse<>("Warehouse get By id", true, dto);
     }
@@ -50,7 +52,8 @@ public class WarehouseServiceImpl implements WarehouseService {
                         .map(mapper::toDto)
                         .toList();
 
-        Map<String, Object> meta = pagination.createMeta(all.getTotalElements(), page, size, all.getTotalPages());
+        Map<String, Object> meta = pagination
+                .createMeta(all.getTotalElements(), page, size, all.getTotalPages());
         return new ApiResponse<>("Warehouse list with pagination", true, list, meta);
     }
 
@@ -58,15 +61,18 @@ public class WarehouseServiceImpl implements WarehouseService {
     public ApiResponse<?> searchWithName(int page, int size, String name) {
         name = name.trim();
         Pageable pageable = pagination.createPageable(page, size);
-        Page<Warehouse> warehousePage = warehouseRepository.findByNameContainingIgnoreCase(name, pageable);
-        Map<String, Object> meta = pagination.createMeta(warehousePage.getTotalElements(), page, size, warehousePage.getTotalPages());
+        Page<Warehouse> warehousePage = warehouseRepository
+                .findByNameContainingIgnoreCase(name, pageable);
+        Map<String, Object> meta = pagination
+                .createMeta(warehousePage.getTotalElements(), page, size, warehousePage.getTotalPages());
         List<WarehouseResDto> list = warehousePage.getContent().stream().map(mapper::toDto).toList();
         return new ApiResponse<>("Search with name", true, list, meta);
     }
 
     @Override
     public ApiResponse<?> update(WarehouseReqDto dto, Long id) {
-        Warehouse warehouse = warehouseRepository.findByIdAndDeletedFalse(id).orElseThrow(() -> new ByIdException("Warehouse not found"));
+        Warehouse warehouse = warehouseRepository
+                .findByIdAndDeletedFalse(id).orElseThrow(() -> new ByIdException("Warehouse not found"));
         mapper.updateWarehouse(warehouse, dto);
         warehouseRepository.save(warehouse);
         return new ApiResponse<>("warehouse updated", true);
@@ -74,7 +80,8 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     @Override
     public ApiResponse<?> delete(Long id) {
-        Warehouse warehouse = warehouseRepository.findByIdAndDeletedFalse(id).orElseThrow(() -> new ByIdException("Warehouse not found"));
+        Warehouse warehouse = warehouseRepository
+                .findByIdAndDeletedFalse(id).orElseThrow(() -> new ByIdException("Warehouse not found"));
         warehouse.setDeleted(true);
         warehouseRepository.save(warehouse);
         return new ApiResponse<>("Warehouse successfully deleted", true);

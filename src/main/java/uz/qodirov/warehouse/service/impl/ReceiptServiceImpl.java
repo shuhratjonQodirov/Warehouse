@@ -19,6 +19,7 @@ import uz.qodirov.warehouse.service.ReceiptService;
 import uz.qodirov.warehouse.utils.ApiResponse;
 import uz.qodirov.warehouse.utils.PaginationUtil;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -65,40 +66,41 @@ public class ReceiptServiceImpl implements ReceiptService {
                         s -> s));
 
         List<Receipt> receipts = new ArrayList<>();
-        List<Stock> stocksToSave = new ArrayList<>();
         List<StockSnapshot> stockSnapshots = new ArrayList<>();
-
+        // stocksToSave ro'yxati shart emas, stockMap.values() dan foydalanamiz
 
         for (ReceiptReqItem item : dto.getItems()) {
             Product product = productMap.get(item.getProductId());
 
-            Receipt receipt = receiptMapper
-                    .toEntity(product, warehouse, supplier, dto, item);
+            // 1. Receipt yaratish
+            Receipt receipt = receiptMapper.toEntity(product, warehouse, supplier, dto, item);
             receipts.add(receipt);
 
             product.setCurrentPrice(item.getPrice());
 
+            // 2. Stockni olish yoki yangi (0 miqdor bilan) yaratish
             Stock stock = stockMap.get(product.getId());
-
             if (stock == null) {
-                stock = stockMapper.toEntity(warehouse, product, item.getQuantity());
+                // MUHIM: Bu yerda miqdorni 0 bilan boshlang, pastda qo'shamiz
+                stock = stockMapper.toEntity(warehouse, product, BigDecimal.ZERO);
                 stockMap.put(product.getId(), stock);
             }
 
-            StockSnapshot
-                    stockSnapshot = snapshotMapper.toEntity(stock, receipt, item);
+            // 3. Snapshotni miqdor o'zgarishidan OLDIN yaratish (to'g'ri log uchun)
+            StockSnapshot stockSnapshot = snapshotMapper.toEntity(stock, receipt, item);
             stockSnapshots.add(stockSnapshot);
 
-
+            // 4. Miqdorni yangilash (Faqat bir marta shu yerda qo'shiladi)
             stock.setPhysicalQuantity(stock.getPhysicalQuantity().add(item.getQuantity()));
-            stocksToSave.add(stock);
-
         }
 
+        // 5. Saqlash
         receiptRepository.saveAll(receipts);
-        stockRepository.saveAll(stocksToSave);
-        stockSnapshotRepository.saveAll(stockSnapshots);
 
+        // stockMap.values() - bu takrorlanmas (unique) stocklar to'plami
+        stockRepository.saveAll(stockMap.values());
+
+        stockSnapshotRepository.saveAll(stockSnapshots);
 
         return new ApiResponse<>("Maxsulot qabul qilindi", true);
     }

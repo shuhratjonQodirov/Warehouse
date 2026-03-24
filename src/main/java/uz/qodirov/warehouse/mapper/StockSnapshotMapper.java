@@ -6,15 +6,19 @@ import uz.qodirov.warehouse.model.Receipt;
 import uz.qodirov.warehouse.model.Stock;
 import uz.qodirov.warehouse.model.StockSnapshot;
 
+import java.math.BigDecimal;
+
 @Component
 public class StockSnapshotMapper {
     public StockSnapshot toEntity(Stock stock, Receipt receipt, ReceiptReqItem item) {
+        BigDecimal currentQty = (stock != null) ? stock.getPhysicalQuantity() : BigDecimal.ZERO;
+
         return StockSnapshot.builder()
                 .stock(stock)
                 .receipt(receipt)
-                .oldQuantity(stock.getPhysicalQuantity())
-                .newQuantity(stock.getPhysicalQuantity().add(item.getQuantity())) // qabul qilinganidan keyingi miqdor
-                .reservedQuantity(stock.getReservedQuantity()) // hozirgi rezerv
+                .oldQuantity(currentQty)
+                .newQuantity(currentQty.add(item.getQuantity()))
+                .reservedQuantity((stock != null) ? stock.getReservedQuantity() : BigDecimal.ZERO)
                 .action("RECEIVE")
                 .build();
     }

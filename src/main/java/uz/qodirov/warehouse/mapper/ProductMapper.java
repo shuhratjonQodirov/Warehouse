@@ -58,11 +58,13 @@ public class ProductMapper {
     public StockResDto mapProductStock(List<StockProjection> rows) {
         StockProjection first = rows.get(0);
 
-        BigDecimal totalQuantity = rows.stream()
+        BigDecimal totalQuantity = rows
+                .stream()
                 .map(StockProjection::getPhysicalQuantity)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        BigDecimal totalReserved = rows.stream()
+        BigDecimal totalReserved = rows
+                .stream()
                 .map(StockProjection::getReservedQuantity)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
