@@ -2,6 +2,7 @@ package uz.qodirov.warehouse.tgBot;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -15,7 +16,7 @@ import uz.qodirov.warehouse.tgBot.handle.HandlerFactory;
 import uz.qodirov.warehouse.tgBot.model.BotUser;
 import uz.qodirov.warehouse.tgBot.repository.BotUserRepository;
 import uz.qodirov.warehouse.tgBot.state.BotState;
-
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class MyGoldTelegramBot implements LongPollingSingleThreadUpdateConsumer {

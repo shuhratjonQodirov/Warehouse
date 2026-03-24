@@ -9,13 +9,15 @@ import uz.qodirov.warehouse.dto.req.KindergartenReqDto;
 import uz.qodirov.warehouse.service.KindergartenService;
 import uz.qodirov.warehouse.utils.ApiResponse;
 
+import static uz.qodirov.warehouse.utils.ApiConstanta.*;
+
 @RestController
 @RequestMapping("/api/v1/kindergarten")
 @RequiredArgsConstructor
 public class KindergartenController {
     private final KindergartenService kindergartenService;
 
-    @PostMapping("/create")
+    @PostMapping(CREATE)
     public HttpEntity<?> create(@RequestBody @Valid KindergartenReqDto dto) {
         ApiResponse<?> response = kindergartenService.create(dto);
         return ResponseEntity.ok(response);
@@ -27,7 +29,7 @@ public class KindergartenController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/get-all")
+    @GetMapping(GET_ALL)
     public HttpEntity<?> getAll(@RequestParam(defaultValue = "0") int page,
                                 @RequestParam(defaultValue = "10") int size) {
         ApiResponse<?> response = kindergartenService.getAll(page, size);
@@ -43,15 +45,15 @@ public class KindergartenController {
     }
 
 
-    @DeleteMapping("/{kindergartenId}")
-    public HttpEntity<?> delete(@PathVariable Long kindergartenId) {
-        ApiResponse<?> response = kindergartenService.delete(kindergartenId);
+    @DeleteMapping(DELETE)
+    public HttpEntity<?> delete(@PathVariable Long id) {
+        ApiResponse<?> response = kindergartenService.delete(id);
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{userId}")
-    public HttpEntity<?> getKGByUserId(@PathVariable Long userId) {
-        ApiResponse<?> response = kindergartenService.getKgByUserId(userId);
+    @GetMapping(GET_ONE)
+    public HttpEntity<?> getKGByUserId(@PathVariable Long id) {
+        ApiResponse<?> response = kindergartenService.getKgByUserId(id);
         return ResponseEntity.ok(response);
     }
 

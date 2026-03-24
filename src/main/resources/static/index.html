@@ -1806,24 +1806,7 @@
             <h1>Dashboard</h1>
             <p>Tizimingizning umumiy ko'rinishi</p>
         </div>
-        <!--        <div class="stats-grid">-->
-        <!--            <div class="stat-card">-->
-        <!--                <div class="stat-value">—</div>-->
-        <!--                <div class="stat-label">Jami Mahsulotlar</div>-->
-        <!--            </div>-->
-        <!--            <div class="stat-card">-->
-        <!--                <div class="stat-value">—</div>-->
-        <!--                <div class="stat-label">Bugungi Taqsimotlar</div>-->
-        <!--            </div>-->
-        <!--            <div class="stat-card">-->
-        <!--                <div class="stat-value">—</div>-->
-        <!--                <div class="stat-label">Aktiv Buyurtmalar</div>-->
-        <!--            </div>-->
-        <!--            <div class="stat-card">-->
-        <!--                <div class="stat-value">—</div>-->
-        <!--                <div class="stat-label">Omborlar</div>-->
-        <!--            </div>-->
-        <!--        </div>-->
+
     </div>
 </div>
 
@@ -2747,6 +2730,10 @@
             injectProfileCSS();
             mainContent.insertAdjacentHTML('beforeend', warehouseStockPageHTML());
             initStockPage();
+        } else if (page === 'reports') {
+            injectProfileCSS();
+            mainContent.insertAdjacentHTML('beforeend', reportsPageHTML());
+            initReportsPage();
         } else {
             mainContent.insertAdjacentHTML('beforeend', `
             <div class="stat-card" style="padding:3rem;text-align:center;max-width:600px">
@@ -7826,7 +7813,7 @@
         if (unitEl) unitEl.textContent = unit;
 
         // Reset info
-        ['dstTotalDays','dstSupplied','dstRemaining','dstAvail','dstRecommended'].forEach(p => {
+        ['dstTotalDays', 'dstSupplied', 'dstRemaining', 'dstAvail', 'dstRecommended'].forEach(p => {
             const el = document.getElementById(p + '-' + id);
             if (el) el.innerHTML = '<span style="color:var(--text-secondary);font-size:.8rem">⏳</span>';
         });
@@ -7957,7 +7944,7 @@
         let unavailableProduct = null;
 
         document.querySelectorAll('[id^="dstProd-"]').forEach(sel => {
-            const rowId = sel.id.replace('dstProd-','');
+            const rowId = sel.id.replace('dstProd-', '');
             const info = dstInfoCache[rowId];
             const prodName = sel.options[sel.selectedIndex]?.text || '';
 
@@ -8053,7 +8040,7 @@
         const month = document.getElementById('dstHistMonth')?.value || '';
         const status = document.getElementById('dstHistStatus')?.value || '';
 
-        let url = `${BASE_API}/distribution/get-all?page=${page}&size=${DST_HIST_SIZE}`;
+        let url = `${BASE_API}/distribution/all?page=${page}&size=${DST_HIST_SIZE}`;
         if (regionId) url += `&regionId=${regionId}`;
         if (month) url += `&yearMonth=${month}`;
         if (status) url += `&status=${status}`;
@@ -8501,6 +8488,556 @@
             btn.disabled = false;
             btn.textContent = '🚗 Biriktirish';
         }
+    }
+
+    // =====================================================================
+    // HISOBOTLAR SAHIFASI — reports
+    // loadPage() ichida:
+    //
+    // } else if (page === 'reports') {
+    //     injectProfileCSS();
+    //     mainContent.insertAdjacentHTML('beforeend', reportsPageHTML());
+    //     initReportsPage();
+    // }
+    // =====================================================================
+
+    function reportsPageHTML() {
+        return `
+    <style>
+        .rpt-filter-bar {
+            display:flex; gap:.75rem; flex-wrap:wrap; align-items:center;
+            margin-bottom:1.25rem;
+        }
+        .rpt-input {
+            padding:.65rem 1rem;
+            background:rgba(58,58,58,.5);
+            border:1.5px solid rgba(255,255,255,.1);
+            border-radius:9px; color:var(--text-primary);
+            font-family:inherit; font-size:.85rem; outline:none;
+            transition:border-color .2s;
+        }
+        .rpt-input:focus { border-color:var(--accent-primary); }
+        .rpt-input::placeholder { color:rgba(255,255,255,.3); }
+        .rpt-select { appearance:none; cursor:pointer; min-width:160px; }
+        .rpt-select option { background:#2d2d2d; }
+
+        .rpt-card {
+            background:rgba(45,45,45,.5);
+            border:1px solid rgba(255,107,53,.15);
+            border-radius:14px; overflow:hidden;
+        }
+        .rpt-table { width:100%; border-collapse:collapse; font-size:.84rem; }
+        .rpt-table thead tr {
+            background:rgba(58,58,58,.35);
+            border-bottom:1px solid rgba(255,107,53,.15);
+        }
+        .rpt-table th {
+            padding:.7rem 1rem; text-align:left;
+            color:var(--text-secondary); font-size:.72rem;
+            text-transform:uppercase; letter-spacing:.05em; font-weight:700;
+            white-space:nowrap;
+        }
+        .rpt-table td {
+            padding:.75rem 1rem;
+            border-bottom:1px solid rgba(255,255,255,.04);
+            vertical-align:middle;
+        }
+        .rpt-table tbody tr { transition:background .15s; }
+        .rpt-table tbody tr:hover td { background:rgba(255,107,53,.04); }
+        .rpt-table tbody tr:last-child td { border-bottom:none; }
+
+        .rpt-action-badge {
+            padding:.25rem .65rem; border-radius:6px;
+            font-size:.72rem; font-weight:700;
+            display:inline-block; white-space:nowrap;
+        }
+        .rpt-badge-receive  { background:rgba(74,222,128,.1);  color:#4ade80; border:1px solid rgba(74,222,128,.2); }
+        .rpt-badge-distribute { background:rgba(56,189,248,.1); color:#38bdf8; border:1px solid rgba(56,189,248,.2); }
+        .rpt-badge-reserve  { background:rgba(251,191,36,.1);  color:#fbbf24; border:1px solid rgba(251,191,36,.2); }
+        .rpt-badge-cancel   { background:rgba(239,68,68,.1);   color:#ef4444; border:1px solid rgba(239,68,68,.2); }
+
+        .rpt-qty-up   { color:#4ade80; font-weight:700; font-family:'Space Mono',monospace; }
+        .rpt-qty-down { color:#f87171; font-weight:700; font-family:'Space Mono',monospace; }
+
+        .rpt-sum-bar {
+            display:flex; gap:1rem; flex-wrap:wrap;
+            margin-bottom:1.25rem;
+        }
+        .rpt-sum-card {
+            background:rgba(45,45,45,.5);
+            border:1px solid rgba(255,107,53,.15);
+            border-radius:12px; padding:1rem 1.4rem;
+            flex:1; min-width:160px;
+        }
+        .rpt-sum-lbl { font-size:.72rem; color:var(--text-secondary); text-transform:uppercase; letter-spacing:.05em; margin-bottom:.3rem; }
+        .rpt-sum-val { font-size:1.25rem; font-weight:800; font-family:'Space Mono',monospace; color:var(--accent-primary); }
+    </style>
+
+
+        <div style="display:flex;gap:.5rem;margin-bottom:1.5rem;flex-wrap:wrap">
+        <button class="ptab-btn active" id="rpttab-audit" onclick="switchRptTab('audit')">📋 Audit log</button>
+        <button class="ptab-btn" id="rpttab-distribution" onclick="switchRptTab('distribution')">📤 Taqsimlash hisoboti</button>
+        </div>
+
+
+        <div id="rptPanel-audit">
+
+        <div class="rpt-sum-bar" id="rptSummaryBar">
+        <div class="rpt-sum-card">
+        <div class="rpt-sum-lbl">Jami operatsiyalar</div>
+        <div class="rpt-sum-val" id="rptSumTotal">—</div>
+        </div>
+        <div class="rpt-sum-card">
+        <div class="rpt-sum-lbl">Qabul qilingan</div>
+        <div class="rpt-sum-val" id="rptSumReceive" style="color:#4ade80">—</div>
+        </div>
+        <div class="rpt-sum-card">
+        <div class="rpt-sum-lbl">Taqsimlangan</div>
+        <div class="rpt-sum-val" id="rptSumDistribute" style="color:#38bdf8">—</div>
+        </div>
+        <div class="rpt-sum-card">
+        <div class="rpt-sum-lbl">Jami summa</div>
+        <div class="rpt-sum-val" id="rptSumAmount" style="color:#fbbf24">—</div>
+        </div>
+        </div>
+
+
+        <div class="rpt-filter-bar">
+        <input type="date" id="rptDateFrom" class="rpt-input" style="color-scheme:dark"
+        onchange="loadAuditLog(0)">
+        <input type="date" id="rptDateTo" class="rpt-input" style="color-scheme:dark"
+        onchange="loadAuditLog(0)">
+        <select id="rptAction" class="rpt-input rpt-select" onchange="loadAuditLog(0)">
+        <option value="">🔍 Barcha amallar</option>
+        <option value="RECEIVE">📥 Qabul qilish</option>
+        <option value="DISTRIBUTE">📤 Taqsimlash</option>
+        <option value="RESERVE">🔒 Rezerv</option>
+        <option value="CANCEL">❌ Bekor</option>
+        </select>
+        <select id="rptWarehouse" class="rpt-input rpt-select" onchange="loadAuditLog(0)">
+        <option value="">🏭 Barcha omborlar</option>
+        </select>
+        <select id="rptProduct" class="rpt-input rpt-select" onchange="loadAuditLog(0)">
+        <option value="">📦 Barcha mahsulotlar</option>
+        </select>
+        <button onclick="rptResetFilters()"
+        style="padding:.65rem 1rem;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);
+                border-radius:9px;color:var(--text-secondary);font-family:inherit;font-size:.82rem;cursor:pointer;
+                transition:all .2s" onmouseover="this.style.color='var(--text-primary)'"
+        onmouseout="this.style.color='var(--text-secondary)'">
+        ✕ Tozalash
+        </button>
+        </div>
+
+
+        <div class="rpt-card">
+        <table class="rpt-table">
+        <thead>
+        <tr>
+        <th style="width:40px">#</th>
+        <th>Mahsulot</th>
+        <th>Amal</th>
+        <th>Ombor</th>
+        <th>Yetkazib beruvchi</th>
+        <th style="text-align:right">Eski miqdor</th>
+        <th style="text-align:right">O'zgarish</th>
+        <th style="text-align:right">Yangi miqdor</th>
+        <th style="text-align:right">Narx</th>
+        <th style="text-align:right">Jami summa</th>
+        <th>Hujjat</th>
+        <th>Kim</th>
+        <th>Sana</th>
+        </tr>
+        </thead>
+        <tbody id="auditLogList">
+        <tr><td colspan="13" style="text-align:center;padding:3rem;color:var(--text-secondary)">⏳ Yuklanmoqda...</td></tr>
+        </tbody>
+        </table>
+        <div id="auditLogPagination"></div>
+        </div>
+        </div>
+        <div id="rptPanel-distribution" style="display:none">
+        <div class="rpt-filter-bar">
+        <input type="month" id="rptDistMonth" class="rpt-input" style="color-scheme:dark"
+        onchange="loadDistributionReport(0)">
+        <select id="rptDistRegion" class="rpt-input rpt-select" onchange="loadDistributionReport(0)">
+        <option value="">🗺️ Barcha regionlar</option>
+        </select>
+        <select id="rptDistWarehouse" class="rpt-input rpt-select" onchange="loadDistributionReport(0)">
+        <option value="">🏭 Barcha omborlar</option>
+        </select>
+        </div>
+
+        <div class="rpt-sum-bar" id="rptDistSummary" style="display:none">
+        <div class="rpt-sum-card">
+        <div class="rpt-sum-lbl">Jami orderlar</div>
+        <div class="rpt-sum-val" id="rptDistTotal">—</div>
+        </div>
+        <div class="rpt-sum-card">
+        <div class="rpt-sum-lbl">Bog'chalar</div>
+        <div class="rpt-sum-val" id="rptDistKg" style="color:#818cf8">—</div>
+        </div>
+        <div class="rpt-sum-card">
+        <div class="rpt-sum-lbl">Jami summa</div>
+        <div class="rpt-sum-val" id="rptDistAmount" style="color:#fbbf24">—</div>
+        </div>
+        </div>
+
+        <div class="rpt-card">
+        <table class="rpt-table">
+        <thead>
+        <tr>
+        <th style="width:40px">#</th>
+        <th>Bog'cha</th>
+        <th>Mahsulot</th>
+        <th>Ombor</th>
+        <th style="text-align:center">Kun</th>
+        <th style="text-align:right">Miqdor</th>
+        <th>Oy</th>
+        <th>Haydovchi</th>
+        <th style="text-align:center">Status</th>
+        <th>Sana</th>
+        </tr>
+        </thead>
+        <tbody id="distReportList">
+        <tr><td colspan="10" style="text-align:center;padding:3rem;color:var(--text-secondary)">⏳ Yuklanmoqda...</td></tr>
+        </tbody>
+        </table>
+        <div id="distReportPagination"></div>
+        </div>
+        </div>
+        `;
+    }
+
+
+    let rptAuditPage = 0;
+    let rptDistPage = 0;
+    const RPT_PAGE_SIZE = 15;
+
+
+    async function initReportsPage() {
+
+        const now = new Date();
+        const ym = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+        if (document.getElementById('rptDistMonth'))
+            document.getElementById('rptDistMonth').value = ym;
+
+        // Bugungi sana
+        const today = now.toISOString().slice(0, 10);
+        const monthStart = ym + '-01';
+        if (document.getElementById('rptDateFrom')) document.getElementById('rptDateFrom').value = monthStart;
+        if (document.getElementById('rptDateTo')) document.getElementById('rptDateTo').value = today;
+
+        await Promise.all([
+            rptLoadWarehouses(),
+            rptLoadProducts(),
+            rptLoadRegions(),
+        ]);
+
+        loadAuditLog(0);
+    }
+
+    async function rptLoadWarehouses() {
+        try {
+            const res = await fetch(`${BASE_API}/warehouse/get-all?size=100`, {headers: getAuthHeaders()});
+            const result = await res.json();
+            ['rptWarehouse', 'rptDistWarehouse'].forEach(id => {
+                const sel = document.getElementById(id);
+                if (!sel) return;
+                (result.data || []).forEach(w => {
+                    const o = document.createElement('option');
+                    o.value = w.id;
+                    o.textContent = w.name;
+                    sel.appendChild(o);
+                });
+            });
+        } catch (e) {
+        }
+    }
+
+    async function rptLoadProducts() {
+        try {
+            const res = await fetch(`${BASE_API}/product/get-all?size=200`, {headers: getAuthHeaders()});
+            const result = await res.json();
+            const sel = document.getElementById('rptProduct');
+            if (!sel) return;
+            (result.data || []).forEach(p => {
+                const o = document.createElement('option');
+                o.value = p.id;
+                o.textContent = p.name;
+                sel.appendChild(o);
+            });
+        } catch (e) {
+        }
+    }
+
+    async function rptLoadRegions() {
+        try {
+            const res = await fetch(`${BASE_API}/region/all`, {headers: getAuthHeaders()});
+            const result = await res.json();
+            const sel = document.getElementById('rptDistRegion');
+            if (!sel) return;
+            (result.data || []).forEach(r => {
+                const o = document.createElement('option');
+                o.value = r.id;
+                o.textContent = r.name;
+                sel.appendChild(o);
+            });
+        } catch (e) {
+        }
+    }
+
+
+    function switchRptTab(tab) {
+        ['audit', 'distribution'].forEach(t => {
+            document.getElementById('rpttab-' + t)?.classList.toggle('active', t === tab);
+            const p = document.getElementById('rptPanel-' + t);
+            if (p) p.style.display = t === tab ? 'block' : 'none';
+        });
+        if (tab === 'distribution') loadDistributionReport(0);
+    }
+
+
+    async function loadAuditLog(page = 0) {
+        rptAuditPage = page;
+        const tbody = document.getElementById('auditLogList');
+        if (!tbody) return;
+        tbody.innerHTML = `<tr><td colspan="13" style="text-align:center;padding:3rem;color:var(--text-secondary)">⏳ Yuklanmoqda...</td></tr>`;
+
+        const dateFrom = document.getElementById('rptDateFrom')?.value || '';
+        const dateTo = document.getElementById('rptDateTo')?.value || '';
+        const action = document.getElementById('rptAction')?.value || '';
+        const warehouseId = document.getElementById('rptWarehouse')?.value || '';
+        const productId = document.getElementById('rptProduct')?.value || '';
+
+        let url = `${BASE_API}/stock-snapshot?page=${page}&size=${RPT_PAGE_SIZE}`;
+        if (dateFrom) url += `&dateFrom=${dateFrom}`;
+        if (dateTo) url += `&dateTo=${dateTo}`;
+        if (action) url += `&action=${action}`;
+        if (warehouseId) url += `&warehouseId=${warehouseId}`;
+        if (productId) url += `&productId=${productId}`;
+
+        try {
+            const res = await fetch(url, {headers: getAuthHeaders()});
+            if (!res.ok) throw new Error('Status: ' + res.status);
+            const result = await res.json();
+            const list = result.data || [];
+            const meta = result.meta;
+
+
+            rptUpdateSummary(list);
+
+            if (!list.length) {
+                tbody.innerHTML = `<tr><td colspan="13" style="text-align:center;padding:3rem;color:var(--text-secondary)">📭 Ma'lumot topilmadi</td></tr>`;
+                document.getElementById('auditLogPagination').innerHTML = '';
+                return;
+            }
+
+            tbody.innerHTML = list.map((r, i) => {
+                const diff = Number(r.newQuantity || 0) - Number(r.oldQuantity || 0);
+                const diffStr = diff > 0
+                    ? `<span class="rpt-qty-up">+${formatQty(diff)}</span>`
+                    : `<span class="rpt-qty-down">${formatQty(diff)}</span>`;
+
+                const actionBadge = {
+                    RECEIVE: '<span class="rpt-action-badge rpt-badge-receive">📥 Qabul</span>',
+                    DISTRIBUTE: '<span class="rpt-action-badge rpt-badge-distribute">📤 Taqsimlash</span>',
+                    RESERVE: '<span class="rpt-action-badge rpt-badge-reserve">🔒 Rezerv</span>',
+                    CANCEL: '<span class="rpt-action-badge rpt-badge-cancel">❌ Bekor</span>',
+                }[r.action] || `<span class="rpt-action-badge" style="background:rgba(148,163,184,.1);color:#94a3b8">${r.action || '—'}</span>`;
+
+                const dt = r.createdAt ? new Date(r.createdAt) : null;
+                const dateStr = dt ? formatDateTime(dt.toISOString()) : '—';
+
+                return `
+            <tr>
+                <td style="color:var(--text-secondary);font-size:.78rem">${page * RPT_PAGE_SIZE + i + 1}</td>
+                <td>
+                    <div style="font-weight:600;color:var(--text-primary)">${r.productName || '—'}</div>
+                    <div style="font-size:.72rem;color:var(--text-secondary)">ID: ${r.productId || '—'}</div>
+                </td>
+                <td>${actionBadge}</td>
+                <td style="color:var(--text-secondary);font-size:.85rem">${r.warehouseName || '—'}</td>
+                <td style="color:var(--text-secondary);font-size:.85rem">${r.supplierName || '—'}</td>
+                <td style="text-align:right;color:var(--text-secondary);font-family:'Space Mono',monospace">
+                    ${formatQty(r.oldQuantity || 0)}
+                </td>
+                <td style="text-align:right">${diffStr}</td>
+                <td style="text-align:right;font-family:'Space Mono',monospace;color:var(--text-primary);font-weight:600">
+                    ${formatQty(r.newQuantity || 0)}
+                </td>
+                <td style="text-align:right;color:var(--text-secondary);font-size:.82rem">
+                    ${r.receiptPrice ? Number(r.receiptPrice).toLocaleString('uz-UZ') + " so'm" : '—'}
+                </td>
+                <td style="text-align:right;font-weight:600;color:#fbbf24;font-size:.82rem">
+                    ${r.receiptTotalSum ? Number(r.receiptTotalSum).toLocaleString('uz-UZ') + " so'm" : '—'}
+                </td>
+                <td style="color:var(--text-secondary);font-size:.78rem">
+                    ${r.receiptDocumentNumber || '—'}
+                </td>
+                <td>
+                    <div style="font-size:.82rem;font-weight:600;color:var(--text-primary)">${r.userFullName || '—'}</div>
+                    <div style="font-size:.72rem;color:var(--text-secondary)">@${r.userUsername || '—'}</div>
+                </td>
+                <td style="color:var(--text-secondary);font-size:.78rem;white-space:nowrap">${dateStr}</td>
+            </tr>`;
+            }).join('');
+
+            renderRptPagination('auditLogPagination', meta, 'loadAuditLog');
+        } catch (e) {
+            tbody.innerHTML = `<tr><td colspan="13" style="text-align:center;padding:2rem;color:#ef4444">❌ Xatolik: ${e.message}</td></tr>`;
+        }
+    }
+
+    function rptUpdateSummary(list) {
+        const total = document.getElementById('rptSumTotal');
+        const receive = document.getElementById('rptSumReceive');
+        const distribute = document.getElementById('rptSumDistribute');
+        const amount = document.getElementById('rptSumAmount');
+
+        if (total) total.textContent = list.length + ' ta';
+        if (receive) receive.textContent = list.filter(r => r.action === 'RECEIVE').length + ' ta';
+        if (distribute) distribute.textContent = list.filter(r => r.action === 'DISTRIBUTE').length + ' ta';
+
+        const totalSum = list.reduce((s, r) => s + Number(r.receiptTotalSum || 0), 0);
+        if (amount) amount.textContent = totalSum > 0
+            ? totalSum.toLocaleString('uz-UZ') + " so'm"
+            : '—';
+    }
+
+    function rptResetFilters() {
+        const now = new Date();
+        const ym = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+        const today = now.toISOString().slice(0, 10);
+        const monthStart = ym + '-01';
+
+        const el = id => document.getElementById(id);
+        if (el('rptDateFrom')) el('rptDateFrom').value = monthStart;
+        if (el('rptDateTo')) el('rptDateTo').value = today;
+        if (el('rptAction')) el('rptAction').value = '';
+        if (el('rptWarehouse')) el('rptWarehouse').value = '';
+        if (el('rptProduct')) el('rptProduct').value = '';
+        loadAuditLog(0);
+    }
+
+
+    async function loadDistributionReport(page = 0) {
+        rptDistPage = page;
+        const tbody = document.getElementById('distReportList');
+        if (!tbody) return;
+        tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:3rem;color:var(--text-secondary)">⏳ Yuklanmoqda...</td></tr>`;
+
+        const month = document.getElementById('rptDistMonth')?.value || '';
+        const regionId = document.getElementById('rptDistRegion')?.value || '';
+        const warehouseId = document.getElementById('rptDistWarehouse')?.value || '';
+
+        let url = `${BASE_API}/order/get-all?page=${page}&size=${RPT_PAGE_SIZE}`;
+        if (month) url += `&yearMonth=${month}`;
+        if (regionId) url += `&regionId=${regionId}`;
+        if (warehouseId) url += `&warehouseId=${warehouseId}`;
+
+        try {
+            const res = await fetch(url, {headers: getAuthHeaders()});
+            if (!res.ok) throw new Error('Status: ' + res.status);
+            const result = await res.json();
+            const list = result.data || [];
+            const meta = result.meta;
+
+            const summaryBar = document.getElementById('rptDistSummary');
+            if (summaryBar) summaryBar.style.display = 'flex';
+            const el = id => document.getElementById(id);
+            if (el('rptDistTotal')) el('rptDistTotal').textContent = (meta?.totalElements || list.length) + ' ta';
+            const kgSet = new Set(list.map(o => o.kindergartenName));
+            if (el('rptDistKg')) el('rptDistKg').textContent = kgSet.size + ' ta';
+            const totalAmt = list.reduce((s, o) => s + Number(o.totalAmount || 0), 0);
+            if (el('rptDistAmount')) el('rptDistAmount').textContent =
+                totalAmt > 0 ? totalAmt.toLocaleString('uz-UZ') + " so'm" : '—';
+
+            if (!list.length) {
+                tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:3rem;color:var(--text-secondary)">📭 Ma'lumot topilmadi</td></tr>`;
+                document.getElementById('distReportPagination').innerHTML = '';
+                return;
+            }
+
+            tbody.innerHTML = list.map((o, i) => {
+                const items = o.items || [];
+
+                if (!items.length) {
+                    return `<tr>
+                    <td style="color:var(--text-secondary);font-size:.78rem">${page * RPT_PAGE_SIZE + i + 1}</td>
+                    <td style="font-weight:600;color:var(--text-primary)">${o.kindergartenName || '—'}</td>
+                    <td colspan="8" style="color:var(--text-secondary);font-size:.82rem">Mahsulotlar yo'q</td>
+                </tr>`;
+                }
+
+                return items.map((item, j) => `
+                <tr>
+                    <td style="color:var(--text-secondary);font-size:.78rem">
+                        ${j === 0 ? page * RPT_PAGE_SIZE + i + 1 : ''}
+                    </td>
+                    <td style="font-weight:600;color:var(--text-primary)">
+                        ${j === 0 ? o.kindergartenName || '—' : ''}
+                    </td>
+                    <td style="color:var(--text-primary)">${item.productName || '—'}</td>
+                    <td style="color:var(--text-secondary);font-size:.82rem">${item.warehouseName || '—'}</td>
+                    <td style="text-align:center">
+                        <span style="padding:.2rem .55rem;background:rgba(255,107,53,.1);color:var(--accent-primary);
+                            border-radius:6px;font-size:.75rem;font-weight:600">
+                            📅 ${item.days ?? '—'} kun
+                        </span>
+                    </td>
+                    <td style="text-align:right;font-weight:700;color:#4ade80;font-family:'Space Mono',monospace">
+                        ${formatQty(item.quantity || 0)} ${item.unit || ''}
+                    </td>
+                    <td style="color:var(--text-secondary);font-size:.82rem">${item.yearMonth || '—'}</td>
+                    <td style="color:var(--text-secondary);font-size:.82rem">
+                        ${o.driverName
+                    ? `<span style="color:#fbbf24">🚗 ${o.driverName}</span>`
+                    : '<span style="color:var(--text-secondary);font-size:.78rem">—</span>'}
+                    </td>
+                    <td style="text-align:center">
+                        ${j === 0 ? `<span style="padding:.25rem .6rem;border-radius:6px;font-size:.72rem;font-weight:600;
+                            background:${statusBg(o.status)};color:${statusColor(o.status)};
+                            border-width:1px;border-style:solid;border-color:${statusBorder(o.status)}">
+                            ${statusLabel(o.status)}</span>` : ''}
+                    </td>
+                    <td style="color:var(--text-secondary);font-size:.78rem;white-space:nowrap">
+                        ${j === 0 ? (o.orderDate || '—') : ''}
+                    </td>
+                </tr>`
+                ).join('');
+            }).join('');
+
+            renderRptPagination('distReportPagination', meta, 'loadDistributionReport');
+        } catch (e) {
+            tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:2rem;color:#ef4444">❌ Xatolik: ${e.message}</td></tr>`;
+        }
+    }
+
+    function renderRptPagination(containerId, meta, fnName) {
+        const container = document.getElementById(containerId);
+        if (!container || !meta) return;
+        const {currentPage: cp = 0, totalPages: tp = 1, totalElements: te = 0} = meta;
+        if (tp <= 1) {
+            container.innerHTML = `<div style="padding:.75rem 1.2rem;font-size:.82rem;color:var(--text-secondary)">${te} ta yozuv</div>`;
+            return;
+        }
+        let html = `<div style="display:flex;align-items:center;justify-content:space-between;padding:.75rem 1.2rem;border-top:1px solid rgba(255,107,53,.1)">
+        <div style="color:var(--text-secondary);font-size:.82rem">Jami: <strong style="color:var(--accent-primary)">${te}</strong></div>
+        <div style="display:flex;gap:.35rem">
+        <button onclick="${fnName}(${cp - 1})" ${cp === 0 ? 'disabled' : ''} style="padding:.35rem .6rem;background:rgba(58,58,58,.5);border:1px solid rgba(255,107,53,.2);border-radius:6px;color:var(--text-primary);cursor:pointer;opacity:${cp === 0 ? .4 : 1}">◀</button>`;
+        const s = Math.max(0, cp - 2), e = Math.min(tp - 1, s + 4);
+        for (let i = s; i <= e; i++) {
+            html += `<button onclick="${fnName}(${i})" style="padding:.35rem .6rem;background:${i === cp ? 'var(--accent-primary)' : 'rgba(58,58,58,.5)'};border:1px solid rgba(255,107,53,.2);border-radius:6px;color:${i === cp ? '#000' : 'var(--text-primary)'};font-weight:${i === cp ? 700 : 400};cursor:pointer">${i + 1}</button>`;
+        }
+        html += `<button onclick="${fnName}(${cp + 1})" ${cp >= tp - 1 ? 'disabled' : ''} style="padding:.35rem .6rem;background:rgba(58,58,58,.5);border:1px solid rgba(255,107,53,.2);border-radius:6px;color:var(--text-primary);cursor:pointer;opacity:${cp >= tp - 1 ? .4 : 1}">▶</button>
+        </div></div>`;
+        container.innerHTML = html;
+    }
+
+
+    function formatQty(num) {
+        return parseFloat(Number(num).toFixed(3)).toString();
     }
 </script>
 </body>

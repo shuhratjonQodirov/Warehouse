@@ -3,16 +3,16 @@ package uz.qodirov.warehouse.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.support.PageableUtils;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uz.qodirov.warehouse.dto.req.ReceiptReqDto;
 import uz.qodirov.warehouse.dto.req.ReceiptReqItem;
 import uz.qodirov.warehouse.dto.res.ReceiptResDto;
 import uz.qodirov.warehouse.error.ByIdException;
-import uz.qodirov.warehouse.error.ExistsNameException;
 import uz.qodirov.warehouse.mapper.ReceiptMapper;
 import uz.qodirov.warehouse.mapper.StockMapper;
+import uz.qodirov.warehouse.mapper.StockSnapshotMapper;
 import uz.qodirov.warehouse.model.*;
 import uz.qodirov.warehouse.repository.*;
 import uz.qodirov.warehouse.service.ReceiptService;
@@ -20,7 +20,6 @@ import uz.qodirov.warehouse.utils.ApiResponse;
 import uz.qodirov.warehouse.utils.PaginationUtil;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -34,8 +33,10 @@ public class ReceiptServiceImpl implements ReceiptService {
     private final WarehouseRepository warehouseRepository;
     private final SupplierRepository supplierRepository;
     private final ReceiptMapper receiptMapper;
+    private final StockSnapshotRepository stockSnapshotRepository;
     private final StockMapper stockMapper;
     private final PaginationUtil paginationUtil;
+    private final StockSnapshotMapper snapshotMapper;
 
     @Override
     @Transactional
@@ -58,18 +59,21 @@ public class ReceiptServiceImpl implements ReceiptService {
                 stockRepository.findAllByWarehouseAndProductIdIn(warehouse, productIds);
 
         Map<Long, Stock> stockMap = stocks
-                .stream().collect(Collectors
-                .toMap(
+                .stream()
+                .collect(Collectors.toMap(
                         s -> s.getProduct().getId(),
                         s -> s));
 
         List<Receipt> receipts = new ArrayList<>();
         List<Stock> stocksToSave = new ArrayList<>();
+        List<StockSnapshot> stockSnapshots = new ArrayList<>();
+
 
         for (ReceiptReqItem item : dto.getItems()) {
             Product product = productMap.get(item.getProductId());
 
-            Receipt receipt = receiptMapper.toEntity(product, warehouse, supplier, dto, item);
+            Receipt receipt = receiptMapper
+                    .toEntity(product, warehouse, supplier, dto, item);
             receipts.add(receipt);
 
             product.setCurrentPrice(item.getPrice());
@@ -79,13 +83,22 @@ public class ReceiptServiceImpl implements ReceiptService {
             if (stock == null) {
                 stock = stockMapper.toEntity(warehouse, product, item.getQuantity());
                 stockMap.put(product.getId(), stock);
-            } else {
-                stock.setPhysicalQuantity(stock.getPhysicalQuantity().add(item.getQuantity()));
             }
+
+            StockSnapshot
+                    stockSnapshot = snapshotMapper.toEntity(stock, receipt, item);
+            stockSnapshots.add(stockSnapshot);
+
+
+            stock.setPhysicalQuantity(stock.getPhysicalQuantity().add(item.getQuantity()));
             stocksToSave.add(stock);
+
         }
+
         receiptRepository.saveAll(receipts);
         stockRepository.saveAll(stocksToSave);
+        stockSnapshotRepository.saveAll(stockSnapshots);
+
 
         return new ApiResponse<>("Maxsulot qabul qilindi", true);
     }

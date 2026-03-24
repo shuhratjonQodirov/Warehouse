@@ -20,14 +20,14 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryMapper mapper;
 
     @Override
-    public ApiResponse<?> create(CategoryReqDto dto) {
+    public ApiResponse<Void> create(CategoryReqDto dto) {
         Category category = mapper.toEntity(dto);
         categoryRepository.save(category);
         return new ApiResponse<>("Category added successfully", true);
     }
 
     @Override
-    public ApiResponse<?> getById(Long id) {
+    public ApiResponse<CategoryResDto> getById(Long id) {
         Category category = categoryRepository.findByIdAndDeletedFalse(id).orElseThrow(() -> new ByIdException("Category not found"));
         CategoryResDto dto = mapper.toDto(category);
         return new ApiResponse<>("category by id", true, dto);

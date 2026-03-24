@@ -8,7 +8,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import uz.qodirov.warehouse.dto.req.CategoryReqDto;
 import uz.qodirov.warehouse.service.CategoryService;
+import uz.qodirov.warehouse.utils.ApiConstanta;
 import uz.qodirov.warehouse.utils.ApiResponse;
+
+import static uz.qodirov.warehouse.utils.ApiConstanta.*;
 
 @RestController
 @RequestMapping("/api/v1/category")
@@ -19,13 +22,13 @@ public class CategoryController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
-    public HttpEntity<?> create(@Valid @RequestBody CategoryReqDto dto) {
+    public HttpEntity<ApiResponse> create(@Valid @RequestBody CategoryReqDto dto) {
         ApiResponse<?> response = categoryService.create(dto);
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN','MANAGER','DRIVER','MUDIR')")
+    @GetMapping(GET_ONE)
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER','DRIVER','MUDIRA')")
     public HttpEntity<?> getOneById(@PathVariable Long id) {
         ApiResponse<?> response = categoryService.getById(id);
         return ResponseEntity.ok(response);
@@ -39,14 +42,14 @@ public class CategoryController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(UPDATE)
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     public HttpEntity<?> update(@PathVariable Long id, @RequestBody @Valid CategoryReqDto dto) {
         ApiResponse<?> response = categoryService.update(id, dto);
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(DELETE)
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     public HttpEntity<?> delete(@PathVariable Long id) {
         ApiResponse<?> response = categoryService.deleteCate(id);

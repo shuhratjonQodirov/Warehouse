@@ -62,4 +62,5 @@ public class HolidayServiceImpl implements HolidayService {
         holidayMapper.toUpdate(dto, holiday);
         return new ApiResponse<>("Holidays updated", true);
     }
+
 }

@@ -2,6 +2,7 @@ package uz.qodirov.warehouse.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,13 +21,18 @@ import uz.qodirov.warehouse.dto.res.AuthResponse;
 import uz.qodirov.warehouse.error.ErrorResponse;
 import uz.qodirov.warehouse.security.JwtProvider;
 
+import static uz.qodirov.warehouse.utils.ApiConstanta.LOGIN;
+
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
-    @PostMapping("/login")
+
+
+    @PostMapping(LOGIN)
     public ResponseEntity<?> login(@RequestBody @Valid AuthRequest request) {
         try {
             Authentication authentication = authenticationManager.authenticate(

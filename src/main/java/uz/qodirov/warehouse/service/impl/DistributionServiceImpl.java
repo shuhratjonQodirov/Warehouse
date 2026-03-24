@@ -2,7 +2,7 @@ package uz.qodirov.warehouse.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.springframework.data.domain.Page;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,9 +12,7 @@ import uz.qodirov.warehouse.dto.req.*;
 import uz.qodirov.warehouse.dto.res.DistributionInfoResDto;
 import uz.qodirov.warehouse.dto.res.OrderDetailResDto;
 import uz.qodirov.warehouse.dto.res.OrderItemResDto;
-import uz.qodirov.warehouse.enums.AgeGroup;
 import uz.qodirov.warehouse.enums.OrderStatus;
-import uz.qodirov.warehouse.enums.StayDuration;
 import uz.qodirov.warehouse.error.ByIdException;
 import uz.qodirov.warehouse.error.ExistsNameException;
 import uz.qodirov.warehouse.model.*;
@@ -28,12 +26,12 @@ import uz.qodirov.warehouse.utils.PaginationUtil;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class DistributionServiceImpl implements DistributionService {
     private final KindergartenRepository kindergartenRepo;
@@ -50,6 +48,7 @@ public class DistributionServiceImpl implements DistributionService {
     private final PaginationUtil paginationUtil;
     private final UserRepository usersRepository;
     private final TelegramClient telegramClient;
+
 
     @Override
     public ApiResponse<?> getInfo(DistributionInfoReqDto dto) {
@@ -226,7 +225,9 @@ public class DistributionServiceImpl implements DistributionService {
             Product product = productRepository
                     .findByIdAndDeletedFalse(item.getProductId())
                     .orElseThrow(() -> new ByIdException("Product not found"));
-            System.out.println(item.toString());
+
+            log.info(item.toString());
+
             Warehouse warehouse = warehouseRepository
                     .findByIdAndDeletedFalse(item.getWarehouseId())
                     .orElseThrow(() -> new ByIdException("Warehosue not found"));
