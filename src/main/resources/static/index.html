@@ -2449,7 +2449,6 @@
                     <label>Username *</label>
                     <div style="position:relative">
                         <input type="text" id="userUsername" placeholder="kamida 6 ta belgi" required minlength="6"
-                               oninput="onUsernameInput(this.value)"
                                style="padding-right:2.5rem">
                         <span id="usernameStatus"
                               style="position:absolute;right:.75rem;top:50%;transform:translateY(-50%);font-size:1rem"></span>
@@ -3078,7 +3077,7 @@
                 right: 16px;
                 z-index: 9400;
                 background: rgba(13,13,17,0.97);
-                border: 1px solid ${roleColor}33;
+                border: 1px solid ${roleColor} 33;
                 border-radius: 18px;
                 padding: 0;
                 min-width: 280px;
@@ -10028,7 +10027,6 @@
                         </div>`).join('');
                     }
                 }
-            }
         } catch(e) {}
         try {
             const res = await fetch(`${BASE_API}/distribution/all?page=0&size=20`, {headers: getAuthHeaders()});
@@ -10477,7 +10475,7 @@
                 list = d.data || [];
             }
             const sel = document.getElementById('applyKg'); if (!sel) return;
-            sel.innerHTML = '<option value="">— Bog\\'cha tanlang —</option>';
+            sel.innerHTML = '<option value="">— Bogcha tanlang —</option>';
             list.forEach(k => { const o=document.createElement('option'); o.value=k.id; o.textContent=k.name; sel.appendChild(o); });
             if (list.length === 1) {
                 sel.value = list[0].id;

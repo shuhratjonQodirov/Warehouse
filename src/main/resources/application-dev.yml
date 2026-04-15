@@ -41,7 +41,7 @@ freemarker:
   # Telegram bot konfiguratsiyasi
 telegram:
   bot:
-#    token: 8746719605:AAFIriQFmA8vZ4e2LCBnE7zhl4_GeD2Aix8
-#    username: WarehouseGold_bot
-    token: 8708865047:AAFqq1uROiH3ezWLUNUEiFjgIgz2UTsFMa0
-    username: Oltiariqq_bot
+    token: 8746719605:AAFIriQFmA8vZ4e2LCBnE7zhl4_GeD2Aix8
+    username: WarehouseGold_bot
+#    token: 8708865047:AAFqq1uROiH3ezWLUNUEiFjgIgz2UTsFMa0
+#    username: Oltiariqq_bot
