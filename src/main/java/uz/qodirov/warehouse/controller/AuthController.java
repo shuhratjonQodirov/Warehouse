@@ -10,11 +10,9 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import uz.qodirov.warehouse.config.UserPrincipal;
 import uz.qodirov.warehouse.dto.req.AuthRequest;
 import uz.qodirov.warehouse.dto.res.AuthResponse;
@@ -46,10 +44,16 @@ public class AuthController {
             AuthResponse response = new AuthResponse();
             response.setToken(token);
             response.setType("Bearer");
+            response.setId(user.getId());
+            response.setFullName(user.getFullName());
+            response.setUsername(user.getUsername());
+            response.setEmail(user.getEmail());
+            response.setPhoneNumber(user.getPhoneNumber());
+            response.setRole(user.getRoleName());
             return ResponseEntity.ok(response);
-        }catch (UsernameNotFoundException | BadCredentialsException e) {
+        } catch (UsernameNotFoundException | BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ErrorResponse("Email yoki parol noto‘g‘ri"));
+                    .body(new ErrorResponse("Login yoki parol noto'g'ri"));
         } catch (DisabledException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ErrorResponse("Hisob faol emas"));
@@ -57,8 +61,22 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResponse("Server xatosi yuz berdi"));
         }
-
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<?> me(@AuthenticationPrincipal UserPrincipal user) {
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ErrorResponse("Avtorizatsiya talab etiladi"));
+        }
+        AuthResponse response = new AuthResponse();
+        response.setId(user.getId());
+        response.setFullName(user.getFullName());
+        response.setUsername(user.getUsername());
+        response.setEmail(user.getEmail());
+        response.setPhoneNumber(user.getPhoneNumber());
+        response.setRole(user.getRoleName());
+        return ResponseEntity.ok(response);
+    }
 
 }

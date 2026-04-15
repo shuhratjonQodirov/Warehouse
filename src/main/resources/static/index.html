@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ombor Boshqaruv Tizimi</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap');
 
         /* ===== KG MODAL ===== */
         #kgOverlay {
@@ -774,24 +774,56 @@
         }
 
         :root {
-            --bg-primary: #1a1a1a;
-            --bg-secondary: #2d2d2d;
-            --bg-tertiary: #3a3a3a;
-            --text-primary: #f5f5f5;
-            --text-secondary: #b0b0b0;
-            --accent-primary: #ff6b35;
-            --accent-secondary: #ffa500;
+            --bg-primary: #09090b;
+            --bg-secondary: #111114;
+            --bg-tertiary: #18181c;
+            --bg-card: rgba(255,255,255,0.035);
+            --text-primary: #f4f4f5;
+            --text-secondary: #71717a;
+            --accent-primary: #22d3ee;
+            --accent-secondary: #a855f7;
+            --accent-glow: rgba(34,211,238,0.35);
+            --purple-glow: rgba(168,85,247,0.35);
+            --border-color: rgba(255,255,255,0.06);
+            --border-accent: rgba(34,211,238,0.2);
             --sidebar-width: 280px;
             --sidebar-collapsed: 60px;
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --radius: 12px;
+            --glow-shadow: 0 0 20px rgba(34,211,238,0.15), 0 0 40px rgba(168,85,247,0.08);
         }
 
         body {
             font-family: 'Outfit', sans-serif;
-            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+            background: var(--bg-primary);
             color: var(--text-primary);
             min-height: 100vh;
-            overflow-x: hidden
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Neon orb ambient light */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -30vh;
+            left: -20vw;
+            width: 70vw;
+            height: 70vh;
+            background: radial-gradient(ellipse, rgba(34,211,238,0.07) 0%, transparent 65%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -30vh;
+            right: -20vw;
+            width: 65vw;
+            height: 65vh;
+            background: radial-gradient(ellipse, rgba(168,85,247,0.07) 0%, transparent 65%);
+            pointer-events: none;
+            z-index: 0;
         }
 
         /* LANDING */
@@ -803,110 +835,188 @@
             justify-content: center;
             text-align: center;
             padding: 2rem;
-            background: radial-gradient(circle at 20% 30%, rgba(255, 107, 53, .1) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(255, 165, 0, .1) 0%, transparent 50%), linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+            background: var(--bg-primary);
             position: relative;
-            overflow: hidden
+            overflow: hidden;
         }
 
         .landing-page::before {
             content: '';
             position: absolute;
-            inset: 0;
-            background: repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(255, 107, 53, .03) 2px, rgba(255, 107, 53, .03) 4px);
-            pointer-events: none
+            top: 0; left: 0; right: 0; bottom: 0;
+            background:
+                radial-gradient(ellipse 60% 50% at 20% 20%, rgba(34,211,238,0.1) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 40% at 80% 80%, rgba(168,85,247,0.1) 0%, transparent 60%),
+                url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h60v60H0z' fill='none' stroke='rgba(255,255,255,0.02)' stroke-width='1'/%3E%3C/svg%3E");
+            pointer-events: none;
         }
 
         .landing-content {
-            max-width: 800px;
+            max-width: 860px;
             z-index: 1;
-            animation: fadeInUp 1s ease-out
+            animation: fadeInUp 1s ease-out;
         }
 
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px)
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0)
-            }
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes neonPulse {
+            0%, 100% { opacity: 1; filter: brightness(1); }
+            50%       { opacity: 0.85; filter: brightness(1.3); }
+        }
+
+        @keyframes floatOrb {
+            0%, 100% { transform: translateY(0px); }
+            50%       { transform: translateY(-18px); }
+        }
+
+        .landing-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            animation: floatOrb 6s ease-in-out infinite;
+            pointer-events: none;
+        }
+        .landing-orb-1 {
+            width: 400px; height: 400px;
+            top: -100px; left: -100px;
+            background: radial-gradient(circle, rgba(34,211,238,0.2) 0%, transparent 70%);
+        }
+        .landing-orb-2 {
+            width: 350px; height: 350px;
+            bottom: -80px; right: -80px;
+            background: radial-gradient(circle, rgba(168,85,247,0.2) 0%, transparent 70%);
+            animation-delay: -3s;
+        }
+
+        .landing-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            border-radius: 100px;
+            background: rgba(34,211,238,0.08);
+            border: 1px solid rgba(34,211,238,0.2);
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 1s ease-out 0.1s backwards;
+        }
+        .landing-badge-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+            animation: neonPulse 2s ease-in-out infinite;
         }
 
         .landing-page h1 {
-            font-family: 'Space Mono', monospace;
-            font-size: 4rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 900;
+            margin-bottom: 1.25rem;
+            background: linear-gradient(135deg, #ffffff 0%, var(--accent-primary) 50%, var(--accent-secondary) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             letter-spacing: -2px;
-            animation: fadeInUp 1s ease-out .2s backwards
+            line-height: 1.1;
+            animation: fadeInUp 1s ease-out 0.2s backwards;
         }
 
         .landing-page .subtitle {
-            font-size: 1.5rem;
+            font-size: 1.15rem;
             color: var(--text-secondary);
-            margin-bottom: 3rem;
-            font-weight: 300;
-            animation: fadeInUp 1s ease-out .4s backwards
+            margin-bottom: 2.5rem;
+            font-weight: 400;
+            line-height: 1.6;
+            max-width: 540px;
+            margin-left: auto;
+            margin-right: auto;
+            animation: fadeInUp 1s ease-out 0.4s backwards;
         }
 
         .feature-grid {
             display: grid;
-            grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-            margin: 3rem 0;
-            animation: fadeInUp 1s ease-out .6s backwards
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin: 2.5rem 0;
+            animation: fadeInUp 1s ease-out 0.6s backwards;
         }
 
         .feature-card {
-            padding: 1.5rem;
-            background: rgba(45, 45, 45, .5);
-            border: 1px solid rgba(255, 107, 53, .2);
-            border-radius: 12px;
-            backdrop-filter: blur(10px);
-            transition: var(--transition)
+            padding: 1.25rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            backdrop-filter: blur(12px);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(34,211,238,0.4), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
         }
 
         .feature-card:hover {
-            background: rgba(45, 45, 45, .8);
-            border-color: var(--accent-primary);
-            transform: translateY(-5px)
+            background: rgba(34,211,238,0.05);
+            border-color: rgba(34,211,238,0.25);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 32px rgba(34,211,238,0.1);
+        }
+        .feature-card:hover::before { opacity: 1; }
+
+        .feature-card .feat-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.6rem;
+            display: block;
         }
 
         .feature-card h3 {
             color: var(--accent-primary);
-            margin-bottom: .5rem;
-            font-size: 1.2rem
+            margin-bottom: .35rem;
+            font-size: 0.95rem;
+            font-weight: 700;
         }
 
         .feature-card p {
             color: var(--text-secondary);
-            font-size: .9rem
+            font-size: .8rem;
+            line-height: 1.5;
         }
 
         .cta-button {
-            display: inline-block;
-            padding: 1.2rem 3rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0.9rem 2.5rem;
             background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            color: #fff;
+            color: #000;
             text-decoration: none;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 1.1rem;
+            border-radius: 100px;
+            font-weight: 700;
+            font-size: 1rem;
             transition: var(--transition);
             border: none;
             cursor: pointer;
-            box-shadow: 0 10px 30px rgba(255, 107, 53, .3);
-            animation: fadeInUp 1s ease-out .8s backwards
+            box-shadow: 0 0 24px var(--accent-glow), 0 4px 16px rgba(0,0,0,0.4);
+            animation: fadeInUp 1s ease-out 0.8s backwards;
         }
 
         .cta-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(255, 107, 53, .5)
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 0 40px var(--accent-glow), 0 8px 24px rgba(0,0,0,0.5);
         }
 
         /* LOGIN */
@@ -916,87 +1026,149 @@
             align-items: center;
             justify-content: center;
             padding: 2rem;
-            background: radial-gradient(circle at 20% 30%, rgba(255, 107, 53, .08) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(255, 165, 0, .08) 0%, transparent 50%), linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%)
+            background: var(--bg-primary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-page::before {
+            content: '';
+            position: absolute;
+            top: -40%; left: -30%;
+            width: 700px; height: 700px;
+            background: radial-gradient(circle, rgba(34,211,238,0.08) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .login-page::after {
+            content: '';
+            position: absolute;
+            bottom: -40%; right: -30%;
+            width: 700px; height: 700px;
+            background: radial-gradient(circle, rgba(168,85,247,0.08) 0%, transparent 60%);
+            pointer-events: none;
         }
 
         .login-box {
-            background: rgba(45, 45, 45, .7);
-            backdrop-filter: blur(20px);
-            padding: 3rem;
+            background: rgba(17,17,20,0.85);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            padding: 2.75rem;
             border-radius: 20px;
-            border: 1px solid rgba(255, 107, 53, .2);
+            border: 1px solid rgba(34,211,238,0.15);
             width: 100%;
-            max-width: 450px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, .5)
+            max-width: 440px;
+            box-shadow: 0 0 60px rgba(34,211,238,0.06), 0 24px 60px rgba(0,0,0,0.6);
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-box::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 20%; right: 20%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(34,211,238,0.5), transparent);
+        }
+
+        .login-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 1.75rem;
+        }
+        .login-logo-icon {
+            width: 44px; height: 44px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+        .login-logo-text {
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: var(--text-primary);
         }
 
         .login-box h2 {
-            font-family: 'Space Mono', monospace;
-            font-size: 2rem;
-            margin-bottom: .5rem;
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text
+            font-weight: 800;
+            font-size: 1.75rem;
+            margin-bottom: 0.4rem;
+            color: var(--text-primary);
+            text-align: center;
         }
 
         .login-box p {
             color: var(--text-secondary);
-            margin-bottom: 2rem
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+            text-align: center;
         }
 
         .form-group {
-            margin-bottom: 1.5rem
+            margin-bottom: 1.25rem;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: .5rem;
+            margin-bottom: .45rem;
             color: var(--text-secondary);
-            font-size: .9rem
+            font-size: .82rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
         }
 
         .form-group input {
             width: 100%;
-            padding: 1rem;
-            background: rgba(58, 58, 58, .5);
-            border: 1px solid rgba(255, 255, 255, .1);
-            border-radius: 8px;
+            padding: 0.85rem 1rem;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
             color: var(--text-primary);
             font-family: 'Outfit', sans-serif;
-            font-size: 1rem;
-            transition: var(--transition)
+            font-size: 0.95rem;
+            transition: var(--transition);
         }
 
         .form-group input:focus {
             outline: none;
             border-color: var(--accent-primary);
-            background: rgba(58, 58, 58, .8)
+            background: rgba(34,211,238,0.04);
+            box-shadow: 0 0 0 3px rgba(34,211,238,0.1);
         }
 
         .login-button {
             width: 100%;
-            padding: 1rem;
+            padding: 0.9rem;
             background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            color: #fff;
+            color: #000;
             border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 700;
             cursor: pointer;
             transition: var(--transition);
-            margin-top: 1rem
+            margin-top: 0.75rem;
+            box-shadow: 0 0 20px var(--accent-glow);
         }
 
         .login-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(255, 107, 53, .4)
+            box-shadow: 0 0 32px var(--accent-glow), 0 8px 20px rgba(0,0,0,0.4);
+        }
+
+        .login-button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
         }
 
         /* DASHBOARD */
         .dashboard {
             display: none;
-            min-height: 100vh
+            min-height: 100vh;
         }
 
         .sidebar {
@@ -1005,313 +1177,400 @@
             top: 0;
             height: 100vh;
             width: var(--sidebar-width);
-            background: rgba(26, 26, 26, .95);
-            backdrop-filter: blur(10px);
-            border-right: 1px solid rgba(255, 107, 53, .1);
-            padding: 1.5rem 0;
+            background: rgba(9,9,11,0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(34,211,238,0.08);
+            padding: 1.25rem 0;
             transition: var(--transition);
             z-index: 1000;
             overflow-y: auto;
             overflow-x: hidden;
             display: flex;
-            flex-direction: column
+            flex-direction: column;
         }
 
-        .sidebar.collapsed {
-            width: var(--sidebar-collapsed)
-        }
+        .sidebar.collapsed { width: var(--sidebar-collapsed); }
 
         .sidebar-header {
-            padding: 0 1.5rem;
-            margin-bottom: 2rem;
+            padding: 0 1.25rem;
+            margin-bottom: 1.75rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 1rem
+            gap: 0.75rem;
         }
 
         .sidebar.collapsed .sidebar-header {
             padding: 0;
             justify-content: center;
-            flex-direction: column
+            flex-direction: column;
         }
 
-        .sidebar.collapsed .logo {
-            display: none
-        }
+        .sidebar.collapsed .logo { display: none; }
 
         .logo {
-            font-family: 'Space Mono', monospace;
-            font-size: 1.3rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
             white-space: nowrap;
-            transition: var(--transition)
+        }
+        .logo-icon {
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.95rem;
+            box-shadow: 0 0 14px var(--accent-glow);
+            flex-shrink: 0;
+        }
+        .logo-text {
+            font-weight: 800;
+            font-size: 1rem;
+            color: var(--text-primary);
+            letter-spacing: -0.3px;
+        }
+        .logo-text span {
+            color: var(--accent-primary);
         }
 
         .toggle-btn {
-            background: var(--bg-tertiary);
-            border: 2px solid var(--accent-primary);
-            color: var(--accent-primary);
-            font-size: 1.4rem;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: var(--text-secondary);
+            font-size: 0.85rem;
             cursor: pointer;
-            padding: .6rem;
             transition: var(--transition);
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            border-radius: 10px;
-            width: 40px;
-            height: 40px;
-            box-shadow: 0 4px 12px rgba(255, 107, 53, .3)
+            border-radius: 8px;
+            width: 32px;
+            height: 32px;
         }
 
         .toggle-btn:hover {
-            background: var(--accent-primary);
-            color: #fff;
-            transform: scale(1.1)
+            background: rgba(34,211,238,0.08);
+            border-color: rgba(34,211,238,0.2);
+            color: var(--accent-primary);
         }
 
         .nav-section {
-            margin-bottom: 1.5rem;
-            flex: 1
+            margin-bottom: 0.5rem;
+            flex: 1;
+            padding: 0 0.5rem;
         }
 
+        .nav-label {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 0.5rem 0.75rem;
+            margin-bottom: 0.25rem;
+            opacity: 0.6;
+        }
+        .sidebar.collapsed .nav-label { display: none; }
+
         .nav-item {
-            padding: .8rem 1.5rem;
+            padding: 0.62rem 0.75rem;
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 0.75rem;
             color: var(--text-secondary);
             text-decoration: none;
             transition: var(--transition);
             cursor: pointer;
             position: relative;
-            border-left: 3px solid transparent
+            border-radius: 10px;
+            margin-bottom: 2px;
         }
 
         .sidebar.collapsed .nav-item {
             justify-content: center;
-            padding: .8rem 0
+            padding: 0.7rem 0;
         }
 
         .nav-item:hover {
             color: var(--text-primary);
-            background: rgba(255, 107, 53, .1);
-            border-left-color: var(--accent-primary)
+            background: rgba(255,255,255,0.05);
         }
 
         .nav-item.active {
             color: var(--accent-primary);
-            background: rgba(255, 107, 53, .15);
-            border-left-color: var(--accent-primary)
+            background: rgba(34,211,238,0.08);
+        }
+        .nav-item.active .nav-icon {
+            filter: drop-shadow(0 0 6px var(--accent-primary));
         }
 
         .nav-icon {
-            font-size: 1.3rem;
-            flex-shrink: 0
+            font-size: 1.1rem;
+            flex-shrink: 0;
+            width: 20px;
+            text-align: center;
         }
 
         .nav-text {
-            font-size: .95rem;
+            font-size: 0.875rem;
             white-space: nowrap;
-            transition: var(--transition)
+            transition: var(--transition);
+            font-weight: 500;
         }
 
         .sidebar.collapsed .nav-text {
             opacity: 0;
             visibility: hidden;
-            width: 0
+            width: 0;
         }
 
         .user-info {
             margin-top: auto;
-            position: relative
+            position: relative;
+            padding: 0 0.5rem;
         }
 
         .user-info-trigger {
-            padding: 1rem 1.5rem;
+            padding: 0.7rem 0.75rem;
             display: flex;
             align-items: center;
-            gap: .75rem;
-            border-top: 1px solid rgba(255, 255, 255, .1);
+            gap: 0.6rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            margin: 0 0;
+            padding-top: 0.85rem;
             cursor: pointer;
-            transition: var(--transition)
+            transition: var(--transition);
+            border-radius: 10px;
+            margin-top: 0.5rem;
         }
 
-        .user-info-trigger:hover {
-            background: rgba(255, 107, 53, .1)
-        }
+        .user-info-trigger:hover { background: rgba(255,255,255,0.04); }
 
         .sidebar.collapsed .user-info-trigger {
             justify-content: center;
-            padding: 1rem 0
+            padding: 0.7rem 0;
         }
 
         .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
             background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            flex-shrink: 0
+            font-size: 0.85rem;
+            flex-shrink: 0;
+            color: #000;
         }
 
         .user-details {
             overflow: hidden;
-            transition: var(--transition)
+            transition: var(--transition);
+            flex: 1;
+            min-width: 0;
         }
 
         .sidebar.collapsed .user-details {
             opacity: 0;
             visibility: hidden;
-            width: 0
+            width: 0;
         }
 
         .user-name {
             font-weight: 600;
-            font-size: .9rem;
-            white-space: nowrap
+            font-size: 0.85rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: var(--text-primary);
+        }
+
+        .user-role {
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+            margin-top: 1px;
         }
 
         .user-arrow {
             margin-left: auto;
-            font-size: 1.1rem;
-            transition: transform .3s ease;
-            color: var(--accent-primary)
+            font-size: 0.75rem;
+            transition: transform 0.3s ease;
+            color: var(--text-secondary);
+            flex-shrink: 0;
         }
 
-        .user-info.expanded .user-arrow {
-            transform: rotate(180deg)
-        }
-
-        .sidebar.collapsed .user-arrow {
-            display: none
-        }
+        .user-info.expanded .user-arrow { transform: rotate(180deg); }
+        .sidebar.collapsed .user-arrow { display: none; }
 
         .user-info.expanded .user-info-trigger {
-            background: rgba(255, 107, 53, .15);
-            border-top-color: var(--accent-primary)
+            background: rgba(34,211,238,0.05);
         }
 
         .user-submenu {
             max-height: 0;
             overflow: hidden;
-            transition: max-height .4s ease-out, opacity .3s ease-out;
-            background: rgba(30, 30, 30, .98);
-            backdrop-filter: blur(10px);
-            border-top: 1px solid rgba(255, 255, 255, .1);
+            transition: max-height 0.4s ease-out, opacity 0.3s ease-out;
+            background: rgba(9,9,11,0.98);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(34,211,238,0.1);
             position: absolute;
-            bottom: calc(100%);
-            left: 0;
-            right: 0;
+            bottom: calc(100% + 4px);
+            left: 0.5rem;
+            right: 0.5rem;
             opacity: 0;
-            box-shadow: 0 -10px 30px rgba(0, 0, 0, .5);
-            border-radius: 12px 12px 0 0
+            box-shadow: 0 -8px 32px rgba(0,0,0,0.6);
+            border-radius: 14px;
         }
 
         .user-submenu.open {
-            max-height: 450px;
-            opacity: 1
+            max-height: 480px;
+            opacity: 1;
         }
 
-        .sidebar.collapsed .user-submenu {
-            display: none
+        .sidebar.collapsed .user-submenu { display: none; }
+
+        .submenu-header {
+            padding: 0.75rem 1rem 0.5rem;
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
         }
 
         .user-submenu-item {
-            padding: .85rem 1rem;
+            padding: 0.6rem 0.75rem;
+            margin: 0.2rem 0.4rem;
             display: flex;
             align-items: center;
-            gap: .75rem;
-            color: var(--text-primary);
+            gap: 0.65rem;
+            color: var(--text-secondary);
             text-decoration: none;
             transition: var(--transition);
             cursor: pointer;
-            font-size: .95rem;
-            border-left: 3px solid transparent
+            font-size: 0.875rem;
+            font-weight: 500;
+            border-radius: 8px;
         }
 
         .user-submenu-item:hover {
-            background: rgba(255, 255, 255, .05)
+            background: rgba(255,255,255,0.05);
+            color: var(--text-primary);
+        }
+
+        .user-submenu-item.danger {
+            color: rgba(239,68,68,0.8);
+        }
+        .user-submenu-item.danger:hover {
+            background: rgba(239,68,68,0.08);
+            color: #ef4444;
         }
 
         .user-submenu-item .item-icon {
-            font-size: 1.1rem;
-            width: 24px;
+            font-size: 1rem;
+            width: 20px;
             display: flex;
             align-items: center;
-            justify-content: center
+            justify-content: center;
+            opacity: 0.8;
         }
 
         .main-content {
             margin-left: var(--sidebar-width);
-            padding: 2rem;
+            padding: 1.75rem 2rem;
             transition: var(--transition);
-            min-height: 100vh
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
         }
 
         .sidebar.collapsed ~ .main-content {
-            margin-left: var(--sidebar-collapsed)
+            margin-left: var(--sidebar-collapsed);
         }
 
         .content-header {
-            margin-bottom: 2rem
+            margin-bottom: 1.75rem;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
+        .content-header-left h1 {
+            font-size: 1.75rem;
+            font-weight: 800;
+            margin-bottom: 0.25rem;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+        /* backwards compat */
         .content-header h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: .5rem;
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text
+            font-size: 1.75rem;
+            font-weight: 800;
+            margin-bottom: 0.25rem;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
         }
 
         .content-header p {
             color: var(--text-secondary);
-            font-size: 1.1rem
+            font-size: 0.88rem;
         }
 
         .stats-grid {
             display: grid;
-            grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         .stat-card {
-            background: rgba(45, 45, 45, .5);
-            border: 1px solid rgba(255, 107, 53, .2);
-            border-radius: 12px;
-            padding: 1.5rem;
-            transition: var(--transition)
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 1.25rem 1.5rem;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
         }
-
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(34,211,238,0.3), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
         .stat-card:hover {
-            background: rgba(45, 45, 45, .8);
-            border-color: var(--accent-primary);
-            transform: translateY(-3px)
+            border-color: rgba(34,211,238,0.15);
+            background: rgba(34,211,238,0.03);
+            transform: translateY(-2px);
         }
+        .stat-card:hover::before { opacity: 1; }
 
         .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
+            font-size: 1.75rem;
+            font-weight: 800;
             color: var(--accent-primary);
-            margin-bottom: .5rem
+            margin-bottom: 0.35rem;
+            font-family: 'Space Mono', monospace;
+            line-height: 1;
         }
 
         .stat-label {
             color: var(--text-secondary);
-            font-size: .9rem
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
         }
 
         /* TABLE STYLES */
@@ -1327,10 +1586,12 @@
             justify-content: center;
             width: 28px;
             height: 28px;
-            background: rgba(255, 107, 53, .1);
-            border: 1px solid rgba(255, 107, 53, .2);
+            background: rgba(34, 211, 238, .08);
+            border: 1px solid rgba(34, 211, 238, .15);
             border-radius: 6px;
-            font-size: .78rem
+            font-size: .78rem;
+            color: var(--accent-primary);
+            font-family: 'Space Mono', monospace;
         }
 
         .action-group {
@@ -1341,37 +1602,38 @@
         }
 
         .btn-edit {
-            padding: .4rem .8rem;
+            padding: .35rem .75rem;
             border-radius: 6px;
             font-size: .78rem;
             font-weight: 600;
-            border: 1px solid rgba(255, 107, 53, .3);
-            background: rgba(255, 107, 53, .1);
+            border: 1px solid rgba(34, 211, 238, .2);
+            background: rgba(34, 211, 238, .06);
             color: var(--accent-primary);
             cursor: pointer;
-            transition: all .2s
+            transition: all .2s;
         }
 
         .btn-edit:hover {
-            background: var(--accent-primary);
-            color: #fff
+            background: rgba(34, 211, 238, .15);
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 8px rgba(34, 211, 238, .2);
         }
 
         .btn-delete {
-            padding: .4rem .8rem;
+            padding: .35rem .75rem;
             border-radius: 6px;
             font-size: .78rem;
             font-weight: 600;
-            border: 1px solid rgba(220, 38, 38, .3);
-            background: rgba(220, 38, 38, .1);
+            border: 1px solid rgba(239, 68, 68, .2);
+            background: rgba(239, 68, 68, .06);
             color: #ef4444;
             cursor: pointer;
-            transition: all .2s
+            transition: all .2s;
         }
 
         .btn-delete:hover {
-            background: #ef4444;
-            color: #fff
+            background: rgba(239, 68, 68, .15);
+            border-color: #ef4444;
         }
 
         .region-name {
@@ -1383,12 +1645,13 @@
         .region-icon {
             width: 34px;
             height: 34px;
-            background: rgba(255, 107, 53, .1);
+            background: rgba(34, 211, 238, .08);
+            border: 1px solid rgba(34, 211, 238, .12);
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1rem
+            font-size: 1rem;
         }
 
         .region-label {
@@ -1572,29 +1835,37 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, .8);
-            backdrop-filter: blur(5px);
+            background: rgba(0, 0, 0, .75);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             z-index: 2000;
             align-items: center;
             justify-content: center;
-            padding: 2rem
+            padding: 1.5rem;
         }
 
-        .modal.show {
-            display: flex
-        }
+        .modal.show { display: flex; }
 
         .modal-content {
-            background: var(--bg-secondary);
-            border-radius: 16px;
-            padding: 2rem;
+            background: rgba(13, 13, 17, 0.97);
+            border-radius: 18px;
+            padding: 1.75rem;
             max-width: 600px;
             width: 100%;
-            max-height: 80vh;
+            max-height: 85vh;
             overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, .5);
-            border: 1px solid rgba(255, 107, 53, .2);
-            animation: modalSlideIn .3s ease-out
+            box-shadow: 0 0 0 1px rgba(34, 211, 238, .12), 0 24px 60px rgba(0, 0, 0, .7);
+            border: 1px solid rgba(34, 211, 238, .12);
+            animation: modalSlideIn .3s cubic-bezier(.22, 1, .36, 1);
+            position: relative;
+        }
+
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 20%; right: 20%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(34,211,238,0.4), transparent);
         }
 
         @keyframes modalSlideIn {
@@ -1612,77 +1883,87 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             padding-bottom: 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, .1)
+            border-bottom: 1px solid rgba(255,255,255,.07);
         }
 
         .modal-header h2 {
-            font-size: 1.5rem;
-            color: var(--accent-primary)
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
         }
 
         .close-modal {
-            background: none;
-            border: none;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255,255,255,.08);
+            border-radius: 8px;
+            background: rgba(255,255,255,.04);
             color: var(--text-secondary);
-            font-size: 1.5rem;
+            font-size: 1rem;
             cursor: pointer;
-            padding: .5rem;
-            transition: var(--transition)
+            transition: var(--transition);
         }
 
         .close-modal:hover {
-            color: var(--text-primary)
+            background: rgba(239,68,68,.1);
+            border-color: rgba(239,68,68,.2);
+            color: #ef4444;
         }
 
         .modal-body .form-group {
-            margin-bottom: 1.2rem
+            margin-bottom: 1rem;
         }
 
         .modal-body .form-group label {
             display: block;
             margin-bottom: .4rem;
             color: var(--text-secondary);
-            font-size: .9rem
+            font-size: .78rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
         }
 
-        .modal-body .form-group input, .modal-body .form-group textarea, .modal-body .form-group select {
+        .modal-body .form-group input,
+        .modal-body .form-group textarea,
+        .modal-body .form-group select {
             width: 100%;
-            padding: .8rem;
-            background: rgba(58, 58, 58, .5);
-            border: 1px solid rgba(255, 255, 255, .1);
-            border-radius: 8px;
+            padding: .75rem .9rem;
+            background: rgba(255,255,255,.04);
+            border: 1px solid rgba(255,255,255,.08);
+            border-radius: 9px;
             color: var(--text-primary);
             font-family: 'Outfit', sans-serif;
-            font-size: .95rem;
-            transition: var(--transition)
+            font-size: .9rem;
+            transition: var(--transition);
+            outline: none;
         }
 
-        .modal-body .form-group input:focus, .modal-body .form-group textarea:focus, .modal-body .form-group select:focus {
-            outline: none;
-            border-color: var(--accent-primary)
+        .modal-body .form-group input:focus,
+        .modal-body .form-group textarea:focus,
+        .modal-body .form-group select:focus {
+            border-color: rgba(34,211,238,.3);
+            background: rgba(34,211,238,.03);
+            box-shadow: 0 0 0 3px rgba(34,211,238,.08);
         }
 
         .modal-body .form-group select option {
-            background: #2d2d2d
+            background: #111114;
         }
 
-        ::-webkit-scrollbar {
-            width: 8px
-        }
-
-        ::-webkit-scrollbar-track {
-            background: rgba(26, 26, 26, .5)
-        }
-
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb {
-            background: rgba(255, 107, 53, .5);
-            border-radius: 4px
+            background: rgba(34, 211, 238, .2);
+            border-radius: 10px;
         }
-
         ::-webkit-scrollbar-thumb:hover {
-            background: var(--accent-primary)
+            background: rgba(34, 211, 238, .4);
         }
 
         @media (max-width: 768px) {
@@ -1715,38 +1996,60 @@
 
 <!-- ===== LANDING ===== -->
 <div class="landing-page" id="landingPage">
+    <div class="landing-orb landing-orb-1"></div>
+    <div class="landing-orb landing-orb-2"></div>
     <div class="landing-content">
-        <h1>Ombor Boshqaruv</h1>
-        <p class="subtitle">Zamonaviy ombor tizimini boshqaring</p>
-        <div class="feature-grid">
-            <div class="feature-card"><h3>📊 Dashboard</h3>
-                <p>Real-time statistika va hisobotlar</p></div>
-            <div class="feature-card"><h3>📦 Mahsulotlar</h3>
-                <p>Mahsulotlarni taqsimlash va qabul qilish</p></div>
-            <div class="feature-card"><h3>🏭 Omborlar</h3>
-                <p>Ko'p omborlarni boshqarish</p></div>
-            <div class="feature-card"><h3>📈 Hisobotlar</h3>
-                <p>Batafsil tahlil va hisobotlar</p></div>
+        <div class="landing-badge">
+            <span class="landing-badge-dot"></span>
+            Warehouse Management System
         </div>
-        <button class="cta-button" onclick="showLogin()">Tizimga Kirish</button>
+        <h1>Ombor Boshqaruv</h1>
+        <p class="subtitle">Zamonaviy va samarali ombor boshqaruv tizimi. Real-vaqt statistikasi, mahsulot taqsimlash va ko'p ombor boshqaruvi.</p>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <span class="feat-icon">📊</span>
+                <h3>Dashboard</h3>
+                <p>Real-time statistika va hisobotlar</p>
+            </div>
+            <div class="feature-card">
+                <span class="feat-icon">📦</span>
+                <h3>Mahsulotlar</h3>
+                <p>Taqsimlash va qabul qilish</p>
+            </div>
+            <div class="feature-card">
+                <span class="feat-icon">🏭</span>
+                <h3>Omborlar</h3>
+                <p>Ko'p omborlarni boshqarish</p>
+            </div>
+            <div class="feature-card">
+                <span class="feat-icon">📈</span>
+                <h3>Hisobotlar</h3>
+                <p>Batafsil tahlil va export</p>
+            </div>
+        </div>
+        <button class="cta-button" onclick="showLogin()">Tizimga Kirish →</button>
     </div>
 </div>
 
 <!-- ===== LOGIN ===== -->
 <div class="login-page" id="loginPage">
     <div class="login-box">
-        <h2>Tizimga Kirish</h2>
-        <p>Ombor boshqaruv tizimiga xush kelibsiz</p>
+        <div class="login-logo">
+            <div class="login-logo-icon">📦</div>
+            <span class="login-logo-text">Ombor<span style="color:var(--accent-primary)">X</span></span>
+        </div>
+        <h2>Xush Kelibsiz</h2>
+        <p>Tizimga kirish uchun ma'lumotlaringizni kiriting</p>
         <form onsubmit="login(event)">
             <div class="form-group">
                 <label>Foydalanuvchi nomi</label>
-                <input type="text" id="username" placeholder="username" required>
+                <input type="text" id="username" placeholder="username" required autocomplete="username">
             </div>
             <div class="form-group">
                 <label>Parol</label>
-                <input type="password" id="password" placeholder="••••••••" required>
+                <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password">
             </div>
-            <button type="submit" class="login-button" id="loginBtn">Kirish</button>
+            <button type="submit" class="login-button" id="loginBtn">→ Kirish</button>
         </form>
     </div>
 </div>
@@ -1756,43 +2059,41 @@
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <div class="logo">Ombor</div>
+            <div class="logo">
+                <div class="logo-icon">📦</div>
+                <span class="logo-text">Ombor<span>X</span></span>
+            </div>
             <button class="toggle-btn" onclick="toggleSidebar()"><span id="toggleIcon">◀</span></button>
         </div>
         <nav class="nav-section">
-            <a class="nav-item active" onclick="loadPage('dashboard')"><span class="nav-icon">📊</span><span
-                    class="nav-text">Dashboard</span></a>
-            <a class="nav-item" onclick="loadPage('distribute')"><span class="nav-icon">🚚</span><span class="nav-text">Mahsulotlarni taqsimlash</span></a>
-            <a class="nav-item" onclick="loadPage('receive')"><span class="nav-icon">📥</span><span class="nav-text">Mahsulot qabul qilish</span></a>
-            <a class="nav-item" onclick="loadPage('warehouse')"><span class="nav-icon">🏭</span><span class="nav-text">Ombordagi Mahsulotlar</span></a>
-            <a class="nav-item" onclick="loadPage('reports')"><span class="nav-icon">📈</span><span class="nav-text">Hisobotlar</span></a>
+            <div class="nav-label">Asosiy</div>
+            <a class="nav-item active" onclick="loadPage('dashboard')"><span class="nav-icon">⬡</span><span class="nav-text">Dashboard</span></a>
+            <a class="nav-item" onclick="loadPage('pending')"><span class="nav-icon">📝</span><span class="nav-text" style="display:flex;align-items:center;justify-content:space-between;width:100%">Tasdiqlash <span id="pendingBadge" style="background:#ef4444;color:#fff;border-radius:10px;padding:2px 6px;font-size:0.7rem;font-weight:700;display:none;">0</span></span></a>
+            <a class="nav-item" onclick="loadPage('distribute')"><span class="nav-icon">↗</span><span class="nav-text">Taqsimlash</span></a>
+            <a class="nav-item" onclick="loadPage('receive')"><span class="nav-icon">↙</span><span class="nav-text">Qabul qilish</span></a>
+            <a class="nav-item" onclick="loadPage('warehouse')"><span class="nav-icon">▦</span><span class="nav-text">Ombor zaxirasi</span></a>
+            <a class="nav-item" onclick="loadPage('reports')"><span class="nav-icon">◈</span><span class="nav-text">Hisobotlar</span></a>
         </nav>
         <div class="user-info">
             <div class="user-info-trigger" onclick="toggleUserSubmenu()">
-                <div class="user-avatar">S</div>
+                <div class="user-avatar">⚙</div>
                 <div class="user-details">
                     <div class="user-name">Sozlamalar</div>
+                    <div class="user-role">Admin panel</div>
                 </div>
-                <span class="user-arrow">▼</span>
+                <span class="user-arrow">▾</span>
             </div>
             <div class="user-submenu" id="userSubmenu">
-                <a class="user-submenu-item" onclick="loadSettingsPage('profile')"><span
-                        class="item-icon">👤</span><span>Profil</span></a>
-                <a class="user-submenu-item" onclick="loadSettingsPage('warehouses')"><span
-                        class="item-icon">🏢</span><span>Omborlar</span></a>
-                <a class="user-submenu-item" onclick="loadSettingsPage('products')"><span
-                        class="item-icon">📦</span><span>Mahsulotlar</span></a>
-                <a class="user-submenu-item" onclick="loadSettingsPage('category')"><span
-                        class="item-icon">🏷️</span><span>Kategoriyalar</span></a>
-                <a class="user-submenu-item" onclick="loadSettingsPage('regions')"><span
-                        class="item-icon">🗺️</span><span>Rayonlar</span></a>
-                <a class="user-submenu-item" onclick="loadSettingsPage('telegram')"><span
-                        class="item-icon">📱</span><span>Telegram va Foydalanuvchilar</span></a>
-                <a class="user-submenu-item" onclick="loadSettingsPage('suppliers')"><span
-                        class="item-icon">🤝</span><span>Yetkazib beruvchilar</span></a>
-                <a class="user-submenu-item" onclick="loadSettingsPage('packages')"><span
-                        class="item-icon">🏫</span><span>Bog'chalar</span></a>
-                <a class="user-submenu-item" onclick="loadSettingsPage('logout')">
+                <div class="submenu-header">Sozlamalar</div>
+                <a class="user-submenu-item" onclick="loadSettingsPage('profile')"><span class="item-icon">👤</span><span>Profil</span></a>
+                <a class="user-submenu-item" onclick="loadSettingsPage('warehouses')"><span class="item-icon">🏢</span><span>Omborlar</span></a>
+                <a class="user-submenu-item" onclick="loadSettingsPage('products')"><span class="item-icon">📦</span><span>Mahsulotlar</span></a>
+                <a class="user-submenu-item" onclick="loadSettingsPage('category')"><span class="item-icon">🏷️</span><span>Kategoriyalar</span></a>
+                <a class="user-submenu-item" onclick="loadSettingsPage('regions')"><span class="item-icon">🗺️</span><span>Rayonlar</span></a>
+                <a class="user-submenu-item" onclick="loadSettingsPage('telegram')"><span class="item-icon">📱</span><span>Telegram & Foydalanuvchilar</span></a>
+                <a class="user-submenu-item" onclick="loadSettingsPage('suppliers')"><span class="item-icon">🤝</span><span>Yetkazib beruvchilar</span></a>
+                <a class="user-submenu-item" onclick="loadSettingsPage('packages')"><span class="item-icon">🏫</span><span>Bog'chalar</span></a>
+                <a class="user-submenu-item danger" onclick="performLogout()">
                     <span class="item-icon">🚪</span>
                     <span>Chiqish</span>
                 </a>
@@ -2328,6 +2629,7 @@
             login_btn: "Sign In",
             login_loading: "Signing in...",
             nav_dashboard: "Dashboard",
+            nav_pending: "Pending Approvals",
             nav_distribute: "Distribute Products",
             nav_receive: "Receive Products",
             nav_warehouse: "Warehouse Products",
@@ -2461,12 +2763,28 @@
         const loginBtn = document.getElementById('loginBtn');
         if (loginBtn && !loginBtn.disabled) loginBtn.textContent = t('login_btn');
 
-        // Nav labels
-        const navTexts = document.querySelectorAll('.nav-text');
-        const navKeys = ['nav_dashboard', 'nav_distribute', 'nav_receive', 'nav_warehouse', 'nav_reports'];
-        navTexts.forEach((el, i) => {
-            if (navKeys[i]) el.textContent = t(navKeys[i]);
-        });
+        // Nav labels specific handling to avoid :has() which is not supported in all browsers
+        const dashboardSpan = document.querySelector('a[onclick="loadPage(\\\'dashboard\\\')"] span.nav-text');
+        if(dashboardSpan) dashboardSpan.textContent = t('nav_dashboard');
+
+        const pendingSpan = document.querySelector('a[onclick="loadPage(\\\'pending\\\')"] span.nav-text');
+        if (pendingSpan) {
+            const badgeEl = pendingSpan.querySelector('#pendingBadge');
+            const badgeHTML = badgeEl ? badgeEl.outerHTML : '';
+            pendingSpan.innerHTML = t('nav_pending') + ' ' + badgeHTML;
+        }
+
+        const distributeSpan = document.querySelector('a[onclick="loadPage(\\\'distribute\\\')"] span.nav-text');
+        if(distributeSpan) distributeSpan.textContent = t('nav_distribute');
+
+        const receiveSpan = document.querySelector('a[onclick="loadPage(\\\'receive\\\')"] span.nav-text');
+        if(receiveSpan) receiveSpan.textContent = t('nav_receive');
+
+        const warehouseSpan = document.querySelector('a[onclick="loadPage(\\\'warehouse\\\')"] span.nav-text');
+        if(warehouseSpan) warehouseSpan.textContent = t('nav_warehouse');
+
+        const reportsSpan = document.querySelector('a[onclick="loadPage(\\\'reports\\\')"] span.nav-text');
+        if(reportsSpan) reportsSpan.textContent = t('nav_reports');
 
         // User settings label
         const userNameEl = document.querySelector('.user-name');
@@ -2567,8 +2885,8 @@
         applyLang(currentLang);
     });
     // ===== CONFIG =====
-    // const BASE_API = 'http://localhost:8085/api/v1';
-    const BASE_API = 'https://omborxona-kx4v.onrender.com/api/v1';
+    const BASE_API = 'http://localhost:8085/api/v1';
+    // const BASE_API = 'https://omborxona-kx4v.onrender.com/api/v1';
 
     // ===== TOAST =====
     function showToast(msg, type = 'success') {
@@ -2608,6 +2926,37 @@
         document.getElementById('loginPage').style.display = 'flex';
     }
 
+    // ===== JORIY FOYDALANUVCHI =====
+    let currentUser = null;
+
+    function getCurrentUser() {
+        if (currentUser) return currentUser;
+        const saved = localStorage.getItem('currentUser');
+        if (saved) { currentUser = JSON.parse(saved); return currentUser; }
+        return null;
+    }
+
+    function saveCurrentUser(data) {
+        currentUser = data;
+        localStorage.setItem('currentUser', JSON.stringify(data));
+    }
+
+    function clearCurrentUser() {
+        currentUser = null;
+        localStorage.removeItem('currentUser');
+    }
+
+    // ===== ROL HELPER =====
+    function getRole() {
+        const u = getCurrentUser();
+        return u ? (u.role || '').toUpperCase() : '';
+    }
+
+    function isAdmin()   { return getRole() === 'ADMIN'; }
+    function isManager() { return getRole() === 'MANAGER'; }
+    function isMudira()  { return getRole() === 'MUDIRA'; }
+    function isDriver()  { return getRole() === 'DRIVER'; }
+
     async function login(event) {
         event.preventDefault();
         const btn = document.getElementById('loginBtn');
@@ -2631,20 +2980,20 @@
 
             localStorage.setItem('authToken', data.token);
             localStorage.setItem('tokenType', data.type || 'Bearer');
+            saveCurrentUser(data);
 
             document.getElementById('loginPage').style.display = 'none';
             document.getElementById('dashboard').style.display = 'block';
-            showToast('Tizimga xush kelibsiz! ✅');
+            showToast(`Xush kelibsiz, ${data.fullName || data.username}! ✅`);
 
-            const mainContent = document.querySelector('.main-content');
-            document.querySelector('.content-header h1').textContent = 'Dashboard';
-            document.querySelector('.content-header p').textContent = '';
-            mainContent.insertAdjacentHTML('beforeend', dashboardHTML());
-            loadDashboardFull();
+            // Rol asosida sidebar va dashboard yuklash
+            renderRoleBasedSidebar();
+            renderProfileIcon();
+            loadDefaultPage();
         } catch (e) {
             showToast('Login yoki parol xato!', 'error');
         } finally {
-            btn.textContent = 'Kirish';
+            btn.textContent = '→ Kirish';
             btn.disabled = false;
         }
     }
@@ -2653,8 +3002,333 @@
     function logout() {
         localStorage.removeItem('authToken');
         localStorage.removeItem('tokenType');
+        clearCurrentUser();
+        // Profile icon ni olib tashlash
+        const pi = document.getElementById('profileIconBtn');
+        if (pi) pi.remove();
+        const pp = document.getElementById('profilePopup');
+        if (pp) pp.remove();
         document.getElementById('dashboard').style.display = 'none';
         document.getElementById('landingPage').style.display = 'flex';
+    }
+
+    function performLogout() {
+        if (confirm('Tizimdan chiqmoqchimisiz?')) {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('tokenType');
+            clearCurrentUser();
+            location.reload();
+        }
+    }
+
+    // ===== PROFILE ICON (o'ng yuqori burchak) =====
+    function renderProfileIcon() {
+        if (document.getElementById('profileIconBtn')) return;
+        const user = getCurrentUser();
+        if (!user) return;
+
+        const initials = (user.fullName || user.username || '?')
+            .split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+
+        const roleLabels = {
+            ADMIN: '👑 Admin', MANAGER: '👔 Manager',
+            MUDIRA: '👩‍💼 Mudira', DRIVER: '🚗 Haydovchi', WAREHOUSEMAN: '🏭 Omborchi'
+        };
+        const roleLabel = roleLabels[user.role] || user.role || 'Foydalanuvchi';
+        const roleColors = {
+            ADMIN: '#a855f7', MANAGER: '#22d3ee',
+            MUDIRA: '#f59e0b', DRIVER: '#10b981', WAREHOUSEMAN: '#3b82f6'
+        };
+        const roleColor = roleColors[user.role] || '#22d3ee';
+
+        const iconBtn = document.createElement('div');
+        iconBtn.id = 'profileIconBtn';
+        iconBtn.innerHTML = `
+        <style>
+            #profileIconBtn {
+                position: fixed;
+                top: 12px;
+                right: 16px;
+                z-index: 9500;
+                cursor: pointer;
+            }
+            #profileAvatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, ${roleColor}, ${roleColor}99);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 800;
+                font-size: 0.88rem;
+                color: #000;
+                border: 2px solid ${roleColor};
+                box-shadow: 0 0 16px ${roleColor}55, 0 4px 12px rgba(0,0,0,0.4);
+                transition: all 0.2s ease;
+                user-select: none;
+            }
+            #profileAvatar:hover {
+                transform: scale(1.08);
+                box-shadow: 0 0 24px ${roleColor}88, 0 6px 16px rgba(0,0,0,0.5);
+            }
+            #profilePopup {
+                position: fixed;
+                top: 60px;
+                right: 16px;
+                z-index: 9400;
+                background: rgba(13,13,17,0.97);
+                border: 1px solid ${roleColor}33;
+                border-radius: 18px;
+                padding: 0;
+                min-width: 280px;
+                box-shadow: 0 0 0 1px ${roleColor}22, 0 20px 60px rgba(0,0,0,0.7);
+                backdrop-filter: blur(20px);
+                animation: profilePopupIn 0.2s cubic-bezier(0.22,1,0.36,1);
+                overflow: hidden;
+                display: none;
+            }
+            #profilePopup.open { display: block; }
+            @keyframes profilePopupIn {
+                from { opacity:0; transform: translateY(-10px) scale(0.97); }
+                to   { opacity:1; transform: translateY(0) scale(1); }
+            }
+            .pp-header {
+                padding: 20px 20px 16px;
+                border-bottom: 1px solid rgba(255,255,255,0.06);
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                background: ${roleColor}11;
+            }
+            .pp-avatar-lg {
+                width: 52px;
+                height: 52px;
+                border-radius: 14px;
+                background: linear-gradient(135deg, ${roleColor}, ${roleColor}88);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 800;
+                font-size: 1.1rem;
+                color: #000;
+                flex-shrink: 0;
+            }
+            .pp-name {
+                font-size: 0.95rem;
+                font-weight: 700;
+                color: #f4f4f5;
+                margin-bottom: 3px;
+            }
+            .pp-role-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+                padding: 3px 10px;
+                border-radius: 20px;
+                font-size: 0.7rem;
+                font-weight: 700;
+                background: ${roleColor}22;
+                border: 1px solid ${roleColor}44;
+                color: ${roleColor};
+            }
+            .pp-body {
+                padding: 14px 20px;
+            }
+            .pp-row {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 7px 0;
+                border-bottom: 1px solid rgba(255,255,255,0.04);
+                font-size: 0.82rem;
+            }
+            .pp-row:last-child { border-bottom: none; }
+            .pp-row .pp-icon { font-size: 0.9rem; width: 18px; text-align:center; opacity:0.7; }
+            .pp-row .pp-val { color: #94a3b8; flex: 1; }
+            .pp-row .pp-lbl { color: #f4f4f5; font-weight: 500; }
+            .pp-footer {
+                padding: 12px 20px 16px;
+                border-top: 1px solid rgba(255,255,255,0.05);
+            }
+            .pp-logout-btn {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid rgba(239,68,68,0.3);
+                border-radius: 10px;
+                background: rgba(239,68,68,0.06);
+                color: #ef4444;
+                font-size: 0.875rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s;
+                font-family: inherit;
+            }
+            .pp-logout-btn:hover {
+                background: rgba(239,68,68,0.12);
+                border-color: #ef4444;
+            }
+        </style>
+        <div id="profileAvatar" onclick="toggleProfilePopup()">${initials}</div>
+        `;
+        document.body.appendChild(iconBtn);
+
+        const popup = document.createElement('div');
+        popup.id = 'profilePopup';
+        popup.innerHTML = `
+        <div class="pp-header">
+            <div class="pp-avatar-lg">${initials}</div>
+            <div>
+                <div class="pp-name">${user.fullName || user.username}</div>
+                <div class="pp-role-badge">${roleLabel}</div>
+            </div>
+        </div>
+        <div class="pp-body">
+            <div class="pp-row">
+                <span class="pp-icon">👤</span>
+                <span class="pp-val">Username</span>
+                <span class="pp-lbl">${user.username || '—'}</span>
+            </div>
+            <div class="pp-row">
+                <span class="pp-icon">📧</span>
+                <span class="pp-val">Email</span>
+                <span class="pp-lbl">${user.email || '—'}</span>
+            </div>
+            <div class="pp-row">
+                <span class="pp-icon">📱</span>
+                <span class="pp-val">Telefon</span>
+                <span class="pp-lbl">${user.phoneNumber || '—'}</span>
+            </div>
+        </div>
+        <div class="pp-footer">
+            <button class="pp-logout-btn" onclick="performLogout()">🚪 Tizimdan chiqish</button>
+        </div>
+        `;
+        document.body.appendChild(popup);
+
+        // Tashqariga bosish bilan yopish
+        document.addEventListener('click', function closePopup(e) {
+            if (!document.getElementById('profileIconBtn')?.contains(e.target) &&
+                !document.getElementById('profilePopup')?.contains(e.target)) {
+                document.getElementById('profilePopup')?.classList.remove('open');
+            }
+        });
+    }
+
+    function toggleProfilePopup() {
+        document.getElementById('profilePopup')?.classList.toggle('open');
+    }
+
+    // ===== ROL ASOSIDA SIDEBAR =====
+    function renderRoleBasedSidebar() {
+        const user = getCurrentUser();
+        if (!user) return;
+        const role = (user.role || '').toUpperCase();
+        const navSection = document.querySelector('.nav-section');
+        if (!navSection) return;
+
+        // Sidebar pastki qismidagi user info ni yangilaymiz
+        const userNameEl = document.querySelector('.user-name');
+        const userRoleEl = document.querySelector('.user-role');
+        const userAvatarEl = document.querySelector('.user-avatar');
+        if (userNameEl) userNameEl.textContent = user.fullName || user.username;
+        if (userRoleEl) userRoleEl.textContent = {
+            ADMIN: 'Admin', MANAGER: 'Manager',
+            MUDIRA: 'Mudira', DRIVER: 'Haydovchi', WAREHOUSEMAN: 'Omborchi'
+        }[role] || role;
+        const initials = (user.fullName || user.username || '?')
+            .split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+        if (userAvatarEl) userAvatarEl.textContent = initials;
+
+        let navHTML = '';
+        if (role === 'ADMIN') {
+            navHTML = `
+                <div class="nav-label">Asosiy</div>
+                <a class="nav-item active" onclick="loadPage('dashboard')"><span class="nav-icon">⬡</span><span class="nav-text">Dashboard</span></a>
+                <a class="nav-item" onclick="loadPage('pending')"><span class="nav-icon">📝</span><span class="nav-text" style="display:flex;align-items:center;justify-content:space-between;width:100%">Tasdiqlash <span id="pendingBadge" style="background:#ef4444;color:#fff;border-radius:10px;padding:2px 6px;font-size:0.7rem;font-weight:700;display:none;">0</span></span></a>
+                <a class="nav-item" onclick="loadPage('distribute')"><span class="nav-icon">↗</span><span class="nav-text">Taqsimlash</span></a>
+                <a class="nav-item" onclick="loadPage('receive')"><span class="nav-icon">↙</span><span class="nav-text">Qabul qilish</span></a>
+                <a class="nav-item" onclick="loadPage('warehouse')"><span class="nav-icon">▦</span><span class="nav-text">Ombor zaxirasi</span></a>
+                <a class="nav-item" onclick="loadPage('reports')"><span class="nav-icon">◈</span><span class="nav-text">Hisobotlar</span></a>
+            `;
+        } else if (role === 'MANAGER') {
+            navHTML = `
+                <div class="nav-label">Asosiy</div>
+                <a class="nav-item active" onclick="loadPage('dashboard')"><span class="nav-icon">⬡</span><span class="nav-text">Dashboard</span></a>
+                <div class="nav-label">Ombor</div>
+                <a class="nav-item" onclick="loadPage('receive')"><span class="nav-icon">↙</span><span class="nav-text">Yuk qabul qilish</span></a>
+                <a class="nav-item" onclick="loadPage('distribute')"><span class="nav-icon">↗</span><span class="nav-text">Mahsulot taqsimlash</span></a>
+                <a class="nav-item" onclick="loadPage('warehouse')"><span class="nav-icon">▦</span><span class="nav-text">Ombor zaxirasi</span></a>
+                <a class="nav-item" onclick="loadPage('all-orders')"><span class="nav-icon">📋</span><span class="nav-text" style="display:flex;align-items:center;justify-content:space-between;width:100%">Arizalar <span id="pendingBadge" style="background:#ef4444;color:#fff;border-radius:10px;padding:2px 6px;font-size:0.7rem;font-weight:700;display:none;">0</span></span></a>
+                <a class="nav-item" onclick="loadPage('reports')"><span class="nav-icon">◈</span><span class="nav-text">Hisobotlar</span></a>
+            `;
+        } else if (role === 'MUDIRA') {
+            navHTML = `
+                <div class="nav-label">Asosiy</div>
+                <a class="nav-item active" onclick="loadPage('dashboard')"><span class="nav-icon">⬡</span><span class="nav-text">Dashboard</span></a>
+                <div class="nav-label">Mening ma'lumotlarim</div>
+                <a class="nav-item" onclick="loadPage('my-kindergartens')"><span class="nav-icon">🏫</span><span class="nav-text">Bog'chalarim</span></a>
+                <a class="nav-item" onclick="loadPage('my-apply')"><span class="nav-icon">📩</span><span class="nav-text">Ariza berish</span></a>
+                <a class="nav-item" onclick="loadPage('my-supply-history')"><span class="nav-icon">📦</span><span class="nav-text">Mahsulot tarixi</span></a>
+                <a class="nav-item" onclick="loadPage('my-orders')"><span class="nav-icon">📝</span><span class="nav-text">Arizalarim holati</span></a>
+            `;
+        } else if (role === 'DRIVER') {
+            navHTML = `
+                <div class="nav-label">Asosiy</div>
+                <a class="nav-item active" onclick="loadPage('dashboard')"><span class="nav-icon">⬡</span><span class="nav-text">Dashboard</span></a>
+                <div class="nav-label">Yetkazish</div>
+                <a class="nav-item" onclick="loadPage('my-deliveries')"><span class="nav-icon">🚗</span><span class="nav-text">Mening yetkazishlarim</span></a>
+                <a class="nav-item" onclick="loadPage('my-reports')"><span class="nav-icon">◈</span><span class="nav-text">Hisobotlarim</span></a>
+            `;
+        } else {
+            // WAREHOUSEMAN va boshqalar — admin kabi
+            navHTML = `
+                <div class="nav-label">Asosiy</div>
+                <a class="nav-item active" onclick="loadPage('dashboard')"><span class="nav-icon">⬡</span><span class="nav-text">Dashboard</span></a>
+                <a class="nav-item" onclick="loadPage('pending')"><span class="nav-icon">📝</span><span class="nav-text" style="display:flex;align-items:center;justify-content:space-between;width:100%">Tasdiqlash <span id="pendingBadge" style="background:#ef4444;color:#fff;border-radius:10px;padding:2px 6px;font-size:0.7rem;font-weight:700;display:none;">0</span></span></a>
+                <a class="nav-item" onclick="loadPage('distribute')"><span class="nav-icon">↗</span><span class="nav-text">Taqsimlash</span></a>
+                <a class="nav-item" onclick="loadPage('receive')"><span class="nav-icon">↙</span><span class="nav-text">Qabul qilish</span></a>
+                <a class="nav-item" onclick="loadPage('warehouse')"><span class="nav-icon">▦</span><span class="nav-text">Ombor zaxirasi</span></a>
+                <a class="nav-item" onclick="loadPage('reports')"><span class="nav-icon">◈</span><span class="nav-text">Hisobotlar</span></a>
+            `;
+        }
+
+        // Admin uchun submenu — sozlamalar faqat admin uchun
+        const submenuHeader = document.querySelector('.submenu-header');
+        if (submenuHeader && role !== 'ADMIN') {
+            // Admin bo'lmagan foydalanuvchilar uchun submenu ni soddalashtiramiz
+            const userSubmenu = document.getElementById('userSubmenu');
+            if (userSubmenu) {
+                userSubmenu.innerHTML = `
+                    <div class="submenu-header">Profil</div>
+                    <a class="user-submenu-item danger" onclick="performLogout()">
+                        <span class="item-icon">🚪</span><span>Chiqish</span>
+                    </a>
+                `;
+            }
+        }
+
+        navSection.innerHTML = navHTML;
+    }
+
+    // ===== SAHIFA YUKLASH (ROL ASOSIDA DEFAULT) =====
+    function loadDefaultPage() {
+        const mainContent = document.querySelector('.main-content');
+        document.querySelector('.content-header h1').textContent = 'Dashboard';
+        document.querySelector('.content-header p').textContent = '';
+        // Avvalgi kontentni tozalaymiz
+        let sibling = mainContent.querySelector('.content-header')?.nextElementSibling;
+        while (sibling) { let n = sibling.nextElementSibling; sibling.remove(); sibling = n; }
+
+        const role = getRole();
+        if (role === 'MUDIRA') {
+            loadMudiraDashboard(mainContent);
+        } else if (role === 'DRIVER') {
+            loadDriverDashboard(mainContent);
+        } else {
+            mainContent.insertAdjacentHTML('beforeend', dashboardHTML());
+            loadDashboardFull();
+        }
     }
 
     // ===== SIDEBAR =====
@@ -2697,31 +3371,31 @@
     // ===== NAVIGATION =====
     function loadPage(page) {
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-        event.target.closest('.nav-item').classList.add('active');
-        const mainContent = document.querySelector('.main-content');
-        document.querySelector('.content-header h1').textContent = {
-            dashboard: 'Dashboard',
-            distribute: 'Taqsimlash',
-            receive: 'Qabul qilish',
-            warehouse: 'Ombordagi Mahsulotlar',
-            reports: 'Hisobotlar'
-        }[page] || page;
-        document.querySelector('.content-header p').textContent = 'Tizimingizning umumiy ko\'rinishi';
-        let sibling = mainContent.querySelector('.content-header').nextElementSibling;
-        while (sibling) {
-            let n = sibling.nextElementSibling;
-            sibling.remove();
-            sibling = n;
+        if (event && event.target) {
+            const navItem = event.target.closest('.nav-item');
+            if (navItem) navItem.classList.add('active');
         }
+        const mainContent = document.querySelector('.main-content');
+        const pageTitles = {
+            dashboard: 'Dashboard', distribute: 'Mahsulot Taqsimlash',
+            receive: 'Yuk Qabul Qilish', warehouse: 'Ombordagi Mahsulotlar',
+            reports: 'Hisobotlar', pending: 'Tasdiqlash',
+            'my-kindergartens': 'Bog\'chalarim', 'my-supply-history': 'Mahsulot Tarixi',
+            'my-orders': 'Arizalarim holati', 'my-apply': 'Ariza berish',
+            'my-deliveries': 'Mening Yetkazishlarim', 'my-reports': 'Hisobotlarim',
+            'all-orders': 'Barcha Arizalar'
+        };
+        document.querySelector('.content-header h1').textContent = pageTitles[page] || page;
+        document.querySelector('.content-header p').textContent = '';
+        let sibling = mainContent.querySelector('.content-header')?.nextElementSibling;
+        while (sibling) { let n = sibling.nextElementSibling; sibling.remove(); sibling = n; }
+
         if (page === 'dashboard') {
-            document.querySelector('.content-header p').textContent = '';
-            mainContent.insertAdjacentHTML('beforeend', dashboardHTML());
-            loadDashboardFull();
+            loadDefaultPage();
         } else if (page === 'receive') {
             injectProfileCSS();
             mainContent.insertAdjacentHTML('beforeend', receivePageHTML());
             initReceivePage();
-
         } else if (page === 'distribute') {
             injectProfileCSS();
             mainContent.insertAdjacentHTML('beforeend', distributePageHTML());
@@ -2730,16 +3404,34 @@
             injectProfileCSS();
             mainContent.insertAdjacentHTML('beforeend', warehouseStockPageHTML());
             initStockPage();
+        } else if (page === 'pending') {
+            injectProfileCSS();
+            mainContent.insertAdjacentHTML('beforeend', pendingPageHTML());
+            initPendingPage();
         } else if (page === 'reports') {
             injectProfileCSS();
             mainContent.insertAdjacentHTML('beforeend', reportsPageHTML());
             initReportsPage();
+        } else if (page === 'my-kindergartens') {
+            loadMyKindergartens(mainContent);
+        } else if (page === 'my-supply-history') {
+            loadMySupplyHistory(mainContent);
+        } else if (page === 'my-orders') {
+            loadMyOrders(mainContent);
+        } else if (page === 'my-apply') {
+            loadMyApplyPage(mainContent);
+        } else if (page === 'all-orders') {
+            loadAllOrdersPage(mainContent);
+        } else if (page === 'my-deliveries') {
+            loadMyDeliveries(mainContent);
+        } else if (page === 'my-reports') {
+            loadDriverReports(mainContent);
         } else {
             mainContent.insertAdjacentHTML('beforeend', `
             <div class="stat-card" style="padding:3rem;text-align:center;max-width:600px">
                 <div style="font-size:3rem;margin-bottom:1rem">🚧</div>
                 <h2 style="color:var(--accent-primary);margin-bottom:.5rem">Tez orada...</h2>
-                <p style="color:var(--text-secondary)">Bu bo'lim ishlab chiqish jarayonida</p>
+                <p style="color:var(--text-secondary)">Bu bo'lim hozir ishlab chiqilmoqda</p>
             </div>
         `);
         }
@@ -2817,13 +3509,15 @@
             loadCategories();
         } else if (page === 'regions') {
             mainContent.insertAdjacentHTML('beforeend', `
-            <div style="margin-bottom:1.5rem"><button onclick="showAddRegionModal()" class="cta-button" style="padding:.8rem 2rem;font-size:.9rem">+ Yangi Rayon</button></div>
-            <div style="background:rgba(45,45,45,.5);border:1px solid rgba(255,107,53,.2);border-radius:12px;overflow:hidden">
+            <div style="margin-bottom:1.25rem;display:flex;align-items:center;gap:1rem">
+                <button onclick="showAddRegionModal()" class="cta-button" style="padding:.7rem 1.5rem;font-size:.875rem;border-radius:8px">+ Yangi Rayon</button>
+            </div>
+            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:14px;overflow:hidden">
                 <table style="width:100%;border-collapse:collapse">
-                    <thead><tr style="border-bottom:1px solid rgba(255,107,53,.2)">
-                        <th style="padding:.75rem 1rem;text-align:left;color:var(--text-secondary);font-size:.8rem;width:50px">T/R</th>
-                        <th style="padding:.75rem 1rem;text-align:left;color:var(--text-secondary);font-size:.8rem">Tuman nomi</th>
-                        <th style="padding:.75rem 1rem;text-align:center;color:var(--text-secondary);font-size:.8rem;width:160px">Amallar</th>
+                    <thead><tr style="border-bottom:1px solid rgba(255,255,255,0.06)">
+                        <th style="padding:.65rem 1rem;text-align:left;color:var(--text-secondary);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700;width:50px">T/R</th>
+                        <th style="padding:.65rem 1rem;text-align:left;color:var(--text-secondary);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700">Tuman nomi</th>
+                        <th style="padding:.65rem 1rem;text-align:center;color:var(--text-secondary);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700;width:160px">Amallar</th>
                     </tr></thead>
                     <tbody id="regionList"></tbody>
                 </table>
@@ -2844,17 +3538,19 @@
             loadRegions();
         } else if (page === 'suppliers') {
             mainContent.insertAdjacentHTML('beforeend', `
-            <div style="margin-bottom:1.5rem"><button onclick="showAddSupplierModal()" class="cta-button" style="padding:.8rem 2rem;font-size:.9rem">+ Yangi Yetkazib Beruvchi</button></div>
-            <div style="background:rgba(45,45,45,.5);border:1px solid rgba(255,107,53,.2);border-radius:12px;overflow:hidden">
+            <div style="margin-bottom:1.25rem">
+                <button onclick="showAddSupplierModal()" class="cta-button" style="padding:.7rem 1.5rem;font-size:.875rem;border-radius:8px">+ Yangi Yetkazib Beruvchi</button>
+            </div>
+            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:14px;overflow:hidden">
                 <table style="width:100%;border-collapse:collapse">
-                    <thead><tr style="background:rgba(58,58,58,.3);border-bottom:1px solid rgba(255,107,53,.2)">
-                        <th style="padding:.75rem 1rem;color:var(--text-secondary);font-size:.8rem;width:50px">#</th>
-                        <th style="padding:.75rem 1rem;text-align:left;color:var(--text-secondary);font-size:.8rem">Nomi</th>
-                        <th style="padding:.75rem 1rem;text-align:left;color:var(--text-secondary);font-size:.8rem">Mas'ul</th>
-                        <th style="padding:.75rem 1rem;text-align:left;color:var(--text-secondary);font-size:.8rem">Telefon</th>
-                        <th style="padding:.75rem 1rem;text-align:left;color:var(--text-secondary);font-size:.8rem">INN</th>
-                        <th style="padding:.75rem 1rem;text-align:center;color:var(--text-secondary);font-size:.8rem">Holat</th>
-                        <th style="padding:.75rem 1rem;text-align:center;color:var(--text-secondary);font-size:.8rem;width:160px">Amallar</th>
+                    <thead><tr style="border-bottom:1px solid rgba(255,255,255,0.06)">
+                        <th style="padding:.65rem 1rem;color:var(--text-secondary);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700;width:50px">#</th>
+                        <th style="padding:.65rem 1rem;text-align:left;color:var(--text-secondary);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700">Nomi</th>
+                        <th style="padding:.65rem 1rem;text-align:left;color:var(--text-secondary);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700">Mas'ul</th>
+                        <th style="padding:.65rem 1rem;text-align:left;color:var(--text-secondary);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700">Telefon</th>
+                        <th style="padding:.65rem 1rem;text-align:left;color:var(--text-secondary);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700">INN</th>
+                        <th style="padding:.65rem 1rem;text-align:center;color:var(--text-secondary);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700">Holat</th>
+                        <th style="padding:.65rem 1rem;text-align:center;color:var(--text-secondary);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700;width:150px">Amallar</th>
                     </tr></thead>
                     <tbody id="supplierList"></tbody>
                 </table>
@@ -2864,21 +3560,22 @@
             loadSuppliers(0);
         } else if (page === 'warehouses') {
             mainContent.insertAdjacentHTML('beforeend', `
-            <div style="margin-bottom:1.5rem;display:flex;gap:1rem;align-items:center">
-                <button onclick="openWarehouseModal()" class="cta-button" style="padding:.8rem 2rem;font-size:.9rem">+ Yangi Ombor</button>
-                <div style="position:relative;flex:1;max-width:300px">
+            <div style="margin-bottom:1.25rem;display:flex;gap:1rem;align-items:center">
+                <button onclick="openWarehouseModal()" class="cta-button" style="padding:.7rem 1.5rem;font-size:.875rem;border-radius:8px">+ Yangi Ombor</button>
+                <div style="position:relative;flex:1;max-width:280px">
                     <input id="whSearch" type="text" placeholder="🔍 Ombor qidirish..." oninput="searchWarehouses(this.value)"
-                        style="width:100%;padding:.7rem 1rem;background:rgba(58,58,58,.5);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:var(--text-primary);font-family:inherit;font-size:.9rem;outline:none">
+                        style="width:100%;padding:.65rem 1rem;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;color:var(--text-primary);font-family:inherit;font-size:.875rem;outline:none;transition:border-color .2s"
+                        onfocus="this.style.borderColor='rgba(34,211,238,.3)'" onblur="this.style.borderColor='rgba(255,255,255,0.08)'">
                 </div>
             </div>
-            <div style="background:rgba(45,45,45,.5);border:1px solid rgba(255,107,53,.2);border-radius:12px;overflow:hidden">
+            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:14px;overflow:hidden">
                 <table style="width:100%;border-collapse:collapse">
-                    <thead><tr style="background:rgba(58,58,58,.3);border-bottom:1px solid rgba(255,107,53,.2)">
-                        <th style="padding:.75rem 1rem;color:var(--text-secondary);font-size:.8rem;width:50px">#</th>
-                        <th style="padding:.75rem 1rem;text-align:left;color:var(--text-secondary);font-size:.8rem">Nomi</th>
-                        <th style="padding:.75rem 1rem;text-align:left;color:var(--text-secondary);font-size:.8rem">Manzil</th>
-                        <th style="padding:.75rem 1rem;text-align:left;color:var(--text-secondary);font-size:.8rem">Tavsif</th>
-                        <th style="padding:.75rem 1rem;text-align:center;color:var(--text-secondary);font-size:.8rem;width:160px">Amallar</th>
+                    <thead><tr style="border-bottom:1px solid rgba(255,255,255,0.06)">
+                        <th style="padding:.65rem 1rem;color:var(--text-secondary);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700;width:50px">#</th>
+                        <th style="padding:.65rem 1rem;text-align:left;color:var(--text-secondary);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700">Nomi</th>
+                        <th style="padding:.65rem 1rem;text-align:left;color:var(--text-secondary);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700">Manzil</th>
+                        <th style="padding:.65rem 1rem;text-align:left;color:var(--text-secondary);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700">Tavsif</th>
+                        <th style="padding:.65rem 1rem;text-align:center;color:var(--text-secondary);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700;width:150px">Amallar</th>
                     </tr></thead>
                     <tbody id="warehouseList"></tbody>
                 </table>
@@ -2954,7 +3651,7 @@
                 return;
             }
             tbody.innerHTML = list.map((w, i) => `
-            <tr style="border-bottom:1px solid rgba(255,107,53,.1)">
+            <tr style="border-bottom:1px solid rgba(255,255,255,.05);transition:background .15s" onmouseover="this.style.background='rgba(34,211,238,.03)'" onmouseout="this.style.background='transparent'">
                 <td class="td-index" style="padding:.75rem 1rem"><span class="index-badge">${page * WH_PAGE_SIZE + i + 1}</span></td>
                 <td style="padding:.75rem 1rem;font-weight:600;color:var(--text-primary)">${w.name}</td>
                 <td style="padding:.75rem 1rem;color:var(--text-secondary);font-size:.85rem">${w.address}</td>
@@ -2994,7 +3691,7 @@
                     return;
                 }
                 tbody.innerHTML = list.map((w, i) => `
-                <tr style="border-bottom:1px solid rgba(255,107,53,.1)">
+                <tr style="border-bottom:1px solid rgba(255,255,255,.05);transition:background .15s" onmouseover="this.style.background='rgba(34,211,238,.03)'" onmouseout="this.style.background='transparent'">
                     <td class="td-index" style="padding:.75rem 1rem"><span class="index-badge">${i + 1}</span></td>
                     <td style="padding:.75rem 1rem;font-weight:600;color:var(--text-primary)">${w.name}</td>
                     <td style="padding:.75rem 1rem;color:var(--text-secondary);font-size:.85rem">${w.address}</td>
@@ -3107,11 +3804,11 @@
                 return;
             }
             tbody.innerHTML = list.map((s, i) => `
-            <tr style="border-bottom:1px solid rgba(255,107,53,.1)">
+            <tr style="border-bottom:1px solid rgba(255,255,255,.05);transition:background .15s" onmouseover="this.style.background='rgba(34,211,238,.03)'" onmouseout="this.style.background='transparent'">
                 <td class="td-index" style="padding:.75rem 1rem"><span class="index-badge">${page * supplierPageSize + i + 1}</span></td>
                 <td style="padding:.75rem 1rem">
                     <div style="display:flex;align-items:center;gap:.6rem">
-                        <div style="width:32px;height:32px;background:rgba(255,107,53,.1);border-radius:8px;display:flex;align-items:center;justify-content:center">🤝</div>
+                        <div style="width:32px;height:32px;background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.15);border-radius:8px;display:flex;align-items:center;justify-content:center">🤝</div>
                         <div><div style="font-weight:600;color:var(--text-primary)">${s.name}</div><div style="font-size:.72rem;color:var(--text-secondary)">ID: ${s.id}</div></div>
                     </div>
                 </td>
@@ -3223,7 +3920,7 @@
                 return;
             }
             tbody.innerHTML = list.map((r, i) => `
-            <tr style="border-bottom:1px solid rgba(255,255,255,.05)">
+            <tr style="border-bottom:1px solid rgba(255,255,255,.05);transition:background .15s" onmouseover="this.style.background='rgba(34,211,238,.03)'" onmouseout="this.style.background='transparent'">
                 <td class="td-index" style="padding:.9rem 1rem"><span class="index-badge">${i + 1}</span></td>
                 <td style="padding:.9rem 1rem">
                     <div class="region-name">
@@ -3889,16 +4586,16 @@
         if (!container || !meta) return;
         const {currentPage = 0, totalPages = 1, totalElements = 0} = meta;
         let html = `
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:1rem;border-top:1px solid rgba(255,107,53,.2)">
-            <div style="color:var(--text-secondary);font-size:.85rem">Jami: <strong style="color:var(--accent-primary)">${totalElements}</strong></div>
-            <div style="display:flex;gap:.5rem;align-items:center">
-                <button onclick="${fnName}(${currentPage - 1})" ${currentPage === 0 ? 'disabled' : ''} style="padding:.5rem .75rem;background:rgba(58,58,58,.5);border:1px solid rgba(255,107,53,.2);border-radius:6px;color:var(--text-primary);cursor:pointer;opacity:${currentPage === 0 ? .5 : 1}">◀</button>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:.85rem 1rem;border-top:1px solid rgba(255,255,255,0.06)">
+            <div style="color:var(--text-secondary);font-size:.8rem">Jami: <strong style="color:var(--accent-primary);font-family:'Space Mono',monospace">${totalElements}</strong></div>
+            <div style="display:flex;gap:.35rem;align-items:center">
+                <button onclick="${fnName}(${currentPage - 1})" ${currentPage === 0 ? 'disabled' : ''} style="padding:.4rem .65rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:6px;color:var(--text-secondary);cursor:pointer;opacity:${currentPage === 0 ? .4 : 1};font-size:.8rem">◀</button>
     `;
         const start = Math.max(0, currentPage - 2), end = Math.min(totalPages - 1, start + 4);
         for (let i = start; i <= end; i++) {
-            html += `<button onclick="${fnName}(${i})" style="padding:.5rem .75rem;background:${i === currentPage ? 'var(--accent-primary)' : 'rgba(58,58,58,.5)'};border:1px solid rgba(255,107,53,.2);border-radius:6px;color:${i === currentPage ? '#000' : 'var(--text-primary)'};font-weight:${i === currentPage ? 700 : 400};cursor:pointer">${i + 1}</button>`;
+            html += `<button onclick="${fnName}(${i})" style="padding:.4rem .65rem;background:${i === currentPage ? 'var(--accent-primary)' : 'rgba(255,255,255,.04)'};border:1px solid ${i === currentPage ? 'var(--accent-primary)' : 'rgba(255,255,255,.08)'};border-radius:6px;color:${i === currentPage ? '#000' : 'var(--text-secondary)'};font-weight:${i === currentPage ? 700 : 400};cursor:pointer;font-size:.8rem;min-width:30px">${i + 1}</button>`;
         }
-        html += `<button onclick="${fnName}(${currentPage + 1})" ${currentPage === totalPages - 1 ? 'disabled' : ''} style="padding:.5rem .75rem;background:rgba(58,58,58,.5);border:1px solid rgba(255,107,53,.2);border-radius:6px;color:var(--text-primary);cursor:pointer;opacity:${currentPage === totalPages - 1 ? .5 : 1}">▶</button>
+        html += `<button onclick="${fnName}(${currentPage + 1})" ${currentPage === totalPages - 1 ? 'disabled' : ''} style="padding:.4rem .65rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:6px;color:var(--text-secondary);cursor:pointer;opacity:${currentPage === totalPages - 1 ? .4 : 1};font-size:.8rem">▶</button>
             </div></div>`;
         container.innerHTML = html;
     }
@@ -3939,35 +4636,36 @@
     //maxsulotlar uchun
     function productsPageHTML() {
         return `
-    <div style="margin-bottom:1.5rem;display:flex;gap:.5rem;flex-wrap:wrap">
+    <div style="margin-bottom:1.25rem;display:flex;gap:.5rem;flex-wrap:wrap">
         <button onclick="switchProductTab('products')" id="ptab-products"
-            class="utab utab-on" style="padding:.55rem 1.4rem;border-radius:8px;border:1.5px solid rgba(255,107,53,.5);background:rgba(255,107,53,.18);color:var(--accent-primary);font-family:inherit;font-size:.88rem;font-weight:600;cursor:pointer">
+            class="utab utab-on" style="padding:.5rem 1.25rem;border-radius:8px;border:1px solid rgba(34,211,238,.3);background:rgba(34,211,238,.1);color:var(--accent-primary);font-family:inherit;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s">
             📦 Mahsulotlar
         </button>
         <button onclick="switchProductTab('norms')" id="ptab-norms"
-            class="utab" style="padding:.55rem 1.4rem;border-radius:8px;border:1.5px solid rgba(255,255,255,.12);background:rgba(58,58,58,.4);color:var(--text-secondary);font-family:inherit;font-size:.88rem;font-weight:600;cursor:pointer">
+            class="utab" style="padding:.5rem 1.25rem;border-radius:8px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);color:var(--text-secondary);font-family:inherit;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s">
             📋 Mahsulot normalari
         </button>
     </div>
 
     <!-- MAHSULOTLAR TAB -->
     <div id="productTabPanel">
-        <div style="margin-bottom:1.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem">
-            <button onclick="openProductModal()" class="cta-button" style="padding:.8rem 2rem;font-size:.9rem">+ Yangi Mahsulot</button>
+        <div style="margin-bottom:1.25rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem">
+            <button onclick="openProductModal()" class="cta-button" style="padding:.7rem 1.5rem;font-size:.875rem;border-radius:8px">+ Yangi Mahsulot</button>
             <input id="productSearch" type="text" placeholder="🔍 Qidirish..."
                 oninput="filterProducts(this.value)"
-                style="padding:.7rem 1rem;background:rgba(58,58,58,.5);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:var(--text-primary);font-family:inherit;font-size:.9rem;outline:none;min-width:220px">
+                style="padding:.65rem 1rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;color:var(--text-primary);font-family:inherit;font-size:.875rem;outline:none;min-width:220px;transition:border-color .2s"
+                onfocus="this.style.borderColor='rgba(34,211,238,.3)'" onblur="this.style.borderColor='rgba(255,255,255,.08)'">
         </div>
-        <div style="background:rgba(45,45,45,.5);border:1px solid rgba(255,107,53,.2);border-radius:12px;overflow:hidden">
+        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:14px;overflow:hidden">
             <table style="width:100%;border-collapse:collapse">
-                <thead><tr style="background:rgba(58,58,58,.3);border-bottom:1px solid rgba(255,107,53,.2)">
-                    <th style="padding:.75rem 1rem;text-align:left;color:var(--text-secondary);font-size:.78rem;text-transform:uppercase;width:50px">#</th>
-                    <th style="padding:.75rem 1rem;text-align:left;color:var(--text-secondary);font-size:.78rem;text-transform:uppercase">Mahsulot</th>
-                    <th style="padding:.75rem 1rem;text-align:left;color:var(--text-secondary);font-size:.78rem;text-transform:uppercase">Kategoriya</th>
-                    <th style="padding:.75rem 1rem;text-align:center;color:var(--text-secondary);font-size:.78rem;text-transform:uppercase">Birlik</th>
-                    <th style="padding:.75rem 1rem;text-align:right;color:var(--text-secondary);font-size:.78rem;text-transform:uppercase">Narx</th>
-                    <th style="padding:.75rem 1rem;text-align:right;color:var(--text-secondary);font-size:.78rem;text-transform:uppercase">Krit. limit</th>
-                    <th style="padding:.75rem 1rem;text-align:center;color:var(--text-secondary);font-size:.78rem;text-transform:uppercase;width:150px">Amallar</th>
+                <thead><tr style="border-bottom:1px solid rgba(255,255,255,0.06)">
+                    <th style="padding:.65rem 1rem;text-align:left;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;font-weight:700;width:50px">#</th>
+                    <th style="padding:.65rem 1rem;text-align:left;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;font-weight:700">Mahsulot</th>
+                    <th style="padding:.65rem 1rem;text-align:left;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;font-weight:700">Kategoriya</th>
+                    <th style="padding:.65rem 1rem;text-align:center;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;font-weight:700">Birlik</th>
+                    <th style="padding:.65rem 1rem;text-align:right;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;font-weight:700">Narx</th>
+                    <th style="padding:.65rem 1rem;text-align:right;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;font-weight:700">Krit. limit</th>
+                    <th style="padding:.65rem 1rem;text-align:center;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;font-weight:700;width:150px">Amallar</th>
                 </tr></thead>
                 <tbody id="productList">
                     <tr><td colspan="7" style="text-align:center;padding:3rem;color:var(--text-secondary)">⏳ Yuklanmoqda...</td></tr>
@@ -4483,38 +5181,39 @@
     function telegramPageHTML() {
         return `
     <style>
-        .utab { padding:.55rem 1.2rem; border-radius:8px; border:1.5px solid rgba(255,255,255,.12); background:rgba(58,58,58,.4); color:var(--text-secondary); font-family:inherit; font-size:.88rem; font-weight:600; cursor:pointer; transition:all .2s; }
-        .utab:hover { background:rgba(255,107,53,.12); color:var(--accent-primary); border-color:rgba(255,107,53,.3); }
-        .utab-on { background:rgba(255,107,53,.18) !important; color:var(--accent-primary) !important; border-color:var(--accent-primary) !important; }
-        .uinfo-card { background:rgba(58,58,58,.3); border:1px solid rgba(255,255,255,.07); border-radius:10px; padding:.75rem; }
-        .uinfo-label { font-size:.72rem; color:var(--text-secondary); margin-bottom:.25rem; }
+        .utab { padding:.5rem 1.1rem; border-radius:8px; border:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.04); color:var(--text-secondary); font-family:inherit; font-size:.85rem; font-weight:600; cursor:pointer; transition:all .2s; }
+        .utab:hover { background:rgba(34,211,238,.06); color:var(--accent-primary); border-color:rgba(34,211,238,.2); }
+        .utab-on { background:rgba(34,211,238,.1) !important; color:var(--accent-primary) !important; border-color:rgba(34,211,238,.3) !important; }
+        .uinfo-card { background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.07); border-radius:10px; padding:.75rem; }
+        .uinfo-label { font-size:.7rem; color:var(--text-secondary); margin-bottom:.25rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; }
         .uinfo-value { font-size:.88rem; font-weight:600; color:var(--text-primary); word-break:break-all; }
     </style>
 
     <!-- LIST VIEW -->
     <div id="userListView">
-        <div style="margin-bottom:1.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem">
-            <button onclick="openUserModal()" class="cta-button" style="padding:.8rem 2rem;font-size:.9rem">+ Yangi Foydalanuvchi</button>
+        <div style="margin-bottom:1.25rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem">
+            <button onclick="openUserModal()" class="cta-button" style="padding:.7rem 1.5rem;font-size:.875rem;border-radius:8px">+ Yangi Foydalanuvchi</button>
             <input id="userSearch" type="text" placeholder="Qidirish..." oninput="searchUsers(this.value)"
-                style="padding:.7rem 1rem;background:rgba(58,58,58,.5);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:var(--text-primary);font-family:inherit;font-size:.9rem;outline:none;min-width:240px">
+                style="padding:.65rem 1rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;color:var(--text-primary);font-family:inherit;font-size:.875rem;outline:none;min-width:240px;transition:border-color .2s"
+                onfocus="this.style.borderColor='rgba(34,211,238,.3)'" onblur="this.style.borderColor='rgba(255,255,255,.08)'">
         </div>
 
-        <div style="display:flex;gap:.5rem;margin-bottom:1.25rem;flex-wrap:wrap">
+        <div style="display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap">
             <button onclick="switchUserTab('DRIVER')"  id="tab-DRIVER"  class="utab utab-on">Haydovchilar</button>
             <button onclick="switchUserTab('MANAGER')" id="tab-MANAGER" class="utab">Managerlar</button>
             <button onclick="switchUserTab('MUDIRA')"  id="tab-MUDIRA"  class="utab">Mudiralar</button>
         </div>
 
-        <div style="background:rgba(45,45,45,.5);border:1px solid rgba(255,107,53,.2);border-radius:12px;overflow:hidden">
+        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:14px;overflow:hidden">
             <table style="width:100%;border-collapse:collapse">
                 <thead>
-                    <tr style="background:rgba(58,58,58,.3);border-bottom:1px solid rgba(255,107,53,.2)">
-                        <th style="padding:.75rem 1rem;color:var(--text-secondary);font-size:.78rem;text-transform:uppercase;width:50px">#</th>
-                        <th style="padding:.75rem 1rem;text-align:left;color:var(--text-secondary);font-size:.78rem;text-transform:uppercase">Foydalanuvchi</th>
-                        <th style="padding:.75rem 1rem;text-align:left;color:var(--text-secondary);font-size:.78rem;text-transform:uppercase">Username</th>
-                        <th style="padding:.75rem 1rem;text-align:left;color:var(--text-secondary);font-size:.78rem;text-transform:uppercase">Telefon</th>
-                        <th style="padding:.75rem 1rem;text-align:center;color:var(--text-secondary);font-size:.78rem;text-transform:uppercase">Telegram</th>
-                        <th style="padding:.75rem 1rem;text-align:center;color:var(--text-secondary);font-size:.78rem;text-transform:uppercase;width:160px">Amallar</th>
+                    <tr style="border-bottom:1px solid rgba(255,255,255,0.06)">
+                        <th style="padding:.65rem 1rem;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;font-weight:700;width:50px">#</th>
+                        <th style="padding:.65rem 1rem;text-align:left;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;font-weight:700">Foydalanuvchi</th>
+                        <th style="padding:.65rem 1rem;text-align:left;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;font-weight:700">Username</th>
+                        <th style="padding:.65rem 1rem;text-align:left;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;font-weight:700">Telefon</th>
+                        <th style="padding:.65rem 1rem;text-align:center;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;font-weight:700">Telegram</th>
+                        <th style="padding:.65rem 1rem;text-align:center;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;font-weight:700;width:160px">Amallar</th>
                     </tr>
                 </thead>
                 <tbody id="userList">
@@ -4706,23 +5405,23 @@
             }).join('').slice(0, 2).toUpperCase();
             var dataStr = encodeURIComponent(JSON.stringify(u));
             return '<tr style="border-bottom:1px solid rgba(255,255,255,.05);cursor:pointer;transition:background .15s" ' +
-                'onmouseover="this.style.background=\'rgba(255,107,53,.04)\'" onmouseout="this.style.background=\'transparent\'">' +
-                '<td style="padding:.85rem 1rem;text-align:center"><span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;background:rgba(255,107,53,.1);border:1px solid rgba(255,107,53,.2);border-radius:6px;font-size:.75rem;color:var(--text-secondary)">' + (page * USER_PAGE_SIZE + i + 1) + '</span></td>' +
+                'onmouseover="this.style.background=\'rgba(34,211,238,.03)\'" onmouseout="this.style.background=\'transparent\'">' +
+                '<td style="padding:.85rem 1rem;text-align:center"><span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.15);border-radius:6px;font-size:.75rem;color:var(--accent-primary);font-family:\'Space Mono\',monospace">' + (page * USER_PAGE_SIZE + i + 1) + '</span></td>' +
                 '<td style="padding:.85rem 1rem"><div style="display:flex;align-items:center;gap:.75rem">' +
                 '<div style="width:38px;height:38px;border-radius:50%;background:' + role.color + ';display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;color:#000;flex-shrink:0">' + initials + '</div>' +
                 '<div><div style="font-weight:600;color:var(--text-primary)">' + (u.fullName || '-') + '</div>' +
                 '<div style="font-size:.73rem;color:var(--text-secondary)">' + (u.email || '-') + '</div></div>' +
                 '</div></td>' +
-                '<td style="padding:.85rem 1rem"><code style="font-size:.82rem;color:var(--accent-primary);background:rgba(255,107,53,.08);padding:.2rem .5rem;border-radius:5px">@' + (u.username || '-') + '</code></td>' +
+                '<td style="padding:.85rem 1rem"><code style="font-size:.82rem;color:var(--accent-primary);background:rgba(34,211,238,.08);padding:.2rem .5rem;border-radius:5px">@' + (u.username || '-') + '</code></td>' +
                 '<td style="padding:.85rem 1rem;color:var(--text-secondary);font-size:.88rem">' + (u.phoneNumber || '-') + '</td>' +
                 '<td style="padding:.85rem 1rem;text-align:center">' +
                 (hasTg ? '<span style="padding:.3rem .7rem;border-radius:100px;background:rgba(0,136,204,.15);color:#38bdf8;border:1px solid rgba(56,189,248,.2);font-size:.75rem;font-weight:600">Ulangan</span>'
                     : '<span style="color:var(--text-secondary);font-size:.8rem">Ulanmagan</span>') +
                 '</td>' +
                 '<td style="padding:.85rem 1rem;text-align:center"><div style="display:flex;align-items:center;justify-content:center;gap:.4rem">' +
-                '<button onclick="event.stopPropagation();viewUserPage(\'' + dataStr + '\')" class="btn-edit">Korish</button>' +
+                '<button onclick="event.stopPropagation();viewUserPage(\'' + dataStr + '\')" class="btn-edit">Ko\'rish</button>' +
                 '<button onclick="event.stopPropagation();editUser(' + u.id + ')" class="btn-edit">Tahrir</button>' +
-                '<button onclick="event.stopPropagation();deleteUser(' + u.id + ',\'' + (u.fullName || '').replace(/'/g, "\\'") + '\')" class="btn-delete">Ochir</button>' +
+                '<button onclick="event.stopPropagation();deleteUser(' + u.id + ',\'' + (u.fullName || '').replace(/'/g, "\\'\'") + '\')" class="btn-delete">Ochir</button>' +
                 '</div></td>' +
                 '</tr>';
         }).join('');
@@ -4750,15 +5449,15 @@
         var cp = meta.currentPage || 0;
         var tp = meta.totalPages || 1;
         var te = meta.totalElements || 0;
-        var html = '<div style="display:flex;align-items:center;justify-content:space-between;padding:1rem 1.2rem;border-top:1px solid rgba(255,107,53,.15)">' +
-            '<div style="color:var(--text-secondary);font-size:.85rem">Jami: <strong style="color:var(--accent-primary)">' + te + '</strong> ta</div>' +
-            '<div style="display:flex;gap:.4rem">' +
-            '<button onclick="loadUsers(' + (cp - 1) + ')" ' + (cp === 0 ? 'disabled' : '') + ' style="padding:.4rem .7rem;background:rgba(58,58,58,.5);border:1px solid rgba(255,107,53,.2);border-radius:6px;color:var(--text-primary);cursor:pointer;opacity:' + (cp === 0 ? .4 : 1) + '">&#9664;</button>';
+        var html = '<div style="display:flex;align-items:center;justify-content:space-between;padding:.85rem 1rem;border-top:1px solid rgba(255,255,255,0.06)">' +
+            '<div style="color:var(--text-secondary);font-size:.8rem">Jami: <strong style="color:var(--accent-primary);font-family:\'Space Mono\',monospace">' + te + '</strong> ta</div>' +
+            '<div style="display:flex;gap:.35rem">' +
+            '<button onclick="loadUsers(' + (cp - 1) + ')" ' + (cp === 0 ? 'disabled' : '') + ' style="padding:.4rem .65rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:6px;color:var(--text-secondary);cursor:pointer;opacity:' + (cp === 0 ? .4 : 1) + ';font-size:.8rem">&#9664;</button>';
         var s = Math.max(0, cp - 2), e2 = Math.min(tp - 1, s + 4);
         for (var i = s; i <= e2; i++) {
-            html += '<button onclick="loadUsers(' + i + ')" style="padding:.4rem .7rem;background:' + (i === cp ? 'var(--accent-primary)' : 'rgba(58,58,58,.5)') + ';border:1px solid rgba(255,107,53,.2);border-radius:6px;color:' + (i === cp ? '#000' : 'var(--text-primary)') + ';font-weight:' + (i === cp ? 700 : 400) + ';cursor:pointer">' + (i + 1) + '</button>';
+            html += '<button onclick="loadUsers(' + i + ')" style="padding:.4rem .65rem;background:' + (i === cp ? 'var(--accent-primary)' : 'rgba(255,255,255,.04)') + ';border:1px solid ' + (i === cp ? 'var(--accent-primary)' : 'rgba(255,255,255,.08)') + ';border-radius:6px;color:' + (i === cp ? '#000' : 'var(--text-secondary)') + ';font-weight:' + (i === cp ? 700 : 400) + ';cursor:pointer;font-size:.8rem;min-width:30px">' + (i + 1) + '</button>';
         }
-        html += '<button onclick="loadUsers(' + (cp + 1) + ')" ' + (cp >= tp - 1 ? 'disabled' : '') + ' style="padding:.4rem .7rem;background:rgba(58,58,58,.5);border:1px solid rgba(255,107,53,.2);border-radius:6px;color:var(--text-primary);cursor:pointer;opacity:' + (cp >= tp - 1 ? .4 : 1) + '">&#9654;</button>' +
+        html += '<button onclick="loadUsers(' + (cp + 1) + ')" ' + (cp >= tp - 1 ? 'disabled' : '') + ' style="padding:.4rem .65rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:6px;color:var(--text-secondary);cursor:pointer;opacity:' + (cp >= tp - 1 ? .4 : 1) + ';font-size:.8rem">&#9654;</button>' +
             '</div></div>';
         container.innerHTML = html;
     }
@@ -8782,6 +9481,146 @@
         `;
     }
 
+    // =====================================================================
+    // PENDING ORDERS (TASDIQLASH)
+    // =====================================================================
+    function pendingPageHTML() {
+        return `
+        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:14px;overflow:hidden">
+            <table style="width:100%;border-collapse:collapse">
+                <thead><tr style="border-bottom:1px solid rgba(255,255,255,0.06)">
+                    <th style="padding:.65rem 1rem;text-align:left;color:var(--text-secondary);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700">Bog'cha</th>
+                    <th style="padding:.65rem 1rem;text-align:left;color:var(--text-secondary);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700">Mahsulotlar</th>
+                     <th style="padding:.65rem 1rem;text-align:center;color:var(--text-secondary);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700">Jami narx</th>
+                    <th style="padding:.65rem 1rem;text-align:center;color:var(--text-secondary);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700">Amallar</th>
+                </tr></thead>
+                <tbody id="pendingList"></tbody>
+            </table>
+            <div id="pendingPagination"></div>
+        </div>
+        `;
+    }
+
+    let currentPendingPage = 0;
+    async function initPendingPage(page = 0) {
+        currentPendingPage = page;
+        const tbody = document.getElementById('pendingList');
+        if (!tbody) return;
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:3rem;color:var(--text-secondary)">⏳ Yuklanmoqda...</td></tr>`;
+        try {
+            const res = await fetch(`${BASE_API}/distribution/all?page=${page}&size=10&status=PENDING_REVIEW`, {headers: getAuthHeaders()});
+            if (!res.ok) throw new Error(res.status);
+            const result = await res.json();
+            const list = result.data || [];
+            
+            // Notification badgeni yangilash
+            const meta = result.meta;
+            const badge = document.getElementById('pendingBadge');
+            if (badge) {
+                const total = meta ? meta.totalElements : list.length;
+                if (total > 0) {
+                    badge.style.display = 'inline-block';
+                    badge.textContent = total;
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
+
+            if (!list.length) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:3rem;color:var(--text-secondary)">📭 Kutilayotgan arizalar yo'q</td></tr>`;
+                document.getElementById('pendingPagination').innerHTML = '';
+                return;
+            }
+
+            tbody.innerHTML = list.map(o => `
+            <tr style="border-bottom:1px solid rgba(255,255,255,.05)">
+                <td style="padding:1rem;color:var(--text-primary);font-weight:600">${o.kindergartenName || '—'} (ID: ${o.id})</td>
+                <td style="padding:1rem;color:var(--text-secondary)">
+                     <button onclick="viewOrderDetail(${o.id})" class="btn-edit" style="font-size:.78rem">
+                        👁️ Ko'rish (${o.items ? o.items.length : '?'} ta mahsulot)
+                     </button>
+                </td>
+                <td style="padding:1rem;text-align:center;color:#4ade80;font-weight:700">
+                    ${o.totalAmount ? Number(o.totalAmount).toLocaleString('uz-UZ') + " so'm" : '—'}
+                </td>
+                <td style="padding:1rem;text-align:center">
+                    <div class="action-group">
+                        <button onclick="approvePending(${o.id})" class="cta-button" style="padding:.4rem 1rem;background:#10b981;border-color:#10b981">Tastiqlash</button>
+                        <button onclick="rejectPending(${o.id})" class="btn-delete" style="padding:.4rem 1rem">Rad etish</button>
+                    </div>
+                </td>
+            </tr>
+            `).join('');
+            
+            renderRptPagination('pendingPagination', meta, 'initPendingPage');
+        } catch (e) {
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:2rem;color:#ef4444">❌ Xato: ${e.message}</td></tr>`;
+        }
+    }
+
+    async function approvePending(id) {
+        if (!confirm('Arizani tasdiqlaysizmi? (Mahsulotlar ombordan yechiladi)')) return;
+        try {
+            const res = await fetch(`${BASE_API}/distribution/approve/${id}`, { method: 'POST', headers: getAuthHeaders() });
+            if (!res.ok) {
+                const result = await res.json().catch(() => ({}));
+                throw new Error(result.message || 'Status: ' + res.status);
+            }
+            showToast('Ariza tasdiqlandi', 'success');
+            initPendingPage(currentPendingPage);
+            updatePendingBadge();
+        } catch(e) {
+            showToast(e.message, 'error');
+        }
+    }
+
+    async function rejectPending(id) {
+        const reason = prompt("Rad etish sababini kiriting (u Mudiraga telegram bot orqali yuboriladi):");
+        if (reason === null) return;
+        if (!reason.trim()) {
+            showToast("Sabab kiritish majburiy!", "error");
+            return;
+        }
+        try {
+            const res = await fetch(`${BASE_API}/distribution/reject/${id}?reason=${encodeURIComponent(reason)}`, { method: 'POST', headers: getAuthHeaders() });
+            if (!res.ok) {
+                const result = await res.json().catch(() => ({}));
+                throw new Error(result.message || 'Status: ' + res.status);
+            }
+            showToast('Ariza rad etildi', 'success');
+            initPendingPage(currentPendingPage);
+            updatePendingBadge();
+        } catch(e) {
+            showToast(e.message, 'error');
+        }
+    }
+
+    async function updatePendingBadge() {
+        if (!requireAuth()) return;
+        try {
+            const res = await fetch(`${BASE_API}/distribution/all?page=0&size=1&status=PENDING_REVIEW`, {headers: getAuthHeaders()});
+            if (res.ok) {
+                const result = await res.json();
+                const total = result.meta ? result.meta.totalElements : 0;
+                const badge = document.getElementById('pendingBadge');
+                if (badge) {
+                    if (total > 0) {
+                        badge.style.display = 'inline-block';
+                        badge.textContent = total;
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                }
+            }
+        } catch(e) {}
+    }
+
+    // Har 30 soniyada badgeni yangilash
+    setInterval(() => {
+        if (document.getElementById('dashboard').style.display === 'flex') {
+           updatePendingBadge();
+        }
+    }, 30000);
 
     let rptAuditPage = 0;
     let rptDistPage = 0;
@@ -9112,6 +9951,841 @@
     function formatQty(num) {
         return parseFloat(Number(num).toFixed(3)).toString();
     }
+
+    // ============================================================
+    // ===== STATUS HELPERS =====
+    // ============================================================
+    function statusBg(s) {
+        return {PENDING_REVIEW:'rgba(251,191,36,0.1)',APPROVED:'rgba(34,211,238,0.1)',DELIVERED:'rgba(16,185,129,0.1)',REJECTED:'rgba(239,68,68,0.1)'}[s]||'rgba(100,116,139,0.1)';
+    }
+    function statusColor(s) {
+        return {PENDING_REVIEW:'#fbbf24',APPROVED:'var(--accent-primary)',DELIVERED:'#10b981',REJECTED:'#ef4444'}[s]||'#64748b';
+    }
+    function statusBorder(s) {
+        return {PENDING_REVIEW:'rgba(251,191,36,0.3)',APPROVED:'rgba(34,211,238,0.3)',DELIVERED:'rgba(16,185,129,0.3)',REJECTED:'rgba(239,68,68,0.3)'}[s]||'rgba(100,116,139,0.2)';
+    }
+    function statusLabel(s) {
+        return {PENDING_REVIEW:"⏳ Ko'rib chiqilmoqda",APPROVED:'✅ Tasdiqlangan',DELIVERED:'📦 Yetkazilgan',REJECTED:'❌ Rad etilgan',CANCELLED:'🚫 Bekor'}[s]||s||'—';
+    }
+
+    // ============================================================
+    // ===== MUDIRA DASHBOARD =====
+    // ============================================================
+    function loadMudiraDashboard(container) {
+        container.insertAdjacentHTML('beforeend', `
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-bottom:1.5rem">
+            <div class="stat-card">
+                <div class="stat-value" id="mudBogcha">—</div>
+                <div class="stat-label">🏫 Bog'chalarim</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="mudOrders">—</div>
+                <div class="stat-label">📝 Faol arizalar</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="mudDelivered">—</div>
+                <div class="stat-label">📦 Yetkazilgan</div>
+            </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+            <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius);padding:1.25rem">
+                <h3 style="font-size:1rem;font-weight:700;margin-bottom:1rem;color:var(--text-primary)">📦 So'nggi mahsulot ma'lumotlari</h3>
+                <div id="mudRecentSupply" style="color:var(--text-secondary);font-size:.88rem">Yuklanmoqda...</div>
+            </div>
+            <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius);padding:1.25rem">
+                <h3 style="font-size:1rem;font-weight:700;margin-bottom:1rem;color:var(--text-primary)">📝 So'nggi arizalarim</h3>
+                <div id="mudRecentOrders" style="color:var(--text-secondary);font-size:.88rem">Yuklanmoqda...</div>
+            </div>
+        </div>`);
+        loadMudiraStats();
+    }
+
+    async function loadMudiraStats() {
+        try {
+            const user = getCurrentUser();
+            let list = [];
+            if (user && user.role === 'MUDIRA') {
+                const res = await fetch(`${BASE_API}/kindergarten/${user.id}`, {headers: getAuthHeaders()});
+                if (res.ok) { const d = await res.json(); if (d.data) list = [d.data]; }
+            } else {
+                const res = await fetch(`${BASE_API}/kindergarten/get-all?page=0&size=100`, {headers: getAuthHeaders()});
+                if (res.ok) { const d = await res.json(); list = d.data || []; }
+            }
+            const el = document.getElementById('mudBogcha');
+            if (el) el.textContent = list.length;
+                const supplyEl = document.getElementById('mudRecentSupply');
+                if (supplyEl) {
+                    if (!list.length) {
+                        supplyEl.innerHTML = "<div style='text-align:center;padding:1rem'>📭 Bog'cha topilmadi</div>";
+                    } else {
+                        supplyEl.innerHTML = list.slice(0,4).map(k => `
+                        <div style="padding:.65rem 0;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;justify-content:space-between;align-items:center">
+                            <div>
+                                <div style="font-weight:600;color:var(--text-primary);font-size:.85rem">🏫 ${k.name||'—'}</div>
+                                <div style="font-size:.75rem;color:var(--text-secondary)">${k.mudirName||k.regionName||'—'}</div>
+                            </div>
+                            <span style="font-size:.75rem;background:rgba(34,211,238,0.1);color:var(--accent-primary);padding:2px 8px;border-radius:6px">${k.totalChildren||0} bola</span>
+                        </div>`).join('');
+                    }
+                }
+            }
+        } catch(e) {}
+        try {
+            const res = await fetch(`${BASE_API}/distribution/all?page=0&size=20`, {headers: getAuthHeaders()});
+            if (res.ok) {
+                const d = await res.json();
+                const list = d.data || [];
+                const ordEl = document.getElementById('mudOrders');
+                if (ordEl) ordEl.textContent = list.filter(o => ['PENDING_REVIEW','APPROVED','PREPARING'].includes(o.status)).length;
+                const delEl = document.getElementById('mudDelivered');
+                if (delEl) delEl.textContent = list.filter(o => o.status === 'SHIPPED' || o.status === 'DELIVERED').length;
+                const ordersEl = document.getElementById('mudRecentOrders');
+                if (ordersEl) {
+                    if (!list.length) {
+                        ordersEl.innerHTML = '<div style="text-align:center;padding:1rem">📭 Ariza topilmadi</div>';
+                    } else {
+                        ordersEl.innerHTML = list.slice(0,5).map(o => `
+                        <div style="padding:.65rem 0;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;justify-content:space-between;align-items:center">
+                            <div>
+                                <div style="font-weight:600;color:var(--text-primary);font-size:.85rem">${o.kindergartenName||'—'}</div>
+                                <div style="font-size:.75rem;color:var(--text-secondary)">${formatOrderDate(o.orderDate)}</div>
+                            </div>
+                            <span style="font-size:.75rem;padding:2px 8px;border-radius:6px;font-weight:600;background:${statusBg(o.status)};color:${statusColor(o.status)}">${statusLabel(o.status)}</span>
+                        </div>`).join('');
+                    }
+                }
+            }
+        } catch(e) {}
+    }
+
+    async function loadMyKindergartens(container) {
+        container.insertAdjacentHTML('beforeend', `
+        <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius);overflow:hidden">
+            <div id="myKgList"><div style="text-align:center;padding:3rem;color:var(--text-secondary)">⏳ Yuklanmoqda...</div></div>
+        </div>`);
+        try {
+            const user = getCurrentUser();
+            let list = [];
+            if (user && user.role === 'MUDIRA') {
+                const res = await fetch(`${BASE_API}/kindergarten/${user.id}`, {headers: getAuthHeaders()});
+                const result = await res.json();
+                if (result.data) list = [result.data];
+            } else {
+                const res = await fetch(`${BASE_API}/kindergarten/get-all?page=0&size=50`, {headers: getAuthHeaders()});
+                const result = await res.json();
+                list = result.data || [];
+            }
+            const el = document.getElementById('myKgList');
+            if (!el) return;
+            if (!list.length) { el.innerHTML = "<div style='text-align:center;padding:3rem;color:var(--text-secondary)'>📭 Bog'cha topilmadi</div>"; return; }
+            el.innerHTML = `<table style="width:100%;border-collapse:collapse">
+                <thead><tr style="background:rgba(255,255,255,0.04);border-bottom:1px solid rgba(255,255,255,0.07)">
+                    <th style="padding:.75rem 1rem;text-align:left;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase">#</th>
+                    <th style="padding:.75rem 1rem;text-align:left;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase">Bog'cha nomi</th>
+                    <th style="padding:.75rem 1rem;text-align:left;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase">Hudud</th>
+                    <th style="padding:.75rem 1rem;text-align:center;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase">Bolalar</th>
+                </tr></thead>
+                <tbody>${list.map((k,i) => `
+                    <tr style="border-bottom:1px solid rgba(255,255,255,0.04)" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background=''">
+                        <td style="padding:.75rem 1rem;color:var(--text-secondary);font-size:.82rem">${i+1}</td>
+                        <td style="padding:.75rem 1rem;font-weight:600;color:var(--text-primary)">🏫 ${k.name||'—'}</td>
+                        <td style="padding:.75rem 1rem;color:var(--text-secondary);font-size:.85rem">${k.regionName||'—'}</td>
+                        <td style="padding:.75rem 1rem;text-align:center"><span style="background:rgba(34,211,238,0.1);color:var(--accent-primary);padding:3px 10px;border-radius:8px;font-size:.82rem;font-weight:600">${k.totalChildren||0}</span></td>
+                    </tr>`).join('')}
+                </tbody></table>`;
+        } catch(e) {
+            const el = document.getElementById('myKgList');
+            if (el) el.innerHTML = `<div style="text-align:center;padding:3rem;color:#ef4444">❌ Xatolik: ${e.message}</div>`;
+        }
+    }
+
+    async function loadMySupplyHistory(container) {
+        container.insertAdjacentHTML('beforeend', `
+        <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius);overflow:hidden">
+            <div style="padding:1rem 1.25rem;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;gap:.75rem;flex-wrap:wrap">
+                <input type="month" id="supHistMonth" style="padding:.5rem .75rem;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:var(--text-primary);font-family:inherit;font-size:.88rem;color-scheme:dark">
+                <button onclick="loadSupplyHistoryData()" style="padding:.5rem 1.25rem;background:var(--accent-primary);color:#000;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:inherit">🔍 Filtrlash</button>
+            </div>
+            <div id="supHistList"><div style="text-align:center;padding:3rem;color:var(--text-secondary)">⏳ Yuklanmoqda...</div></div>
+        </div>`);
+        const now = new Date();
+        document.getElementById('supHistMonth').value = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+        await loadSupplyHistoryData();
+    }
+
+    async function loadSupplyHistoryData() {
+        const month = document.getElementById('supHistMonth')?.value||'';
+        const el = document.getElementById('supHistList');
+        if (!el) return;
+        el.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--text-secondary)">⏳ Yuklanmoqda...</div>';
+        try {
+            // distribution/all endpoint barcha buyurtmalarni qaytaradi
+            let url = `${BASE_API}/distribution/all?page=0&size=100`;
+            const res = await fetch(url, {headers: getAuthHeaders()});
+            const result = await res.json();
+            // Faqat SHIPPED yoki DELIVERED larni ko'rsatamiz
+            let list = (result.data || []).filter(o => ['SHIPPED','DELIVERED','PREPARING'].includes(o.status));
+            // Oy bo'yicha filtrlash (client-side, chunki backend da bu parametr yo'q)
+            if (month) {
+                list = list.filter(o => {
+                    const d = formatOrderDate(o.orderDate);
+                    return d.startsWith(month);
+                });
+            }
+            if (!list.length) { el.innerHTML = "<div style='text-align:center;padding:3rem;color:var(--text-secondary)'>📭 Ma'lumot topilmadi</div>"; return; }
+            el.innerHTML = `<table style="width:100%;border-collapse:collapse">
+                <thead><tr style="background:rgba(255,255,255,0.04)">
+                    <th style="padding:.75rem 1rem;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase;text-align:left">#</th>
+                    <th style="padding:.75rem 1rem;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase;text-align:left">Bog'cha</th>
+                    <th style="padding:.75rem 1rem;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase;text-align:center">Sana</th>
+                    <th style="padding:.75rem 1rem;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase;text-align:right">Jami summa</th>
+                    <th style="padding:.75rem 1rem;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase;text-align:center">Haydovchi</th>
+                    <th style="padding:.75rem 1rem;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase;text-align:center">Status</th>
+                </tr></thead>
+                <tbody>${list.map((o,i) => `
+                    <tr style="border-bottom:1px solid rgba(255,255,255,0.04)">
+                        <td style="padding:.65rem 1rem;color:var(--text-secondary);font-size:.8rem">${i+1}</td>
+                        <td style="padding:.65rem 1rem;font-weight:600;color:var(--text-primary)">🏫 ${o.kindergartenName||'—'}</td>
+                        <td style="padding:.65rem 1rem;text-align:center;color:var(--text-secondary);font-size:.82rem">${formatOrderDate(o.orderDate)}</td>
+                        <td style="padding:.65rem 1rem;text-align:right;font-weight:600;color:#4ade80;font-family:'Space Mono',monospace">${o.totalAmount ? Number(o.totalAmount).toLocaleString('uz-UZ')+" so'm" : '—'}</td>
+                        <td style="padding:.65rem 1rem;text-align:center;color:#fbbf24;font-size:.82rem">${o.driverName||'—'}</td>
+                        <td style="padding:.65rem 1rem;text-align:center"><span style="padding:.2rem .6rem;border-radius:6px;font-size:.75rem;font-weight:700;background:${statusBg(o.status)};color:${statusColor(o.status)}">${statusLabel(o.status)}</span></td>
+                    </tr>`).join('')}
+                </tbody></table>`;
+        } catch(e) {
+            el.innerHTML = `<div style="text-align:center;padding:3rem;color:#ef4444">❌ Xatolik: ${e.message}</div>`;
+        }
+    }
+
+    async function loadMyOrders(container) {
+        container.insertAdjacentHTML('beforeend', `
+        <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius);overflow:hidden">
+            <div style="padding:1rem 1.25rem;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;gap:.75rem;flex-wrap:wrap;align-items:center">
+                <select id="myOrderStatus" style="padding:.5rem .75rem;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:var(--text-primary);font-family:inherit;font-size:.88rem">
+                    <option value="">Barcha statuslar</option>
+                    <option value="PENDING_REVIEW">⏳ Ko'rib chiqilmoqda</option>
+                    <option value="APPROVED">✅ Tasdiqlangan</option>
+                    <option value="DELIVERED">📦 Yetkazilgan</option>
+                    <option value="REJECTED">❌ Rad etilgan</option>
+                </select>
+                <button onclick="loadMyOrdersData()" style="padding:.5rem 1.25rem;background:var(--accent-primary);color:#000;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:inherit">🔍 Filtrlash</button>
+            </div>
+            <div id="myOrdersList"><div style="text-align:center;padding:3rem;color:var(--text-secondary)">⏳ Yuklanmoqda...</div></div>
+        </div>`);
+        await loadMyOrdersData();
+    }
+
+    async function loadMyOrdersData() {
+        const status = document.getElementById('myOrderStatus')?.value||'';
+        const el = document.getElementById('myOrdersList');
+        if (!el) return;
+        el.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--text-secondary)">⏳ Yuklanmoqda...</div>';
+        try {
+            let url = `${BASE_API}/distribution/all?page=0&size=100`;
+            const res = await fetch(url, {headers: getAuthHeaders()});
+            const result = await res.json();
+            let list = result.data || [];
+            // Client-side status filtrlash
+            if (status) list = list.filter(o => o.status === status);
+            if (!list.length) { el.innerHTML = "<div style='text-align:center;padding:3rem;color:var(--text-secondary)'>📭 Ariza topilmadi</div>"; return; }
+            el.innerHTML = `<table style="width:100%;border-collapse:collapse">
+                <thead><tr style="background:rgba(255,255,255,0.04)">
+                    <th style="padding:.75rem 1rem;text-align:left;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase">#</th>
+                    <th style="padding:.75rem 1rem;text-align:left;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase">Bog'cha</th>
+                    <th style="padding:.75rem 1rem;text-align:right;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase">Summa</th>
+                    <th style="padding:.75rem 1rem;text-align:center;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase">Sana</th>
+                    <th style="padding:.75rem 1rem;text-align:center;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase">Haydovchi</th>
+                    <th style="padding:.75rem 1rem;text-align:center;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase">Status</th>
+                </tr></thead>
+                <tbody>${list.map((o,i) => `
+                    <tr style="border-bottom:1px solid rgba(255,255,255,0.04)" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background=''">
+                        <td style="padding:.65rem 1rem;color:var(--text-secondary);font-size:.8rem">${i+1}</td>
+                        <td style="padding:.65rem 1rem;font-weight:600;color:var(--text-primary)">🏫 ${o.kindergartenName||'—'}</td>
+                        <td style="padding:.65rem 1rem;text-align:right;color:#fbbf24;font-size:.82rem;font-family:'Space Mono',monospace">${o.totalAmount ? Number(o.totalAmount).toLocaleString('uz-UZ')+" so'm" : '—'}</td>
+                        <td style="padding:.65rem 1rem;text-align:center;color:var(--text-secondary);font-size:.82rem">${formatOrderDate(o.orderDate)}</td>
+                        <td style="padding:.65rem 1rem;text-align:center;color:#22d3ee;font-size:.82rem">${o.driverName||'—'}</td>
+                        <td style="padding:.65rem 1rem;text-align:center"><span style="padding:.25rem .7rem;border-radius:8px;font-size:.75rem;font-weight:700;background:${statusBg(o.status)};color:${statusColor(o.status)}">${statusLabel(o.status)}</span></td>
+                    </tr>`).join('')}
+                </tbody></table>`;
+        } catch(e) {
+            el.innerHTML = `<div style="text-align:center;padding:3rem;color:#ef4444">❌ Xatolik: ${e.message}</div>`;
+        }
+    }
+
+    // ============================================================
+    // ===== DRIVER DASHBOARD =====
+    // ============================================================
+    function loadDriverDashboard(container) {
+        container.insertAdjacentHTML('beforeend', `
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-bottom:1.5rem">
+            <div class="stat-card"><div class="stat-value" id="drvTotal">—</div><div class="stat-label">🚗 Jami yetkazishlar</div></div>
+            <div class="stat-card"><div class="stat-value" id="drvMonth">—</div><div class="stat-label">📅 Bu oy</div></div>
+            <div class="stat-card"><div class="stat-value" id="drvPending">—</div><div class="stat-label">⏳ Faol (tasdiqlangan)</div></div>
+        </div>
+        <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius);padding:1.25rem">
+            <h3 style="font-size:1rem;font-weight:700;margin-bottom:1rem;color:var(--text-primary)">🚗 So'nggi yetkazishlar</h3>
+            <div id="drvRecentDeliveries" style="color:var(--text-secondary);font-size:.88rem">Yuklanmoqda...</div>
+        </div>`);
+        loadDriverStats();
+    }
+
+    async function loadDriverStats() {
+        try {
+            const res = await fetch(`${BASE_API}/distribution/all?page=0&size=100`, {headers: getAuthHeaders()});
+            if (res.ok) {
+                const d = await res.json();
+                const list = d.data || [];
+                const el = id => document.getElementById(id);
+                if (el('drvTotal')) el('drvTotal').textContent = list.length;
+                if (el('drvPending')) el('drvPending').textContent = list.filter(o => o.status === 'PREPARING' || o.status === 'APPROVED').length;
+                const now = new Date();
+                const ym = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+                if (el('drvMonth')) el('drvMonth').textContent = list.filter(o => {
+                    const d = formatOrderDate(o.orderDate); return d.startsWith(ym);
+                }).length;
+                const recentEl = el('drvRecentDeliveries');
+                if (recentEl) {
+                    const recent = list.slice(0,6);
+                    recentEl.innerHTML = !recent.length
+                        ? '<div style="text-align:center;padding:1.5rem">📭 Yetkazish topilmadi</div>'
+                        : recent.map(o => `
+                        <div style="padding:.65rem 0;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;justify-content:space-between;align-items:center">
+                            <div>
+                                <div style="font-weight:600;color:var(--text-primary);font-size:.85rem">🏫 ${o.kindergartenName||'—'}</div>
+                                <div style="font-size:.75rem;color:var(--text-secondary)">${formatOrderDate(o.orderDate)}</div>
+                            </div>
+                            <span style="font-size:.75rem;padding:3px 10px;border-radius:8px;font-weight:600;background:${statusBg(o.status)};color:${statusColor(o.status)}">${statusLabel(o.status)}</span>
+                        </div>`).join('');
+                }
+            }
+        } catch(e) {}
+    }
+
+    async function loadMyDeliveries(container) {
+        container.insertAdjacentHTML('beforeend', `
+        <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius);overflow:hidden">
+            <div style="padding:1rem 1.25rem;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;gap:.75rem;flex-wrap:wrap;align-items:center">
+                <input type="month" id="drvDelivMonth" style="padding:.5rem .75rem;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:var(--text-primary);font-family:inherit;font-size:.88rem;color-scheme:dark">
+                <select id="drvDelivStatus" style="padding:.5rem .75rem;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:var(--text-primary);font-family:inherit;font-size:.88rem">
+                    <option value="">Barcha statuslar</option>
+                    <option value="APPROVED">✅ Tasdiqlangan</option>
+                    <option value="DELIVERED">📦 Yetkazilgan</option>
+                </select>
+                <button onclick="loadDeliveriesData()" style="padding:.5rem 1.25rem;background:var(--accent-primary);color:#000;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:inherit">🔍 Filtrlash</button>
+            </div>
+            <div id="drvDelivList"><div style="text-align:center;padding:3rem;color:var(--text-secondary)">⏳ Yuklanmoqda...</div></div>
+        </div>`);
+        const now = new Date();
+        const ym = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+        document.getElementById('drvDelivMonth').value = ym;
+        await loadDeliveriesData();
+    }
+
+    async function loadDeliveriesData() {
+        const month = document.getElementById('drvDelivMonth')?.value||'';
+        const status = document.getElementById('drvDelivStatus')?.value||'';
+        const el = document.getElementById('drvDelivList');
+        if (!el) return;
+        el.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--text-secondary)">⏳ Yuklanmoqda...</div>';
+        try {
+            let url = `${BASE_API}/distribution/all?page=0&size=100`;
+            const res = await fetch(url, {headers: getAuthHeaders()});
+            const result = await res.json();
+            let list = result.data || [];
+            // Client-side filtrlash
+            if (status) list = list.filter(o => o.status === status);
+            if (month) list = list.filter(o => formatOrderDate(o.orderDate).startsWith(month));
+            if (!list.length) { el.innerHTML = "<div style='text-align:center;padding:3rem;color:var(--text-secondary)'>📭 Ma'lumot topilmadi</div>"; return; }
+            el.innerHTML = `<table style="width:100%;border-collapse:collapse">
+                <thead><tr style="background:rgba(255,255,255,0.04)">
+                    <th style="padding:.75rem 1rem;text-align:left;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase">#</th>
+                    <th style="padding:.75rem 1rem;text-align:left;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase">Bog'cha</th>
+                    <th style="padding:.75rem 1rem;text-align:right;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase">Summa</th>
+                    <th style="padding:.75rem 1rem;text-align:center;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase">Sana</th>
+                    <th style="padding:.75rem 1rem;text-align:center;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase">Status</th>
+                </tr></thead>
+                <tbody>${list.map((o,i) => `
+                    <tr style="border-bottom:1px solid rgba(255,255,255,0.04)" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background=''">
+                        <td style="padding:.65rem 1rem;color:var(--text-secondary);font-size:.8rem">${i+1}</td>
+                        <td style="padding:.65rem 1rem"><div style="font-weight:600;color:var(--text-primary)">🏫 ${o.kindergartenName||'—'}</div></td>
+                        <td style="padding:.65rem 1rem;text-align:right;color:#fbbf24;font-size:.82rem;font-family:'Space Mono',monospace">${o.totalAmount ? Number(o.totalAmount).toLocaleString('uz-UZ')+" so'm" : '—'}</td>
+                        <td style="padding:.65rem 1rem;text-align:center;color:var(--text-secondary);font-size:.82rem">${formatOrderDate(o.orderDate)}</td>
+                        <td style="padding:.65rem 1rem;text-align:center"><span style="padding:.25rem .7rem;border-radius:8px;font-size:.75rem;font-weight:700;background:${statusBg(o.status)};color:${statusColor(o.status)}">${statusLabel(o.status)}</span></td>
+                    </tr>`).join('')}
+                </tbody></table>`;
+        } catch(e) {
+            el.innerHTML = `<div style="text-align:center;padding:3rem;color:#ef4444">❌ Xatolik: ${e.message}</div>`;
+        }
+    }
+
+    async function loadDriverReports(container) {
+        container.insertAdjacentHTML('beforeend', `
+        <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius);padding:1.5rem">
+            <h3 style="font-size:1rem;font-weight:700;margin-bottom:1.25rem">📊 Oylik hisobot</h3>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem" id="drvReportCards">
+                <div style="text-align:center;color:var(--text-secondary)">⏳ Yuklanmoqda...</div>
+            </div>
+        </div>`);
+        try {
+            const res = await fetch(`${BASE_API}/distribution/all?page=0&size=100`, {headers: getAuthHeaders()});
+            if (res.ok) {
+                const d = await res.json();
+                const list = d.data || [];
+                const shipped = list.filter(o => ['SHIPPED','DELIVERED'].includes(o.status));
+                const now = new Date();
+                const ym = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+                const thisMonth = shipped.filter(o => formatOrderDate(o.orderDate).startsWith(ym)).length;
+                const el = document.getElementById('drvReportCards');
+                if (el) el.innerHTML = `
+                    <div style="background:rgba(34,211,238,0.06);border:1px solid rgba(34,211,238,0.15);border-radius:12px;padding:1.5rem;text-align:center">
+                        <div style="font-size:2rem;font-weight:800;color:var(--accent-primary);font-family:'Space Mono',monospace">${shipped.length}</div>
+                        <div style="color:var(--text-secondary);font-size:.82rem;margin-top:.35rem">Jami yetkazilgan</div>
+                    </div>
+                    <div style="background:rgba(168,85,247,0.06);border:1px solid rgba(168,85,247,0.15);border-radius:12px;padding:1.5rem;text-align:center">
+                        <div style="font-size:2rem;font-weight:800;color:#a855f7;font-family:'Space Mono',monospace">${thisMonth}</div>
+                        <div style="color:var(--text-secondary);font-size:.82rem;margin-top:.35rem">Bu oy</div>
+                    </div>
+                    <div style="background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.15);border-radius:12px;padding:1.5rem;text-align:center">
+                        <div style="font-size:2rem;font-weight:800;color:#10b981;font-family:'Space Mono',monospace">${new Set(shipped.map(o=>o.kindergartenName)).size}</div>
+                        <div style="color:var(--text-secondary);font-size:.82rem;margin-top:.35rem">Bog'chalar</div>
+                    </div>`;
+            }
+        } catch(e) {}
+    }
+
+    // orderDate Date tipini string ga aylantirish
+    function formatOrderDate(dateVal) {
+        if (!dateVal) return '—';
+        // Java Date JSON da milliseconds (number) yoki ISO string bo'lishi mumkin
+        try {
+            const d = new Date(dateVal);
+            if (isNaN(d.getTime())) return String(dateVal);
+            return d.toISOString().slice(0, 10);
+        } catch(e) { return String(dateVal); }
+    }
+
+    // ============================================================
+    // ===== MUDIRA: ARIZA BERISH SAHIFASI =====
+    // ============================================================
+    async function loadMyApplyPage(container) {
+        container.insertAdjacentHTML('beforeend', `
+        <style>
+            .apply-grid { display:grid; grid-template-columns:1fr 1.6fr; gap:1.25rem; }
+            @media(max-width:900px){ .apply-grid { grid-template-columns:1fr; } }
+            .apply-card { background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius);padding:1.5rem; }
+            .apply-label { font-size:.72rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.45rem;display:block; }
+            .apply-select, .apply-input {
+                width:100%;padding:.65rem .9rem;background:rgba(255,255,255,0.05);
+                border:1px solid rgba(255,255,255,0.1);border-radius:10px;
+                color:var(--text-primary);font-family:inherit;font-size:.9rem;
+                transition:border .2s;box-sizing:border-box;
+            }
+            .apply-select option { background: #1f1f23; color: #fff; }
+            .apply-select:focus, .apply-input:focus { outline:none; border-color:var(--accent-primary); }
+            .apply-info-box {
+                background:rgba(34,211,238,0.06);border:1px solid rgba(34,211,238,0.15);
+                border-radius:10px;padding:1rem;margin-top:1rem;
+                display:grid;grid-template-columns:1fr 1fr;gap:.5rem;
+            }
+            .apply-info-item { font-size:.82rem; }
+            .apply-info-item span { color:var(--text-secondary); }
+            .apply-info-item strong { color:var(--accent-primary); }
+            .apply-items-table { width:100%;border-collapse:collapse;margin-top:1rem; }
+            .apply-items-table th { padding:.6rem .75rem;text-align:left;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,0.07); }
+            .apply-items-table td { padding:.6rem .75rem;border-bottom:1px solid rgba(255,255,255,0.04); }
+            .apply-add-row { display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:.5rem;align-items:end;margin-top:.75rem; }
+            .apply-submit-btn {
+                width:100%;padding:.85rem;margin-top:1.25rem;
+                background:linear-gradient(135deg,var(--accent-primary),#0ea5e9);
+                border:none;border-radius:12px;color:#000;font-weight:800;
+                font-size:1rem;cursor:pointer;font-family:inherit;transition:all .2s;
+            }
+            .apply-submit-btn:hover { transform:translateY(-1px);box-shadow:0 8px 24px rgba(34,211,238,0.3); }
+            .apply-submit-btn:disabled { opacity:.5;cursor:not-allowed;transform:none; }
+            .apply-remove-btn { padding:.5rem .7rem;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:8px;color:#ef4444;cursor:pointer;font-size:.85rem; }
+        </style>
+        <div class="apply-grid">
+            <div class="apply-card">
+                <h3 style="font-size:1rem;font-weight:700;margin-bottom:1.25rem;color:var(--text-primary)">📩 Yangi ariza</h3>
+                <div style="display:flex;flex-direction:column;gap:.85rem">
+                    <div><label class="apply-label">Bog'cha *</label>
+                        <select class="apply-select" id="applyKg" onchange="applyKgChanged()"><option value="">— Bog'cha tanlang —</option></select>
+                    </div>
+                    <div style="display:none"><label class="apply-label">Ombor *</label>
+                        <select class="apply-select" id="applyWarehouse"><option value="">— Ombor tanlang —</option></select>
+                    </div>
+                    <div><label class="apply-label">Oy *</label>
+                        <input type="month" class="apply-input" id="applyMonth" style="color-scheme:dark">
+                    </div>
+                    <div id="applyInfoBox" style="display:none" class="apply-info-box">
+                        <div class="apply-info-item"><span>Ish kunlari:</span> <strong id="applyTotWD">—</strong></div>
+                        <div class="apply-info-item"><span>Berilgan kun:</span> <strong id="applySupWD">—</strong></div>
+                        <div class="apply-info-item"><span>Qolgan kunlar:</span> <strong id="applyRemWD">—</strong></div>
+                        <div class="apply-info-item"><span>Zaxira:</span> <strong id="applyStock">—</strong></div>
+                    </div>
+                </div>
+                <div style="margin-top:1.25rem">
+                    <h4 style="font-size:.88rem;font-weight:700;margin-bottom:.75rem;color:var(--text-secondary)">📦 Mahsulot qo'shish</h4>
+                    <div class="apply-add-row">
+                        <div><label class="apply-label">Mahsulot</label>
+                            <select class="apply-select" id="applyProduct" onchange="applyProductChanged()"><option value="">— Mahsulot —</option></select>
+                        </div>
+                        <div><label class="apply-label">Kun soni</label>
+                            <input type="number" class="apply-input" id="applyDays" min="1" max="31" placeholder="0">
+                        </div>
+                        <div><label class="apply-label">Miqdor (kg)</label>
+                            <input type="number" class="apply-input" id="applyQty" min="0.001" step="0.001" placeholder="0.000">
+                        </div>
+                        <div><label class="apply-label">&nbsp;</label>
+                            <button onclick="applyAddItem()" style="padding:.65rem .9rem;background:var(--accent-primary);border:none;border-radius:10px;color:#000;font-weight:700;cursor:pointer;font-size:1rem">+</button>
+                        </div>
+                    </div>
+                </div>
+                <button class="apply-submit-btn" id="applySubmitBtn" onclick="applySubmit()">📤 Ariza yuborish</button>
+            </div>
+            <div class="apply-card">
+                <h3 style="font-size:1rem;font-weight:700;margin-bottom:.25rem;color:var(--text-primary)">🗒️ Ariza tarkibi</h3>
+                <p style="font-size:.8rem;color:var(--text-secondary);margin-bottom:1rem">Quyidagi mahsulotlar arizaga qo'shiladi</p>
+                <div id="applyItemsList"><div style="text-align:center;padding:3rem;color:var(--text-secondary);font-size:.88rem">ℹ️ Hali mahsulot qo'shilmagan</div></div>
+                <div id="applyTotalBox" style="display:none;margin-top:1rem;padding:.85rem 1rem;background:rgba(34,211,238,0.06);border:1px solid rgba(34,211,238,0.15);border-radius:10px">
+                    <div style="display:flex;justify-content:space-between;align-items:center">
+                        <span style="color:var(--text-secondary);font-size:.88rem">Jami mahsulotlar:</span>
+                        <strong style="color:var(--accent-primary);font-size:1.1rem" id="applyItemCount">0 ta</strong>
+                    </div>
+                </div>
+            </div>
+        </div>`);
+
+        const now = new Date();
+        document.getElementById('applyMonth').value = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+        window._applyItems = [];
+        await Promise.all([applyLoadKindergartens(), applyLoadWarehouses(), applyLoadProducts()]);
+    }
+
+    async function applyLoadKindergartens() {
+        try {
+            const role = getRole();
+            const user = getCurrentUser();
+            let list = [];
+            if (role === 'MUDIRA' && user && user.id) {
+                const res = await fetch(`${BASE_API}/kindergarten/${user.id}`, {headers: getAuthHeaders()});
+                const d = await res.json();
+                if (d.data) list = [d.data];
+            } else {
+                const res = await fetch(`${BASE_API}/kindergarten/get-all?page=0&size=100`, {headers: getAuthHeaders()});
+                const d = await res.json();
+                list = d.data || [];
+            }
+            const sel = document.getElementById('applyKg'); if (!sel) return;
+            sel.innerHTML = '<option value="">— Bog\\'cha tanlang —</option>';
+            list.forEach(k => { const o=document.createElement('option'); o.value=k.id; o.textContent=k.name; sel.appendChild(o); });
+            if (list.length === 1) {
+                sel.value = list[0].id;
+                applyKgChanged();
+            }
+        } catch(e) {}
+    }
+    async function applyLoadWarehouses() {
+        try {
+            const res = await fetch(`${BASE_API}/warehouse/get-all?page=0&size=100`, {headers: getAuthHeaders()});
+            const d = await res.json();
+            const sel = document.getElementById('applyWarehouse'); if (!sel) return;
+            const list = d.data || [];
+            list.forEach(w => { const o=document.createElement('option'); o.value=w.id; o.textContent=w.name; sel.appendChild(o); });
+            if (list.length > 0) {
+                sel.value = list[0].id;
+            }
+        } catch(e) {}
+    }
+    async function applyLoadProducts() {
+        try {
+            const res = await fetch(`${BASE_API}/product/get-all?page=0&size=200`, {headers: getAuthHeaders()});
+            const d = await res.json();
+            const sel = document.getElementById('applyProduct'); if (!sel) return;
+            window._applyProducts = d.data||[];
+            (d.data||[]).forEach(p => { const o=document.createElement('option'); o.value=p.id; o.textContent=p.name; sel.appendChild(o); });
+        } catch(e) {}
+    }
+
+    function applyKgChanged() { applyFetchInfo(); }
+    function applyProductChanged() { applyFetchInfo(); }
+
+    async function applyFetchInfo() {
+        const kgId = document.getElementById('applyKg')?.value;
+        const prodId = document.getElementById('applyProduct')?.value;
+        const whId = document.getElementById('applyWarehouse')?.value;
+        const month = document.getElementById('applyMonth')?.value;
+        if (!kgId||!prodId||!whId||!month) return;
+        try {
+            const res = await fetch(`${BASE_API}/distribution/info`, {
+                method:'POST', headers:{...getAuthHeaders(),'Content-Type':'application/json'},
+                body: JSON.stringify({kindergartenId:Number(kgId),productId:Number(prodId),warehouseId:Number(whId),yearMonth:month})
+            });
+            if (!res.ok) return;
+            const d = await res.json();
+            const info = d.data||{};
+            document.getElementById('applyInfoBox').style.display = 'grid';
+            document.getElementById('applyTotWD').textContent = info.totalWorkingDays??'—';
+            document.getElementById('applySupWD').textContent = info.suppliedWorkingDays??'—';
+            document.getElementById('applyRemWD').textContent = info.remainingWorkingDays??'—';
+            document.getElementById('applyStock').textContent = info.availableProduct!=null ? Number(info.availableProduct).toFixed(2)+' kg' : '—';
+            if (info.recommendedQuantity) document.getElementById('applyQty').value = Number(info.recommendedQuantity).toFixed(3);
+            if (info.remainingWorkingDays) document.getElementById('applyDays').value = info.remainingWorkingDays;
+        } catch(e) {}
+    }
+
+    function applyAddItem() {
+        const kgId = document.getElementById('applyKg')?.value;
+        const whId = document.getElementById('applyWarehouse')?.value;
+        const prodSel = document.getElementById('applyProduct');
+        const prodId = prodSel?.value;
+        const prodName = prodSel?.options[prodSel.selectedIndex]?.text||'—';
+        const days = parseInt(document.getElementById('applyDays')?.value);
+        const qty = parseFloat(document.getElementById('applyQty')?.value);
+        if (!kgId) { showToast("Bog'chani tanlang!", 'error'); return; }
+        if (!whId) { showToast('Ombor tanlang!', 'error'); return; }
+        if (!prodId) { showToast('Mahsulot tanlang!', 'error'); return; }
+        if (!days||days<1) { showToast('Kun sonini kiriting!', 'error'); return; }
+        if (!qty||qty<=0) { showToast('Miqdorni kiriting!', 'error'); return; }
+        if ((window._applyItems||[]).find(i => i.productId===Number(prodId))) { showToast("Bu mahsulot allaqachon qo'shilgan!", 'error'); return; }
+        window._applyItems.push({productId:Number(prodId), productName:prodName, days, quantity:qty});
+        applyRenderItems();
+        document.getElementById('applyDays').value='';
+        document.getElementById('applyQty').value='';
+        document.getElementById('applyInfoBox').style.display='none';
+        document.getElementById('applyProduct').value='';
+    }
+
+    function applyRemoveItem(idx) { window._applyItems.splice(idx,1); applyRenderItems(); }
+
+    function applyRenderItems() {
+        const el = document.getElementById('applyItemsList');
+        const totalBox = document.getElementById('applyTotalBox');
+        const countEl = document.getElementById('applyItemCount');
+        if (!el) return;
+        if (!window._applyItems?.length) {
+            el.innerHTML = "<div style='text-align:center;padding:3rem;color:var(--text-secondary);font-size:.88rem'>ℹ️ Hali mahsulot qo'shilmagan</div>";
+            if (totalBox) totalBox.style.display='none'; return;
+        }
+        el.innerHTML = `<table class="apply-items-table">
+            <thead><tr><th>#</th><th>Mahsulot</th><th style="text-align:center">Kun</th><th style="text-align:right">Miqdor</th><th></th></tr></thead>
+            <tbody>${window._applyItems.map((it,i) => `<tr>
+                <td style="color:var(--text-secondary)">${i+1}</td>
+                <td style="font-weight:600;color:var(--text-primary)">${it.productName}</td>
+                <td style="text-align:center"><span style="background:rgba(34,211,238,0.1);color:var(--accent-primary);padding:2px 8px;border-radius:6px;font-size:.8rem">${it.days} kun</span></td>
+                <td style="text-align:right;font-family:'Space Mono',monospace;color:#4ade80;font-weight:600">${parseFloat(it.quantity).toFixed(3)} kg</td>
+                <td><button class="apply-remove-btn" onclick="applyRemoveItem(${i})">✕</button></td>
+            </tr>`).join('')}</tbody></table>`;
+        if (totalBox) totalBox.style.display='block';
+        if (countEl) countEl.textContent = window._applyItems.length+' ta';
+    }
+
+    async function applySubmit() {
+        const kgId=document.getElementById('applyKg')?.value;
+        const whId=document.getElementById('applyWarehouse')?.value;
+        const month=document.getElementById('applyMonth')?.value;
+        if (!kgId) { showToast("Bog'chani tanlang!",'error'); return; }
+        if (!whId) { showToast('Omborni tanlang!','error'); return; }
+        if (!month) { showToast('Oyni tanlang!','error'); return; }
+        if (!window._applyItems?.length) { showToast("Kamida bir mahsulot qo'shing!",'error'); return; }
+        const btn=document.getElementById('applySubmitBtn');
+        btn.disabled=true; btn.textContent='⏳ Yuborilmoqda...';
+        try {
+            const res = await fetch(`${BASE_API}/distribution/create`, {
+                method:'POST', headers:{...getAuthHeaders(),'Content-Type':'application/json'},
+                body: JSON.stringify({
+                    kindergartenId:Number(kgId), warehouseId:Number(whId), yearMonth:month,
+                    items: window._applyItems.map(it=>({productId:it.productId, days:it.days, quantity:it.quantity}))
+                })
+            });
+            const d = await res.json();
+            if (res.ok && d.success!==false) {
+                showToast('✅ Ariza muvaffaqiyatli yuborildi!','success');
+                window._applyItems=[];
+                applyRenderItems();
+                document.getElementById('applyKg').value='';
+                document.getElementById('applyWarehouse').value='';
+                document.getElementById('applyInfoBox').style.display='none';
+            } else { showToast(d.message||'Xatolik yuz berdi!','error'); }
+        } catch(e) { showToast('Server xatosi: '+e.message,'error'); }
+        finally { btn.disabled=false; btn.textContent='📤 Ariza yuborish'; }
+    }
+
+    // ============================================================
+    // ===== MANAGER/ADMIN: BARCHA ARIZALAR =====
+    // ============================================================
+    async function loadAllOrdersPage(container) {
+        container.insertAdjacentHTML('beforeend', `
+        <style>
+            .ariz-badge { display:inline-flex;align-items:center;justify-content:center;padding:.25rem .7rem;border-radius:8px;font-size:.75rem;font-weight:700; }
+            .ariz-action-btn { padding:.4rem .85rem;border-radius:8px;font-size:.8rem;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .15s; }
+            .ariz-approve-btn { background:rgba(16,185,129,0.12);color:#10b981;border:1px solid rgba(16,185,129,0.3); }
+            .ariz-approve-btn:hover { background:rgba(16,185,129,0.22); }
+            .ariz-reject-btn { background:rgba(239,68,68,0.1);color:#ef4444;border:1px solid rgba(239,68,68,0.25); }
+            .ariz-reject-btn:hover { background:rgba(239,68,68,0.18); }
+            .ariz-detail-btn { background:rgba(34,211,238,0.08);color:var(--accent-primary);border:1px solid rgba(34,211,238,0.2); }
+        </style>
+        <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius);overflow:hidden">
+            <div style="display:flex;gap:.65rem;flex-wrap:wrap;align-items:center;padding:1rem 1.25rem;border-bottom:1px solid rgba(255,255,255,0.06)">
+                <select id="arizStatus" style="padding:.5rem .75rem;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:var(--text-primary);font-family:inherit;font-size:.88rem">
+                    <option value="">Barcha statuslar</option>
+                    <option value="PENDING_REVIEW">⏳ Ko'rib chiqilmoqda</option>
+                    <option value="PREPARING">🔄 Tayyorlanmoqda</option>
+                    <option value="SHIPPED">🚗 Yo'lda</option>
+                    <option value="DELIVERED">📦 Yetkazilgan</option>
+                    <option value="REJECTED">❌ Rad etilgan</option>
+                </select>
+                <button onclick="allOrdersLoad()" style="padding:.5rem 1.1rem;background:var(--accent-primary);color:#000;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:inherit">🔍 Filtrlash</button>
+                <div style="margin-left:auto;color:var(--text-secondary);font-size:.82rem" id="arizCount"></div>
+            </div>
+            <div id="arizList"><div style="text-align:center;padding:3rem;color:var(--text-secondary)">⏳ Yuklanmoqda...</div></div>
+        </div>
+        <div id="arizDetailModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9000;align-items:center;justify-content:center">
+            <div style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:var(--radius);width:90%;max-width:620px;max-height:85vh;overflow-y:auto;padding:1.5rem;position:relative">
+                <button onclick="closeArizDetail()" style="position:absolute;top:.85rem;right:.85rem;background:rgba(255,255,255,0.06);border:none;color:var(--text-secondary);font-size:1.1rem;cursor:pointer;padding:.3rem .6rem;border-radius:6px">✕</button>
+                <h3 style="font-size:1rem;font-weight:700;margin-bottom:1.25rem;color:var(--text-primary)" id="arizDetailTitle">Ariza tafsiloti</h3>
+                <div id="arizDetailContent"></div>
+            </div>
+        </div>`);
+        await allOrdersLoad();
+    }
+
+    async function allOrdersLoad() {
+        const status = document.getElementById('arizStatus')?.value||'';
+        const el = document.getElementById('arizList');
+        const countEl = document.getElementById('arizCount');
+        if (!el) return;
+        el.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--text-secondary)">⏳ Yuklanmoqda...</div>';
+        try {
+            const res = await fetch(`${BASE_API}/distribution/all?page=0&size=200`, {headers: getAuthHeaders()});
+            const result = await res.json();
+            let list = result.data||[];
+            if (status) list = list.filter(o => o.status===status);
+            if (countEl) countEl.textContent = `Jami: ${list.length} ta ariza`;
+            if (!list.length) {
+                el.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--text-secondary)">📭 Ariza topilmadi</div>'; return;
+            }
+            const role = getRole();
+            el.innerHTML = `<table style="width:100%;border-collapse:collapse">
+                <thead><tr style="background:rgba(255,255,255,0.04);border-bottom:1px solid rgba(255,255,255,0.07)">
+                    <th style="padding:.75rem 1rem;text-align:left;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase">#</th>
+                    <th style="padding:.75rem 1rem;text-align:left;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase">Bog'cha</th>
+                    <th style="padding:.75rem 1rem;text-align:right;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase">Summa</th>
+                    <th style="padding:.75rem 1rem;text-align:center;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase">Sana</th>
+                    <th style="padding:.75rem 1rem;text-align:center;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase">Haydovchi</th>
+                    <th style="padding:.75rem 1rem;text-align:center;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase">Status</th>
+                    <th style="padding:.75rem 1rem;text-align:center;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase">Amal</th>
+                </tr></thead>
+                <tbody>${list.map((o,i) => `
+                    <tr style="border-bottom:1px solid rgba(255,255,255,0.04)" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background=''">
+                        <td style="padding:.7rem 1rem;color:var(--text-secondary);font-size:.8rem">${i+1}</td>
+                        <td style="padding:.7rem 1rem"><div style="font-weight:600;color:var(--text-primary);font-size:.88rem">🏫 ${o.kindergartenName||'—'}</div></td>
+                        <td style="padding:.7rem 1rem;text-align:right;color:#fbbf24;font-size:.82rem;font-family:'Space Mono',monospace">${o.totalAmount ? Number(o.totalAmount).toLocaleString('uz-UZ')+" so'm" : '—'}</td>
+                        <td style="padding:.7rem 1rem;text-align:center;color:var(--text-secondary);font-size:.82rem">${formatOrderDate(o.orderDate)}</td>
+                        <td style="padding:.7rem 1rem;text-align:center;color:#22d3ee;font-size:.82rem">${o.driverName||'—'}</td>
+                        <td style="padding:.7rem 1rem;text-align:center"><span class="ariz-badge" style="background:${statusBg(o.status)};color:${statusColor(o.status)}">${statusLabel(o.status)}</span></td>
+                        <td style="padding:.7rem 1rem;text-align:center">
+                            <div style="display:flex;gap:.4rem;justify-content:center;flex-wrap:wrap">
+                                <button class="ariz-action-btn ariz-detail-btn" onclick="openArizDetail(${o.id})">👁 Ko'rish</button>
+                                ${o.status==='PENDING_REVIEW'&&(role==='ADMIN'||role==='MANAGER') ? `
+                                    <button class="ariz-action-btn ariz-approve-btn" onclick="arizApprove(${o.id})">✅</button>
+                                    <button class="ariz-action-btn ariz-reject-btn" onclick="arizReject(${o.id})">❌</button>
+                                ` : ''}
+                            </div>
+                        </td>
+                    </tr>`).join('')}
+                </tbody></table>`;
+        } catch(e) {
+            el.innerHTML = `<div style="text-align:center;padding:3rem;color:#ef4444">❌ Xatolik: ${e.message}</div>`;
+        }
+    }
+
+    async function openArizDetail(orderId) {
+        const modal = document.getElementById('arizDetailModal');
+        const content = document.getElementById('arizDetailContent');
+        const title = document.getElementById('arizDetailTitle');
+        if (!modal||!content) return;
+        modal.style.display = 'flex';
+        content.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text-secondary)">⏳ Yuklanmoqda...</div>';
+        try {
+            const res = await fetch(`${BASE_API}/distribution/${orderId}`, {headers: getAuthHeaders()});
+            const d = await res.json();
+            const order = d.data||{};
+            if (title) title.textContent = `Ariza #${order.id||orderId} — ${order.kindergartenName||''}`;
+            const items = order.items||[];
+            content.innerHTML = `
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1.25rem">
+                <div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:.85rem">
+                    <div style="font-size:.72rem;color:var(--text-secondary);margin-bottom:.35rem">Status</div>
+                    <span style="padding:.3rem .8rem;border-radius:8px;font-weight:700;font-size:.82rem;background:${statusBg(order.status)};color:${statusColor(order.status)}">${statusLabel(order.status)}</span>
+                </div>
+                <div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:.85rem">
+                    <div style="font-size:.72rem;color:var(--text-secondary);margin-bottom:.35rem">Sana</div>
+                    <div style="font-weight:600;color:var(--text-primary)">${formatOrderDate(order.orderDate)}</div>
+                </div>
+                <div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:.85rem">
+                    <div style="font-size:.72rem;color:var(--text-secondary);margin-bottom:.35rem">Jami summa</div>
+                    <div style="font-weight:700;color:#fbbf24">${order.totalAmount ? Number(order.totalAmount).toLocaleString('uz-UZ')+" so'm" : '—'}</div>
+                </div>
+                <div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:.85rem">
+                    <div style="font-size:.72rem;color:var(--text-secondary);margin-bottom:.35rem">Haydovchi</div>
+                    <div style="font-weight:600;color:#22d3ee">${order.driverName||'—'}</div>
+                </div>
+            </div>
+            <h4 style="font-size:.88rem;font-weight:700;margin-bottom:.75rem;color:var(--text-secondary)">📦 Mahsulotlar</h4>
+            ${items.length ? `<table style="width:100%;border-collapse:collapse">
+                <thead><tr style="background:rgba(255,255,255,0.04)">
+                    <th style="padding:.6rem .75rem;text-align:left;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase">Mahsulot</th>
+                    <th style="padding:.6rem .75rem;text-align:center;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase">Ombor</th>
+                    <th style="padding:.6rem .75rem;text-align:center;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase">Kun</th>
+                    <th style="padding:.6rem .75rem;text-align:right;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase">Miqdor</th>
+                    <th style="padding:.6rem .75rem;text-align:right;color:var(--text-secondary);font-size:.7rem;text-transform:uppercase">Tavsiya</th>
+                </tr></thead>
+                <tbody>${items.map(it => `<tr style="border-bottom:1px solid rgba(255,255,255,0.04)">
+                    <td style="padding:.6rem .75rem;font-weight:600;color:var(--text-primary)">${it.productName||'—'}</td>
+                    <td style="padding:.6rem .75rem;text-align:center;color:var(--text-secondary);font-size:.82rem">${it.warehouseName||'—'}</td>
+                    <td style="padding:.6rem .75rem;text-align:center"><span style="background:rgba(34,211,238,0.1);color:var(--accent-primary);padding:2px 8px;border-radius:6px;font-size:.78rem">${it.days||0} kun</span></td>
+                    <td style="padding:.6rem .75rem;text-align:right;font-weight:700;color:#4ade80;font-family:'Space Mono',monospace">${it.quantity ? Number(it.quantity).toFixed(3) : '—'} ${it.unit||''}</td>
+                    <td style="padding:.6rem .75rem;text-align:right;color:var(--text-secondary);font-size:.8rem">${it.recommendedQuantity ? Number(it.recommendedQuantity).toFixed(3) : '—'} ${it.unit||''}</td>
+                </tr>`).join('')}</tbody></table>`
+            : '<div style="text-align:center;padding:2rem;color:var(--text-secondary)">Mahsulotlar mavjud emas</div>'}
+            ${order.status==='PENDING_REVIEW' ? `
+            <div style="display:flex;gap:.75rem;margin-top:1.25rem">
+                <button onclick="arizApprove(${order.id});closeArizDetail()" class="ariz-action-btn ariz-approve-btn" style="flex:1;padding:.75rem">✅ Tasdiqlash</button>
+                <button onclick="arizReject(${order.id});closeArizDetail()" class="ariz-action-btn ariz-reject-btn" style="flex:1;padding:.75rem">❌ Rad etish</button>
+            </div>` : ''}`;
+        } catch(e) {
+            content.innerHTML = `<div style="text-align:center;padding:2rem;color:#ef4444">❌ Xatolik: ${e.message}</div>`;
+        }
+    }
+
+    function closeArizDetail() {
+        const modal = document.getElementById('arizDetailModal');
+        if (modal) modal.style.display='none';
+    }
+
+    async function arizApprove(id) {
+        if (!confirm('Bu arizani tasdiqlaysizmi?')) return;
+        try {
+            const res = await fetch(`${BASE_API}/distribution/approve/${id}`, {method:'POST', headers: getAuthHeaders()});
+            const d = await res.json();
+            if (res.ok) { showToast('✅ Ariza tasdiqlandi','success'); allOrdersLoad(); }
+            else showToast(d.message||'Xatolik!','error');
+        } catch(e) { showToast(e.message,'error'); }
+    }
+
+    async function arizReject(id) {
+        const reason = prompt('Rad etish sababini yozing:');
+        if (reason===null) return;
+        if (!reason.trim()) { showToast('Sabab kiritish shart!','error'); return; }
+        try {
+            const res = await fetch(`${BASE_API}/distribution/reject/${id}?reason=${encodeURIComponent(reason)}`, {method:'POST', headers: getAuthHeaders()});
+            const d = await res.json();
+            if (res.ok) { showToast('Ariza rad etildi','success'); allOrdersLoad(); }
+            else showToast(d.message||'Xatolik!','error');
+        } catch(e) { showToast(e.message,'error'); }
+    }
+
 </script>
 </body>
 </html>

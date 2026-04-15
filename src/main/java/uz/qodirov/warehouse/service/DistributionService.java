@@ -9,6 +9,11 @@ public interface DistributionService {
     ApiResponse<?> getInfo(DistributionInfoReqDto dto);
 
     ApiResponse<?> create(OrderReqDto dto);
+    
+    ApiResponse<?> addDraftItem(OrderReqDto dto);
+    ApiResponse<?> submitDraft(Long kindergartenId);
+    ApiResponse<?> approveOrder(Long orderId);
+    ApiResponse<?> rejectOrder(Long orderId, String reason);
 
     ApiResponse<?> getAll(int page, int size);
 

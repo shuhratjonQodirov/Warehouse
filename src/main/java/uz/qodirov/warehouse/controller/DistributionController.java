@@ -43,6 +43,16 @@ public class DistributionController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/approve/{id}")
+    public HttpEntity<?> approveOrder(@PathVariable Long id) {
+        return ResponseEntity.ok(distributionService.approveOrder(id));
+    }
+
+    @PostMapping("/reject/{id}")
+    public HttpEntity<?> rejectOrder(@PathVariable Long id, @RequestParam String reason) {
+        return ResponseEntity.ok(distributionService.rejectOrder(id, reason));
+    }
+
     @GetMapping(GET_ONE)
     public HttpEntity<?> getAll(@PathVariable Long id) {
         ApiResponse<?> response = distributionService.getOneByid(id);

@@ -1,0 +1,83 @@
+/* components.css - Apple-styled reusable components */
+
+/* Apple-style Card */
+.card {
+    background: var(--macos-surface);
+    backdrop-filter: var(--macos-blur);
+    -webkit-backdrop-filter: var(--macos-blur);
+    border: 1px solid var(--macos-border);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+}
+
+/* Badges */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 980px;
+    font-size: 12px;
+    font-weight: 600;
+}
+.badge-success {
+    background: rgba(52, 199, 89, 0.15);
+    color: var(--macos-success);
+}
+.badge-danger {
+    background: rgba(255, 59, 48, 0.15);
+    color: var(--macos-danger);
+}
+
+/* Tables */
+.apple-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid var(--macos-border);
+    background: var(--macos-surface-solid);
+}
+
+.apple-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.apple-table th {
+    text-align: left;
+    padding: 14px 16px;
+    background: rgba(0, 0, 0, 0.02);
+    color: var(--macos-text-secondary);
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: -0.01em;
+    border-bottom: 1px solid var(--macos-border);
+}
+
+[data-theme="dark"] .apple-table th {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.apple-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--macos-border);
+    color: var(--macos-text-primary);
+    vertical-align: middle;
+}
+
+.apple-table tr:last-child td {
+    border-bottom: none;
+}
+
+.apple-table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.apple-table tbody tr:hover {
+    background-color: rgba(0, 113, 227, 0.03);
+}
+
+[data-theme="dark"] .apple-table tbody tr:hover {
+    background-color: rgba(10, 132, 255, 0.08);
+}

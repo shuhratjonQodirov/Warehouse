@@ -19,8 +19,20 @@ public class UserPrincipal implements UserDetails {
         return user.getId();
     }
 
+    public String getFullName() {
+        return user.getFullName();
+    }
+
     public String getEmail() {
         return user.getEmail();
+    }
+
+    public String getPhoneNumber() {
+        return user.getPhoneNumber();
+    }
+
+    public String getRoleName() {
+        return user.getRole() != null ? user.getRole().name() : null;
     }
 
     @Override

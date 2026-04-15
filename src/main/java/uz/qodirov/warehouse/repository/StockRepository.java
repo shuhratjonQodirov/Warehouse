@@ -2,6 +2,7 @@ package uz.qodirov.warehouse.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import uz.qodirov.warehouse.dto.res.StockProjection;
 import uz.qodirov.warehouse.model.Product;
 import uz.qodirov.warehouse.model.Stock;
@@ -20,4 +21,7 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
 
     @Query(nativeQuery = true,value = "SELECT s.id, p.id as product_id, p.name as product_name, c.name as category_name, p.unit,w.id as warehouse_id, w.name as warehouse_name,s.physical_quantity, s.reserved_quantity FROM stock s INNER JOIN product p ON s.product_id = p.id INNER JOIN warehouse w ON s.warehouse_id = w.id LEFT JOIN category c ON c.id = p.category_id WHERE s.physical_quantity > 0 AND s.deleted = false")
     List<StockProjection> findAllByActive();
+
+    @Query(value = "SELECT s.id,p.id AS product_id, p.name AS product_name,c.name AS category_name, p.unit AS unit, w.id AS warehouse_id, w.name AS warehouse_name, s.physical_quantity,s.reserved_quantity FROM stock s  INNER JOIN product p ON s.product_id = p.id  INNER JOIN warehouse w ON s.warehouse_id = w.id LEFT JOIN category c ON c.id = p.category_id WHERE p.id = :productId AND s.deleted = false", nativeQuery = true)
+    List<StockProjection> findAllWithWarehouse(@Param("productId") Long productId);
 }

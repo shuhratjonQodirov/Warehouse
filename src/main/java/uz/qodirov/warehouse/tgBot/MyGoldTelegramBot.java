@@ -52,8 +52,21 @@ public class MyGoldTelegramBot implements LongPollingSingleThreadUpdateConsumer 
                 /// todo some
             } else if (message.hasPhoto()) {
                 /// todo some
+            } else if (message.hasWebAppData()) {
+                String data = message.getWebAppData().getData();
+                BotUser botUser = botUserRepository.findByChatId(chatId).orElse(null);
+                if (botUser != null) {
+                    try {
+                        telegramClient.execute(new SendMessage(chatId.toString(), "📦 Arizangiz qabul qilindi!\n\nSavatdagi mahsulotlar:\n" + data));
+                        // TODO: Save data to Order / DistributionService
+                        botUser.setState(BotState.MAIN_MENU.name());
+                        botUserRepository.save(botUser);
+                        handleByState(update, botUser);
+                    } catch (Exception e) {
+                        log.error("Error parsing WebAppData: ", e);
+                    }
+                }
             }
-
 
         }
 

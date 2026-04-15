@@ -19,6 +19,7 @@ import uz.qodirov.warehouse.model.*;
 import uz.qodirov.warehouse.repository.*;
 import uz.qodirov.warehouse.service.CalculateDailyNorm;
 import uz.qodirov.warehouse.service.DistributionService;
+import uz.qodirov.warehouse.service.PdfGenerationService;
 import uz.qodirov.warehouse.service.WorkingDayService;
 import uz.qodirov.warehouse.utils.ApiResponse;
 import uz.qodirov.warehouse.utils.PaginationUtil;
@@ -48,9 +49,9 @@ public class DistributionServiceImpl implements DistributionService {
     private final PaginationUtil paginationUtil;
     private final UserRepository usersRepository;
     private final TelegramClient telegramClient;
-
-
+    private final PdfGenerationService pdfGenerationService;
     @Override
+
     public ApiResponse<?> getInfo(DistributionInfoReqDto dto) {
 
         YearMonth yearMonth = YearMonth.parse(dto.getYearMonth());
@@ -74,12 +75,14 @@ public class DistributionServiceImpl implements DistributionService {
         Stock stock = stockRepo.findByProductAndWarehouse(product, warehouse).orElse(new Stock());
 
 
-        Optional<KindergartenMonthlySupply> optionalKindergartenMonthlySupply = monthlySupplyRepo.findByKindergartenAndProductAndYearMonth(kindergarten, product, dto.getYearMonth());
+        Optional<KindergartenMonthlySupply> optionalKindergartenMonthlySupply =
+                monthlySupplyRepo.findByKindergartenAndProductAndYearMonth(kindergarten, product, dto.getYearMonth());
         KindergartenMonthlySupply monthlySupply;
+
         if (optionalKindergartenMonthlySupply.isPresent()) {
             monthlySupply = optionalKindergartenMonthlySupply.get();
         } else {
-            monthlySupply = new KindergartenMonthlySupply();
+            monthlySupply = new KindergartenMonthlySupply();//// todo
             monthlySupply.setKindergarten(kindergarten);
             monthlySupply.setYearMonth(dto.getYearMonth());
             monthlySupply.setTotalWorkingDays(totalWorkingDays);
@@ -95,6 +98,7 @@ public class DistributionServiceImpl implements DistributionService {
         List<ProductNorm> productNormList = productNormRepo.findByProductAndDeletedFalse(product);
 
         BigDecimal dailyNorm = calculateDailyNorm.dailyNorm(kindergarten, productNormList);
+
         DistributionInfoResDto dto1 = DistributionInfoResDto.builder().totalWorkingDays(totalWorkingDays)
                 .suppliedWorkingDays(suppliedWorkingDays)
                 .remainingWorkingDays(remainingWorkingDays)
@@ -172,16 +176,141 @@ public class DistributionServiceImpl implements DistributionService {
             orderItemRepository.save(orderItem);
         }
         order.setTotalAmount(totalAmount);
-        return null;
+        orderRepository.save(order);
+        return new ApiResponse<>("Ariza muvaffaqiyatli yaratildi", true);
+    }
+
+    @Override
+    @Transactional
+    public ApiResponse<?> addDraftItem(OrderReqDto dto) {
+        Kindergarten kindergarten = kindergartenRepo
+                .findByIdAndDeletedFalse(dto.getKindergartenId())
+                .orElseThrow(() -> new ExistsNameException("Kindergarten not found"));
+
+        Warehouse warehouse = warehouseRepository
+                .findByIdAndDeletedFalse(dto.getWarehouseId())
+                .orElseThrow(() -> new ExistsNameException("Warehouse not found"));
+
+        Order order = orderRepository.findFirstByKindergartenAndStatusOrderByCreatedAtDesc(kindergarten, OrderStatus.DRAFT)
+                .orElseGet(() -> {
+                    Order newOrder = new Order();
+                    newOrder.setStatus(OrderStatus.DRAFT);
+                    newOrder.setKindergarten(kindergarten);
+                    newOrder.setOrderDate(LocalDate.now());
+                    newOrder.setTotalAmount(BigDecimal.ZERO);
+                    return orderRepository.save(newOrder);
+                });
+
+        BigDecimal totalAmount = order.getTotalAmount() == null ? BigDecimal.ZERO : order.getTotalAmount();
+
+        for (OrderItemReq item : dto.getItems()) {
+            Product product = productRepository.findByIdAndDeletedFalse(item.getProductId()).orElseThrow();
+
+            KindergartenMonthlySupply monthlySupply = monthlySupplyRepo
+                    .findByKindergartenAndProductAndYearMonth(kindergarten, product, dto.getYearMonth())
+                    .orElseThrow(() -> new ExistsNameException("Monthly supply not found"));
+
+            if (monthlySupply.getRemainingWorkingDays() < item.getDays()) {
+                throw new ByIdException("Qolgan kunlar miqdori so'ralgandan kam.");
+            }
+
+            OrderItem orderItem = new OrderItem();
+            orderItem.setOrder(order);
+            orderItem.setProduct(product);
+            orderItem.setWarehouse(warehouse);
+            orderItem.setMonthlySupply(monthlySupply);
+            orderItem.setPriceAtOrder(product.getCurrentPrice());
+            orderItem.setQuantity(item.getQuantity());
+            orderItem.setWorkingDays(item.getDays());
+
+            List<ProductNorm> productNormList = productNormRepo.findByProductAndDeletedFalse(product);
+            BigDecimal dailyNorm = calculateDailyNorm.dailyNorm(kindergarten, productNormList);
+            orderItem.setRecommendedQuantity(dailyNorm.multiply(BigDecimal.valueOf(item.getDays())));
+
+            orderItemRepository.save(orderItem);
+
+            totalAmount = totalAmount.add(item.getQuantity().multiply(product.getCurrentPrice()));
+        }
+
+        order.setTotalAmount(totalAmount);
+        return new ApiResponse<>("Qo'shildi", true);
+    }
+
+    @Override
+    @Transactional
+    public ApiResponse<?> submitDraft(Long kindergartenId) {
+        Kindergarten kindergarten = kindergartenRepo.findByIdAndDeletedFalse(kindergartenId).orElseThrow();
+        Order order = orderRepository.findFirstByKindergartenAndStatusOrderByCreatedAtDesc(kindergarten, OrderStatus.DRAFT)
+                .orElseThrow(() -> new ByIdException("Savatchada arizalar yo'q"));
+        order.setStatus(OrderStatus.PENDING_REVIEW);
+        return new ApiResponse<>("Arizangiz Adminga yuborildi", true);
+    }
+
+    @Override
+    @Transactional
+    public ApiResponse<?> approveOrder(Long orderId) {
+        Order order = orderRepository.findByIdAndDeletedFalse(orderId).orElseThrow();
+        if (order.getStatus() != OrderStatus.PENDING_REVIEW) throw new ByIdException("Order kutilayotgan emas");
+
+        order.setStatus(OrderStatus.PREPARING);
+
+        List<OrderItem> items = orderItemRepository.findAllByOrderId(orderId);
+        for (OrderItem item : items) {
+            Stock stock = stockRepo.findByProductAndWarehouse(item.getProduct(), item.getWarehouse())
+                    .orElseThrow(() -> new ByIdException("Omborda maxsulot yetarli emas"));
+
+            if (stock.getPhysicalQuantity().compareTo(item.getQuantity()) < 0) {
+                throw new ByIdException(item.getProduct().getName() + " uchun zaxira yetarli emas!");
+            }
+            // Zaxiraga olinadi
+            stock.setReservedQuantity(stock.getReservedQuantity().add(item.getQuantity()));
+
+            // Limitdan ushlanadi
+            KindergartenMonthlySupply monthlySupply = item.getMonthlySupply();
+            monthlySupply.setSuppliedWorkingDays(monthlySupply.getSuppliedWorkingDays() + item.getWorkingDays());
+            monthlySupply.setLastSupplyDate(LocalDate.now());
+        }
+
+        return new ApiResponse<>("Ariza tasdiqlandi", true);
+    }
+
+    @Override
+    @Transactional
+    public ApiResponse<?> rejectOrder(Long orderId, String reason) {
+        Order order = orderRepository.findByIdAndDeletedFalse(orderId).orElseThrow();
+        order.setStatus(OrderStatus.REJECTED);
+
+        if (order.getKindergarten().getMudir() != null && order.getKindergarten().getMudir().getChatId() != null) {
+            SendMessage msg = new SendMessage(order.getKindergarten().getMudir().getChatId().toString(),
+                    "❌ Arizangiz rad etildi.\nSabab: " + reason);
+            try {
+                telegramClient.execute(msg);
+            } catch (Exception e) {
+                log.error("Telegram error sending reject", e);
+            }
+        }
+        return new ApiResponse<>("Ariza rad etildi", true);
     }
 
     @Override
     public ApiResponse<?> getAll(int page, int size) {
         Pageable pageable = paginationUtil.createPageable(page, size);
 
-        List<OrderListResDto> list = orderRepository.findByRes(pageable);
+        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        uz.qodirov.warehouse.config.UserPrincipal principal = (uz.qodirov.warehouse.config.UserPrincipal) auth.getPrincipal();
+
+        List<OrderListResDto> list;
+        if ("MUDIRA".equals(principal.getRoleName())) {
+            list = orderRepository.findByResForMudira(principal.getId(), pageable);
+        } else if ("DRIVER".equals(principal.getRoleName())) {
+            list = orderRepository.findByResForDriver(principal.getId(), pageable);
+        } else {
+            list = orderRepository.findByRes(pageable);
+        }
+
         int totalPages = (int) Math.ceil((double) list.size() / size);
         Map<String, Object> meta = paginationUtil.createMeta(list.size(), page, size, totalPages);
+
 
 
         return new ApiResponse<>("", true, list, meta);
@@ -221,6 +350,15 @@ public class DistributionServiceImpl implements DistributionService {
 
         List<OrderItemResDto> itemResDtoList = orderItemRepository.findByOrder(order.getId());
 
+        StringBuilder text = new StringBuilder();
+        text.append("🚚 Sizga yangi buyurtma tayinlandi!\n\n");
+        text.append("🏫 Bog'cha: ").append(order.getKindergarten().getName()).append("\n");
+        if (order.getKindergarten().getRegion() != null) {
+            text.append("📍 Manzil: ").append(order.getKindergarten().getRegion().getName()).append("\n");
+        }
+        text.append("\n📦 Mahsulotlar:\n");
+
+        int count = 1;
         for (OrderItemResDto item : itemResDtoList) {
             Product product = productRepository
                     .findByIdAndDeletedFalse(item.getProductId())
@@ -232,18 +370,47 @@ public class DistributionServiceImpl implements DistributionService {
                     .findByIdAndDeletedFalse(item.getWarehouseId())
                     .orElseThrow(() -> new ByIdException("Warehosue not found"));
 
-
             Stock stock = stockRepo.findByProductAndWarehouse(product, warehouse).orElseThrow();
             stock.setPhysicalQuantity(stock.getPhysicalQuantity().subtract(item.getQuantity()));
             stock.setReservedQuantity(stock.getReservedQuantity().subtract(item.getQuantity()));
-
+            
+            text.append(count++).append(". ").append(product.getName())
+                .append(" - ").append(item.getQuantity()).append(" kg/shun\n");
         }
 
-
-        SendMessage message = new SendMessage(driver.getChatId().toString(), "");
-
-        message.setText("Sizga yangi buyurtma biriktirildi");
+        SendMessage message = new SendMessage(driver.getChatId().toString(), text.toString());
         telegramClient.execute(message);
+
+        // Send GPS Location if Kindergarten has coords
+        if (order.getKindergarten().getLatitude() != null && order.getKindergarten().getLongitude() != null) {
+            org.telegram.telegrambots.meta.api.methods.send.SendLocation location = 
+                new org.telegram.telegrambots.meta.api.methods.send.SendLocation(
+                    driver.getChatId().toString(),
+                    order.getKindergarten().getLatitude().doubleValue(),
+                    order.getKindergarten().getLongitude().doubleValue()
+                );
+            telegramClient.execute(location);
+        }
+
+        // Generate and Send PDF Invoice (Electronic Nakladnoy)
+        try {
+            java.io.File pdfInvoice = pdfGenerationService.generateOrderInvoice(order);
+            org.telegram.telegrambots.meta.api.objects.InputFile inputFile = new org.telegram.telegrambots.meta.api.objects.InputFile(pdfInvoice);
+            
+            // Send to Driver
+            org.telegram.telegrambots.meta.api.methods.send.SendDocument sendDocToDriver = new org.telegram.telegrambots.meta.api.methods.send.SendDocument(driver.getChatId().toString(), inputFile);
+            sendDocToDriver.setCaption("📄 Bog'cha uchun YUK XATI (Shtrix kodli)");
+            telegramClient.execute(sendDocToDriver);
+
+            // Send to Mudira
+            if (order.getKindergarten().getMudir() != null && order.getKindergarten().getMudir().getChatId() != null) {
+                org.telegram.telegrambots.meta.api.methods.send.SendDocument sendDocToMudira = new org.telegram.telegrambots.meta.api.methods.send.SendDocument(order.getKindergarten().getMudir().getChatId().toString(), inputFile);
+                sendDocToMudira.setCaption("🧾 Elektron Yuk xati va Check. Mahsulotlar yo'lga chiqdi.");
+                telegramClient.execute(sendDocToMudira);
+            }
+        } catch (Exception e) {
+            log.error("Error generating and sending PDF inside assignDriver", e);
+        }
 
         return new ApiResponse<>("Driver assigned", true);
     }

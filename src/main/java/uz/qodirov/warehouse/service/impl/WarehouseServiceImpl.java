@@ -41,7 +41,7 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
     @Override
-    public ApiResponse<?> getAll(int page, int size) {
+    public ApiResponse<List<WarehouseResDto>> getAll(int page, int size) {
         Pageable pageable = pagination.createPageable(page, size);
         Page<Warehouse> all = warehouseRepository.findAllByDeletedFalse(pageable);
 

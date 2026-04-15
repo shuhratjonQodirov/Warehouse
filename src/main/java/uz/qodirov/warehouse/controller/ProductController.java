@@ -5,9 +5,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import uz.qodirov.warehouse.annotation.EncryptResponse;
 import uz.qodirov.warehouse.dto.req.ProductReqDto;
+import uz.qodirov.warehouse.dto.res.ProductResDto;
 import uz.qodirov.warehouse.service.ProductService;
 import uz.qodirov.warehouse.utils.ApiResponse;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/product")
@@ -21,10 +25,11 @@ public class ProductController {
         return ResponseEntity.ok(response);
     }
 
+    @EncryptResponse(encrypted = true)
     @GetMapping("/get-all")
     public HttpEntity<?> getAll(@RequestParam(defaultValue = "0") int page,
                                 @RequestParam(defaultValue = "10") int size) {
-        ApiResponse<?> response = productService.getAll(page, size);
+        ApiResponse<List<ProductResDto>> response = productService.getAll(page, size);
         return ResponseEntity.ok(response);
     }
 

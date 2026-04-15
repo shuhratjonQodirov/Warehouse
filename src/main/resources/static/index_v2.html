@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="uz" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ombor Boshqaruv - Apple Design</title>
+    
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/landing.css">
+    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/modal.css">
+</head>
+<body>
+
+    <!-- 1. LANDING PAGE -->
+    <div id="landingPage" class="app-page landing-container">
+        <button class="apple-btn glass-panel" style="position:absolute; top:20px; right:20px; padding:8px 12px; z-index:100; font-size:13px;" onclick="toggleTheme()">🌓 Theme</button>
+        <div class="landing-content">
+            <h1 data-i18n="landing_title">Ombor Boshqaruv</h1>
+            <p class="subtitle" data-i18n="landing_subtitle">Dizayn va qulaylik uyg'unlashgan tizim</p>
+            <div class="features-grid">
+                <div class="feature-card glass-panel"><h3 data-i18n="feat_dashboard">📊 Dashboard</h3></div>
+                <div class="feature-card glass-panel"><h3 data-i18n="feat_products">📦 Biznes nazorat</h3></div>
+                <div class="feature-card glass-panel"><h3 data-i18n="feat_warehouses">🏭 Omborlar</h3></div>
+            </div>
+            <button class="apple-btn btn-large" onclick="navigateTo('loginPage')" data-i18n="landing_btn">Tizimga Kirish</button>
+        </div>
+    </div>
+
+    <!-- 2. LOGIN PAGE -->
+    <div id="loginPage" class="app-page login-container hidden">
+        <button class="apple-btn glass-panel" style="position:absolute; top:20px; right:20px; padding:8px 12px; z-index:100; font-size:13px;" onclick="toggleTheme()">🌓 Theme</button>
+        <div class="login-box glass-panel">
+            <h2 data-i18n="login_title">Tizimga Kirish</h2>
+            <form class="login-form" onsubmit="performLogin(event)">
+                <div class="input-group">
+                    <label data-i18n="login_username">Username</label>
+                    <input type="text" id="username" class="apple-input" required>
+                </div>
+                <div class="input-group">
+                    <label data-i18n="login_password">Password</label>
+                    <input type="password" id="password" class="apple-input" required>
+                </div>
+                <button type="submit" id="loginBtn" class="apple-btn login-btn" data-i18n="login_btn">Kirish</button>
+            </form>
+            <a class="back-link" onclick="navigateTo('landingPage')">← Orqaga qaytish</a>
+        </div>
+    </div>
+
+    <!-- 3. DASHBOARD PAGE -->
+    <div id="dashboardPage" class="app-page dashboard-container hidden">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">Warehouse</div>
+                <button class="toggle-sidebar-btn" onclick="toggleSidebar()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                </button>
+            </div>
+            
+            <nav class="nav-menu">
+                <a class="nav-item active" onclick="loadDashboardView('home');"><span class="nav-icon">📊</span><span class="nav-text">Dashboard</span></a>
+                <a class="nav-item" onclick="loadDashboardView('products');"><span class="nav-icon">📦</span><span class="nav-text">Mahsulotlar</span></a>
+                <a class="nav-item" onclick="loadDashboardView('warehouse');"><span class="nav-icon">🏭</span><span class="nav-text">Omborlar</span></a>
+                <a class="nav-item" onclick="loadDashboardView('distribution');"><span class="nav-icon">🚚</span><span class="nav-text">Taqsimlash</span></a>
+                <a class="nav-item" onclick="loadDashboardView('reports');"><span class="nav-icon">📈</span><span class="nav-text">Hisobotlar</span></a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-profile" onclick="logout()">
+                    <div class="user-avatar">A</div>
+                    <div class="user-info">
+                        <div class="user-name">Foydalanuvchi</div>
+                        <div class="user-role" style="color:var(--macos-danger)">Chiqish</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <h1 class="page-title" id="pageTitle">Dashboard</h1>
+                <div class="topbar-actions">
+                    <button class="apple-btn" style="background:var(--macos-surface); color:var(--macos-text-primary); border:1px solid var(--macos-border);" onclick="toggleTheme()">🌓 Theme</button>
+                </div>
+            </header>
+            <div class="content-body" id="routerOutlet"></div>
+        </main>
+    </div>
+
+    <!-- MODALS -->
+
+    <!-- Product Modal -->
+    <div id="productModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="productModalTitle">Yangi Mahsulot</h3 class="modal-title">
+                <button class="modal-close-btn" onclick="closeModal('productModal')">✕</button>
+            </div>
+            <div class="modal-body">
+                <form id="productForm" onsubmit="saveProduct(event)">
+                    <input type="hidden" id="productId">
+                    <div class="form-group">
+                        <label>Mahsulot nomi *</label>
+                        <input type="text" id="productName" class="apple-input" placeholder="Masalan: Guruch" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>O'lchov birligi *</label>
+                            <select id="productUnit" class="apple-input" required>
+                                <option value="">— Tanlang —</option>
+                                <option value="KG">KG</option>
+                                <option value="G">G</option>
+                                <option value="L">L</option>
+                                <option value="DONA">DONA</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Kategoriya *</label>
+                            <select id="productCategory" class="apple-input" required>
+                                <option value="">Yuklanmoqda...</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Narxi (so'm)</label>
+                            <input type="number" id="productPrice" class="apple-input" min="0" step="0.01" placeholder="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Kritik limit</label>
+                            <input type="number" id="productLimit" class="apple-input" min="0" step="0.01" placeholder="0">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Tavsif</label>
+                        <textarea id="productDescription" class="apple-input" placeholder="Qisqacha..."></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="apple-btn" style="background:var(--macos-surface); color:var(--macos-text-primary); border:1px solid var(--macos-border);" onclick="closeModal('productModal')">Bekor qilish</button>
+                        <button type="submit" class="apple-btn" id="productSaveBtn">Saqlash</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Warehouse Modal -->
+    <div id="warehouseModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="whTitle">🏢 Yangi Ombor</h3>
+                <button class="modal-close-btn" onclick="closeModal('warehouseModal')">✕</button>
+            </div>
+            <div class="modal-body">
+                <form id="warehouseForm" onsubmit="saveWarehouse(event)">
+                    <input type="hidden" id="whId">
+                    <div class="form-group">
+                        <label>Ombor nomi *</label>
+                        <input type="text" id="whName" class="apple-input" placeholder="Ombor nomi" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Manzili *</label>
+                        <input type="text" id="whAddress" class="apple-input" placeholder="Manzil..." required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Kenglik (Lat)</label>
+                            <input type="number" id="whLat" step="any" class="apple-input" placeholder="41.2995">
+                        </div>
+                        <div class="form-group">
+                            <label>Uzunlik (Lon)</label>
+                            <input type="number" id="whLon" step="any" class="apple-input" placeholder="69.2401">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Tavsif *</label>
+                        <textarea id="whDesc" class="apple-input" placeholder="Tavsif..."></textarea>
+                    </div>
+                    <div class="modal-footer" style="padding:0; border:none; margin-top:20px;">
+                        <button type="button" class="apple-btn" style="background:var(--macos-surface); color:var(--macos-text-primary); border:1px solid var(--macos-border);" onclick="closeModal('warehouseModal')">Bekor qilish</button>
+                        <button type="submit" class="apple-btn" id="whSaveBtn">Saqlash</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/core/app.js"></script>
+    <script src="js/api/api.js"></script>
+    <script src="js/pages/dashboard.js"></script>
+</body>
+</html>

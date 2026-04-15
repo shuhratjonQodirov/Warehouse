@@ -29,6 +29,9 @@ public class ProductServiceImpl implements ProductService {
     private final ProductMapper mapper;
     private final PaginationUtil paginationUtil;
 
+    // Tezkor RAM kesh (faqat mudiralar ommaviy murojaati uchun)
+    private volatile List<ProductResDto> cachedAllProducts = null;
+
     @Override
     @Transactional
     public ApiResponse<?> create(ProductReqDto dto) {
@@ -41,12 +44,17 @@ public class ProductServiceImpl implements ProductService {
 
         Product product = mapper.toEntity(dto, category);
         productRepository.save(product);
+        cachedAllProducts = null; // Hotirani yangilash
         return new ApiResponse<>("New category created", true);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public ApiResponse<?> getAll(int page, int size) {
+    public ApiResponse<List<ProductResDto>> getAll(int page, int size) {
+        if (page == 0 && size == -1 && cachedAllProducts != null) {
+            return new ApiResponse<>("List of products (CACHED)", true, cachedAllProducts, null);
+        }
+
         Pageable pageable = paginationUtil.createPageable(page, size);
 
         Page<Product> all = productRepository.findAllByDeletedFalseOrderByCreatedAtAsc(pageable);
@@ -54,6 +62,10 @@ public class ProductServiceImpl implements ProductService {
         Map<String, Object> meta = paginationUtil.createMeta(all.getTotalElements(), page, size, all.getTotalPages());
 
         List<ProductResDto> list = all.stream().map(mapper::toDto).toList();
+
+        if (page == 0 && size == -1) {
+            cachedAllProducts = list;
+        }
 
         return new ApiResponse<>("List of products", true, list, meta);
     }
@@ -64,6 +76,7 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findByIdAndDeletedFalse(id).orElseThrow(() -> new ByIdException("Product not found"));
         product.setDeleted(Boolean.TRUE);
         productRepository.save(product);
+        cachedAllProducts = null; // Hotirani yangilash
         return new ApiResponse<>("Product deleted succes fully", true);
     }
 
@@ -82,6 +95,7 @@ public class ProductServiceImpl implements ProductService {
 
         mapper.toUpdate(product, category, dto);
         productRepository.save(product);
+        cachedAllProducts = null; // Hotirani yangilash
         return new ApiResponse<>();
     }
 
